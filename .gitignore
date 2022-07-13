@@ -3,6 +3,7 @@ recordings/*
 
 # Hidden directories
 .*/
+beaf/__pycache__
 # Build content
 *egg-info/
 # Tool output files
