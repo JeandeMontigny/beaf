@@ -1,2 +1,9 @@
 # ignore directories
 recordings/*
+
+# Hidden directories
+.*/
+# Build content
+*egg-info/
+# Tool output files
+*.out
