@@ -1,5 +1,6 @@
 import os, sys, psutil, h5py, json
 import numpy as np
+from multiprocessing import Pool
 
 # ---------------------------------------------------------------- #
 #TODO: pritave/protected class members? (__name; _name respectively)
@@ -17,24 +18,30 @@ class Brw_File:
         self.recording = []
 
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk):
-        id_frame_start = int(np.floor(t_start * self.info.sampling_rate) * self.info.nb_channel)
-        id_frame_end = int(np.floor(t_end * self.info.sampling_rate) * self.info.nb_channel)
-        nb_frame_chunk = int((id_frame_end - id_frame_start) / frame_chunk)
+        frame_start =  int(np.floor(t_start * self.info.sampling_rate))
+        frame_end = int(np.floor(t_end * self.info.sampling_rate))
 
-        if nb_frame_chunk < 1:
-            raise SystemExit("Recording snippet to extract is less than a frame")
+        if frame_chunk > self.info.recording_length / self.info.nb_channel:
+            print("Frame_chunk is bigger than the number of frame in the recording.")
+            frame_chunk = frame_end - frame_start
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
 
         # comparison in bit
-        #TODO: just need to compare to frame_chunk?
-        #      does self.data.get("Well_A1").get("Raw")[first_frame:last_frame]
-        #      load full self.data.get("Well_A1").get("Raw") into memory?
-        if  (id_frame_end - id_frame_start) * 2 > (psutil.virtual_memory().available):
-            raise SystemExit("Memory size of the recording snippet to extract is bigger than your available system memory")
+        if  frame_chunk * self.info.nb_channel * 2 > psutil.virtual_memory().available:
+            raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
 
+        id_frame_chunk = frame_chunk * self.info.nb_channel
+
+        first_frame = frame_start * self.info.nb_channel
+        last_frame = int(first_frame + id_frame_chunk)
         for chunk in range(0, nb_frame_chunk):
-            first_frame = int(id_frame_start + chunk * frame_chunk)
-            last_frame = int(first_frame + frame_chunk)
-            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame]
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.info.nb_channel
+
+            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.info.nb_channel]
+
+            first_frame += id_frame_chunk + self.info.nb_channel
+            last_frame = int(first_frame + id_frame_chunk)
 
             # for each frame in this data chunk
             for frame_nb in range(0, int(len(data_chunk)/self.info.nb_channel)):
@@ -59,6 +66,7 @@ class Brw_File:
         self.data = h5py.File(self.path,'r')
 
         if len(ch_to_extract) == 0 or ch_to_extract == "all":
+            ch_to_extract = []
             for ch in range (0, 4096):
                 ch_to_extract.append(ch)
                 self.recording.append([ch, []])
@@ -107,6 +115,9 @@ class Bxr_File:
 
 
 class Experiment_Settings:
+    """
+    TODO: description
+    """
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')
 
@@ -160,7 +171,7 @@ def convert_digital_to_analog(info, value):
     return digital_value
 
 
-def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 1000000):
+def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000):
     """
     TODO: description
     """
