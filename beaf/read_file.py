@@ -193,26 +193,30 @@ class Bxr_File:
         self.spike_channels = []
         self.sorted = []
 
-    def read_spike_brx_data(self, t_start, t_end):
+    def read_spike_brx_data(self, t_start, t_end, ch_to_extract):
         frame_start =  int(np.floor(t_start * self.info.sampling_rate))
         frame_end = int(np.floor(t_end * self.info.sampling_rate))
 
         id_start = 0; id_end = 0
-        init_frame_start = False; init_frame_end = False
-        temps_spike_times = self.data.get('Well_A1').get('SpikeTimes')[:]
-        for i in range(0, len(temps_spike_times)):
-            # find first spike time > frame_start
-            if (not init_frame_start) and temps_spike_times[i] >= frame_start:
-                id_start = i - 1
-                if frame_start < 0: frame_start = 0
-                init_frame_start = True
-            # find last spike time < frame_end
-            if (not init_frame_end) and temps_spike_times[i] >= frame_end:
-                id_end = i
-                init_frame_end = True
-            if init_frame_start and init_frame_end:
-                break
-        del(temps_spike_times)
+        if frame_start == 0 and frame_end == self.info.recording_length:
+            id_start = 0
+            id_end = self.info.recording_length
+        else:
+            init_frame_start = False; init_frame_end = False
+            temps_spike_times = self.data.get('Well_A1').get('SpikeTimes')[:]
+            for i in range(0, len(temps_spike_times)):
+                # find first spike time > frame_start
+                if (not init_frame_start) and temps_spike_times[i] >= frame_start:
+                    id_start = i - 1
+                    if frame_start < 0: frame_start = 0
+                    init_frame_start = True
+                # find last spike time < frame_end
+                if (not init_frame_end) and temps_spike_times[i] >= frame_end:
+                    id_end = i
+                    init_frame_end = True
+                if init_frame_start and init_frame_end:
+                    break
+            del(temps_spike_times)
 
         self.spike_times = self.data.get('Well_A1').get('SpikeTimes')[id_start:id_end]
         self.spike_channels = self.data.get('Well_A1').get('SpikeChIdxs')[id_start:id_end]
@@ -220,14 +224,23 @@ class Bxr_File:
         self.sorted = [[] for ch in range(0, self.info.nb_channel)]
 
         for i in range(0, len(self.spike_times)):
-            self.sorted[self.spike_channels[i]].append(self.spike_times[i])
+            if len(ch_to_extract) == self.info.nb_channel or self.spike_channels[i] in ch_to_extract:
+                self.sorted[self.spike_channels[i]].append(self.spike_times[i])
 
-    def read(self, t_start, t_end):
+    def read(self, t_start, t_end, ch_to_extract):
         # TODO: other brx event than spikes
         self.info = get_bxr_experiment_setting(self.path)
         self.data = h5py.File(self.path,'r')
+
+        if len(ch_to_extract) == 0 or ch_to_extract == "all":
+            ch_to_extract = []
+            for ch in range (0, 4096):
+                ch_to_extract.append(ch)
+
+        if t_end == "all": t_end = self.info.get_recording_length_sec()
+
         # if type == spikes:
-        self.read_spike_brx_data(t_start, t_end)
+        self.read_spike_brx_data(t_start, t_end, ch_to_extract)
 
         self.data.close()
 
@@ -281,7 +294,7 @@ class Brw_Experiment_Settings:
         return int(self.recording_length)
 
     def get_recording_length_sec(self):
-        return round(self.recording_length / self.get_sampling_rate(), 3)
+        return self.recording_length / self.get_sampling_rate()
 
     def close(self):
         self.data.close()
@@ -345,12 +358,12 @@ def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_
     return File
 
 
-def read_bxr_file(file_path, t_start = 0, t_end = 60):
+def read_bxr_file(file_path, t_start = 0, t_end = 60, ch_to_extract = []):
     """
     TODO: description
     """
     File = Bxr_File(file_path)
-    File.read(t_start, t_end)
+    File.read(t_start, t_end, ch_to_extract)
 
     return File
 
