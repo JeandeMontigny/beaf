@@ -95,8 +95,7 @@ class Brw_File:
         if frame_end > toc[len(toc)-1][1]:
             frame_end = self.info.recording_length
 
-        chunk_nb_start = 0
-        chunk_nb_end = 0
+        chunk_nb_start = 0; chunk_nb_end = 0
         for chunk_nb in range(0, len(toc)):
             if toc[chunk_nb][0] <= frame_start:
                 chunk_nb_start = chunk_nb
@@ -117,9 +116,7 @@ class Brw_File:
             i = 0
             while i < len(data_chunk):
                 ch_id = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder='little')
-                # ch_id = int.from_bytes([data_chunk[i], data_chunk[i+1]], byteorder='little')
                 size = int.from_bytes([data_chunk[i+4], data_chunk[i+5], data_chunk[i+6], data_chunk[i+7]], byteorder='little')
-                # size = int.from_bytes([data_chunk[i+2], data_chunk[i+3], data_chunk[i+4], data_chunk[i+5]], byteorder='little')
                 # update i to be the index of first range
                 i += 8
                 if len(ch_to_extract) == 4096 or (ch_id in ch_to_extract):
@@ -192,12 +189,49 @@ class Bxr_File:
         self.path = bxr_path
         self.data = []
         self.info = []
+        self.spike_times = []
+        self.spike_channels = []
+        self.sorted = []
 
-    def read():
+    def read_spike_brx_data(self, t_start, t_end):
+        frame_start =  int(np.floor(t_start * self.info.sampling_rate))
+        frame_end = int(np.floor(t_end * self.info.sampling_rate))
+
+        id_start = 0; id_end = 0
+        init_frame_start = False; init_frame_end = False
+        temps_spike_times = self.data.get('Well_A1').get('SpikeTimes')[:]
+        for i in range(0, len(temps_spike_times)):
+            # find first spike time > frame_start
+            if (not init_frame_start) and temps_spike_times[i] >= frame_start:
+                id_start = i - 1
+                if frame_start < 0: frame_start = 0
+                init_frame_start = True
+            # find last spike time < frame_end
+            if (not init_frame_end) and temps_spike_times[i] >= frame_end:
+                id_end = i
+                init_frame_end = True
+            if init_frame_start and init_frame_end:
+                break
+        del(temps_spike_times)
+
+        self.spike_times = self.data.get('Well_A1').get('SpikeTimes')[id_start:id_end]
+        self.spike_channels = self.data.get('Well_A1').get('SpikeChIdxs')[id_start:id_end]
+
+        self.sorted = [[] for ch in range(0, self.info.nb_channel)]
+
+        for i in range(0, len(self.spike_times)):
+            self.sorted[self.spike_channels[i]].append(self.spike_times[i])
+
+    def read(self, t_start, t_end):
+        # TODO: other brx event than spikes
+        self.info = get_bxr_experiment_setting(self.path)
         self.data = h5py.File(self.path,'r')
+        # if type == spikes:
+        self.read_spike_brx_data(t_start, t_end)
 
+        self.data.close()
 
-class Experiment_Settings:
+class Brw_Experiment_Settings:
     """
     TODO: description
     """
@@ -252,6 +286,45 @@ class Experiment_Settings:
     def close(self):
         self.data.close()
 
+
+class Bxr_Experiment_Settings:
+    """
+    TODO: description
+    """
+    def __init__(self, file_path):
+        self.data = h5py.File(file_path,'r')
+        # in frame
+        self.recording_length = 0
+
+    def read(self):
+        # TODO: other brx event than spikes
+        experiment_settings = json.loads(self.data.get("ExperimentSettings").__getitem__(0))
+
+        self.mea_model = experiment_settings['MeaPlate']['Model']
+        self.sampling_rate = experiment_settings['TimeConverter']['FrameRate']
+        self.channel_idx = self.data.get('Well_A1').get('StoredChIdxs')[:]
+        self.nb_channel = len(self.channel_idx)
+        self.recording_length = self.data.get('Well_A1').get('SpikeTimes')[len(self.data.get('Well_A1').get('SpikeTimes'))-1]
+
+
+    def get_mea_model(self):
+        return self.mea_model
+
+    def get_sampling_rate(self):
+        return self.sampling_rate
+
+    def get_nb_channel(self):
+        return self.nb_channel
+
+    def get_recording_length(self):
+        return int(self.recording_length)
+
+    def get_recording_length_sec(self):
+        return round(self.recording_length / self.get_sampling_rate(), 3)
+
+    def close(self):
+        self.data.close()
+
 # ---------------------------------------------------------------- #
 def convert_digital_to_analog(info, value):
     digital_value = info.min_analog_value + value * (info.max_analog_value - info.min_analog_value) / (info.max_digital_value - info.min_digital_value)
@@ -272,12 +345,12 @@ def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_
     return File
 
 
-def read_bxr_file(file_path):
+def read_bxr_file(file_path, t_start = 0, t_end = 60):
     """
     TODO: description
     """
     File = Bxr_File(file_path)
-    File.read()
+    File.read(t_start, t_end)
 
     return File
 
@@ -286,7 +359,18 @@ def get_brw_experiment_setting(file_path):
     """
     TODO: description
     """
-    experiment_setting = Experiment_Settings(file_path)
+    experiment_setting = Brw_Experiment_Settings(file_path)
+    experiment_setting.read()
+    experiment_setting.close()
+
+    return experiment_setting
+
+
+def get_bxr_experiment_setting(file_path):
+    """
+    TODO: description
+    """
+    experiment_setting = Bxr_Experiment_Settings(file_path)
     experiment_setting.read()
     experiment_setting.close()
 
