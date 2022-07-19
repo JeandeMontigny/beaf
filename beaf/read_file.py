@@ -21,15 +21,18 @@ class Brw_File:
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start =  int(np.floor(t_start * self.info.sampling_rate))
         frame_end = int(np.floor(t_end * self.info.sampling_rate))
-
+        # resize frame_chunk if it is larger than the recording length to extract
         if frame_chunk > self.info.recording_length / self.info.nb_channel:
             frame_chunk = frame_end - frame_start
-        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        if frame_start > self.info.recording_length / self.info.nb_channel:
+            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
 
         # comparison in bit
         if  frame_chunk * self.info.nb_channel * 2 > psutil.virtual_memory().available:
             raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
 
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
         id_frame_chunk = frame_chunk * self.info.nb_channel
 
         first_frame = frame_start * self.info.nb_channel
@@ -53,7 +56,7 @@ class Brw_File:
                     ch = ch_to_extract[ch_id]
                     self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
 
-        for ch_id in ch_to_extract:
+        for ch_id in range (0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
 
         if verbose:
@@ -62,7 +65,7 @@ class Brw_File:
 
     def read_raw_compressed_data(self, t_start, t_end, ch_to_extract, frame_chunk):
         # data chunk [start-end[ in number of frame
-        tocs = self.data.get("TOC")
+        toc = self.data.get("TOC")
         # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
         event_sparse_raw_toc = self.data.get("Well_A1").get("EventsBasedSparseRawTOC")
 
@@ -87,12 +90,17 @@ class Brw_File:
         # get data chunk corresponding to t_start-t_end, using toc (in frame)
         frame_start =  int(np.floor(t_start * self.info.sampling_rate))
         frame_end = int(np.floor(t_end * self.info.sampling_rate))
+        if frame_start > toc[len(toc)-1][1]:
+            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
+        if frame_end > toc[len(toc)-1][1]:
+            frame_end = self.info.recording_length
+
         chunk_nb_start = 0
         chunk_nb_end = 0
-        for chunk_nb in range(0, len(tocs)):
-            if tocs[chunk_nb][0] <= frame_start:
+        for chunk_nb in range(0, len(toc)):
+            if toc[chunk_nb][0] <= frame_start:
                 chunk_nb_start = chunk_nb
-            if tocs[chunk_nb][1] >= frame_end:
+            if toc[chunk_nb][1] >= frame_end:
                 chunk_nb_end = chunk_nb +1
                 break
         print(chunk_nb_end - chunk_nb_start, "data chunks to read")
@@ -196,6 +204,7 @@ class Experiment_Settings:
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')
         self.recording_type = ""
+        # in frame
         self.recording_length = np.nan
 
     def read(self):
@@ -205,14 +214,16 @@ class Experiment_Settings:
         except:
             self.recording_type = experiment_settings['DataSettings']['EventsBasedRawRanges']['$type']
 
-        if self.recording_type == "RawDataSettings":
-            self.recording_length = len(self.data.get("Well_A1").get("Raw"))
-
         self.mea_model = experiment_settings['MeaPlate']['Model']
         self.sampling_rate = experiment_settings['TimeConverter']['FrameRate']
         #TODO: check that recorded channels are actually listed in data.get("Well_A1").get("StoredChIdxs")
         self.channel_idx = self.data.get("Well_A1").get("StoredChIdxs")[:]
         self.nb_channel = len(self.channel_idx)
+
+        if self.recording_type == "RawDataSettings":
+            self.recording_length = len(self.data.get("Well_A1").get("Raw")) / self.nb_channel
+        elif self.recording_type == "NoiseBlankingCompressionSettings":
+            self.recording_length = self.data.get("TOC")[len(self.data.get("TOC"))-1][1]
 
         self.min_analog_value = experiment_settings['ValueConverter']['MinAnalogValue']
         self.max_analog_value = experiment_settings['ValueConverter']['MaxAnalogValue']
@@ -233,10 +244,10 @@ class Experiment_Settings:
         return self.nb_channel
 
     def get_recording_length(self):
-        return self.recording_length
+        return int(self.recording_length)
 
     def get_recording_length_sec(self):
-        return round(self.recording_length / (self.get_nb_channel() * self.get_sampling_rate()), 3)
+        return round(self.recording_length / self.get_sampling_rate(), 3)
 
     def close(self):
         self.data.close()
