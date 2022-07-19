@@ -14,15 +14,15 @@ class Brw_File:
         self.data = []
         # recording info from json
         self.info = []
-        # recording from selected channels, for selected time windowns
+        # recording from selected channels, for selected time windows
+        # [[ch nb, [rec], [frame start, frame end] ], [...]]
         self.recording = []
 
-    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk):
+    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start =  int(np.floor(t_start * self.info.sampling_rate))
         frame_end = int(np.floor(t_end * self.info.sampling_rate))
 
         if frame_chunk > self.info.recording_length / self.info.nb_channel:
-            print("Frame_chunk is bigger than the number of frame in the recording.")
             frame_chunk = frame_end - frame_start
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
 
@@ -35,6 +35,8 @@ class Brw_File:
         first_frame = frame_start * self.info.nb_channel
         last_frame = int(first_frame + id_frame_chunk)
         for chunk in range(0, nb_frame_chunk):
+            if verbose:
+                print("Reading chunk %s out of %s" %(chunk+1, nb_frame_chunk), end = "\r")
             if chunk == nb_frame_chunk-1:
                 last_frame = frame_end * self.info.nb_channel
 
@@ -51,17 +53,90 @@ class Brw_File:
                     ch = ch_to_extract[ch_id]
                     self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
 
+        for ch_id in ch_to_extract:
+            self.recording[ch_id][2].append([frame_start, frame_end])
 
-    #TODO
+        if verbose:
+            print("\ndone")
+
+
     def read_raw_compressed_data(self, t_start, t_end, ch_to_extract, frame_chunk):
+        # data chunk [start-end[ in number of frame
+        tocs = self.data.get("TOC")
+        # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
         event_sparse_raw_toc = self.data.get("Well_A1").get("EventsBasedSparseRawTOC")
-        event_sparse_raw = self.data.get("Well_A1").get("EventsBasedSparseRaw")[event_sparse_raw_toc[0]:event_sparse_raw_toc[1]]
 
-        reconstructed_raw_data = []
-        return reconstructed_raw_data
+        # EventsBasedSparseRaw dataset is stored in byte (8 bit). Values have different format:
+        #     'ChId' and  'Size' are int (32 bit) values: encoded on bytes of EventsBasedSparseRaw
+        #     'range begin' and 'range end' are long (64 bit): encoded on 8 bytes of EventsBasedSparseRaw
+        #     'sample' values are short (16 bit); encoded on 2 bytes of EventsBasedSparseRaw
+        #
+        #             Data chunk n                        Data chunk n+1
+        # ¦                                ¦                                  ¦
+        # ChData 1, ChData 2, ..., ChData n; ChData 1, ChData 2, ..., ChData n;
+        #     _____¦        ¦___________________________
+        #     ChID, size, range 1, range 2, ..., range n
+        #     ___________¦       ¦_______________________________________
+        #     range beging, range end, sample 1, sample 2, ...., sample n
+
+        # size: number of bytes composing the ranges of this ChData (so ChData size without ChID + size)
+        # range begin: frame number relative to the begininng of the rec of sample 1
+        # range end: frame number +1 relative to the begininng of the rec of next last sample of this range data
+        #   i.e. range end - range begin = nb of sample for this range
+
+        # get data chunk corresponding to t_start-t_end, using toc (in frame)
+        frame_start =  int(np.floor(t_start * self.info.sampling_rate))
+        frame_end = int(np.floor(t_end * self.info.sampling_rate))
+        chunk_nb_start = 0
+        chunk_nb_end = 0
+        for chunk_nb in range(0, len(tocs)):
+            if tocs[chunk_nb][0] <= frame_start:
+                chunk_nb_start = chunk_nb
+            if tocs[chunk_nb][1] >= frame_end:
+                chunk_nb_end = chunk_nb +1
+                break
+        print(chunk_nb_end - chunk_nb_start, "data chunks to read")
+
+        for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+            if data_chunk_nb < len(event_sparse_raw_toc)-1:
+                chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+            else:
+                chunk_end_id = len(self.data.get("Well_A1").get("EventsBasedSparseRaw"))
+
+            data_chunk = self.data.get("Well_A1").get("EventsBasedSparseRaw")[chunk_start_id:chunk_end_id]
+
+            i = 0
+            while i < len(data_chunk):
+                ch_id = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder='little')
+                # ch_id = int.from_bytes([data_chunk[i], data_chunk[i+1]], byteorder='little')
+                size = int.from_bytes([data_chunk[i+4], data_chunk[i+5], data_chunk[i+6], data_chunk[i+7]], byteorder='little')
+                # size = int.from_bytes([data_chunk[i+2], data_chunk[i+3], data_chunk[i+4], data_chunk[i+5]], byteorder='little')
+                # update i to be the index of first range
+                i += 8
+                if len(ch_to_extract) == 4096 or (ch_id in ch_to_extract):
+                    rec_ch_id = 0
+                    for ch in range(0, len(ch_to_extract)):
+                        if self.recording[ch][0] == ch_id:
+                            rec_ch_id = ch
+                    j = 0
+                    while j < size:
+                        range_begin = int.from_bytes([data_chunk[i+j+k] for k in range(0, 8)], byteorder='little')
+                        range_end = int.from_bytes([data_chunk[i+j+k+8] for k in range(0, 8)], byteorder='little')
+                        # if is not within desired time windows to extrat, break
+                        if range_begin < frame_start or range_begin > frame_end:
+                            break
+                        for k in range(0, range_end - range_begin):
+                            sample = int.from_bytes([data_chunk[i+16+k*2], data_chunk[i+17+k*2]], byteorder='little')
+                            self.recording[rec_ch_id][1].append(convert_digital_to_analog(self.info, sample))
+                        self.recording[rec_ch_id][2].append([range_begin, range_end])
+                        j += 16 + (range_end - range_begin)*2
+
+                # update i to be the index of next ChData
+                i += size
 
 
-    def read(self, t_start, t_end, ch_to_extract, frame_chunk):
+    def read(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         self.info = get_brw_experiment_setting(self.path)
         self.data = h5py.File(self.path,'r')
 
@@ -69,14 +144,14 @@ class Brw_File:
             ch_to_extract = []
             for ch in range (0, 4096):
                 ch_to_extract.append(ch)
-                self.recording.append([ch, []])
+                self.recording.append([ch, [], []])
         else:
-            self.recording = [[ch, []] for ch in ch_to_extract]
+            self.recording = [[ch, [], []]  for ch in ch_to_extract]
 
         if t_end == "all": t_end = self.info.get_recording_length_sec()
 
         if self.info.recording_type == "RawDataSettings":
-            self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk)
+            self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
         elif self.info.recording_type == "NoiseBlankingCompressionSettings":
             self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
 
@@ -120,20 +195,25 @@ class Experiment_Settings:
     """
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')
+        self.recording_type = ""
+        self.recording_length = np.nan
 
     def read(self):
         experiment_settings = json.loads(self.data.get("ExperimentSettings").__getitem__(0))
         try:
-            self.recording_type = experiment_settings['DataSettings']['EventsBasedRawRanges']['$type']
-        except:
             self.recording_type = experiment_settings['DataSettings']['Raw']['$type']
+        except:
+            self.recording_type = experiment_settings['DataSettings']['EventsBasedRawRanges']['$type']
+
+        if self.recording_type == "RawDataSettings":
+            self.recording_length = len(self.data.get("Well_A1").get("Raw"))
+
         self.mea_model = experiment_settings['MeaPlate']['Model']
         self.sampling_rate = experiment_settings['TimeConverter']['FrameRate']
-        #TODO: if only recording zone (so less than 4096 channels), info from MeaPlate?
-        self.nb_channel = 4096
-        # if self.data.get("Well_A1").get("MeaPlate").get("") != "":
-        #     total_channel_nb =
-        self.recording_length = len(self.data.get("Well_A1").get("Raw"))
+        #TODO: check that recorded channels are actually listed in data.get("Well_A1").get("StoredChIdxs")
+        self.channel_idx = self.data.get("Well_A1").get("StoredChIdxs")[:]
+        self.nb_channel = len(self.channel_idx)
+
         self.min_analog_value = experiment_settings['ValueConverter']['MinAnalogValue']
         self.max_analog_value = experiment_settings['ValueConverter']['MaxAnalogValue']
         self.min_digital_value = experiment_settings['ValueConverter']['MinDigitalValue']
@@ -171,12 +251,12 @@ def convert_digital_to_analog(info, value):
     return digital_value
 
 
-def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000):
+def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False):
     """
     TODO: description
     """
     File = Brw_File(file_path)
-    File.read(t_start, t_end, ch_to_extract, frame_chunk)
+    File.read(t_start, t_end, ch_to_extract, frame_chunk, verbose)
 
     return File
 
