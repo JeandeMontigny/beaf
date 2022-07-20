@@ -49,7 +49,7 @@ class Brw_File:
             last_frame = int(first_frame + id_frame_chunk)
 
             # for each frame in this data chunk
-            for frame_nb in range(0, int(len(data_chunk)/self.info.nb_channel)):
+            for frame_nb in range(0, self.info.recording_length):
                 frame_start_id = frame_nb*self.info.nb_channel
 
                 for ch_id in range(0, len(ch_to_extract)):
@@ -193,16 +193,19 @@ class Bxr_File:
         self.spike_channels = []
         self.sorted = []
 
-    def read_spike_brx_data(self, t_start, t_end, ch_to_extract):
+    def read_spike_brx_data(self, t_start, t_end, ch_to_extract, sort):
         frame_start =  int(np.floor(t_start * self.info.sampling_rate))
         frame_end = int(np.floor(t_end * self.info.sampling_rate))
 
         id_start = 0; id_end = 0
-        if frame_start == 0 and frame_end == self.info.recording_length:
+        init_frame_start = False; init_frame_end = False
+        if frame_start == 0:
             id_start = 0
+            init_frame_start = True
+        if frame_end >= self.info.recording_length:
             id_end = self.info.recording_length
-        else:
-            init_frame_start = False; init_frame_end = False
+            init_frame_end = True
+        if (not init_frame_start) and (not init_frame_end) :
             temps_spike_times = self.data.get('Well_A1').get('SpikeTimes')[:]
             for i in range(0, len(temps_spike_times)):
                 # find first spike time > frame_start
@@ -221,13 +224,15 @@ class Bxr_File:
         self.spike_times = self.data.get('Well_A1').get('SpikeTimes')[id_start:id_end]
         self.spike_channels = self.data.get('Well_A1').get('SpikeChIdxs')[id_start:id_end]
 
-        self.sorted = [[] for ch in range(0, self.info.nb_channel)]
+        # unsorted data (spike_times, spike_channels) are more convinient to clean data (ex, spike at same frame on most channels)
+        if sort:
+            self.sorted = [[] for ch in range(0, self.info.nb_channel)]
+            for i in range(0, len(self.spike_times)):
+                if len(ch_to_extract) == self.info.nb_channel or self.spike_channels[i] in ch_to_extract:
+                    self.sorted[self.spike_channels[i]].append(self.spike_times[i])
 
-        for i in range(0, len(self.spike_times)):
-            if len(ch_to_extract) == self.info.nb_channel or self.spike_channels[i] in ch_to_extract:
-                self.sorted[self.spike_channels[i]].append(self.spike_times[i])
 
-    def read(self, t_start, t_end, ch_to_extract):
+    def read(self, t_start, t_end, ch_to_extract, sort):
         # TODO: other brx event than spikes
         self.info = get_bxr_experiment_setting(self.path)
         self.data = h5py.File(self.path,'r')
@@ -240,7 +245,7 @@ class Bxr_File:
         if t_end == "all": t_end = self.info.get_recording_length_sec()
 
         # if type == spikes:
-        self.read_spike_brx_data(t_start, t_end, ch_to_extract)
+        self.read_spike_brx_data(t_start, t_end, ch_to_extract, sort)
 
         self.data.close()
 
@@ -333,7 +338,7 @@ class Bxr_Experiment_Settings:
         return int(self.recording_length)
 
     def get_recording_length_sec(self):
-        return round(self.recording_length / self.get_sampling_rate(), 3)
+        return self.recording_length / self.get_sampling_rate()
 
     def close(self):
         self.data.close()
@@ -358,12 +363,12 @@ def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_
     return File
 
 
-def read_bxr_file(file_path, t_start = 0, t_end = 60, ch_to_extract = []):
+def read_bxr_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], sort = False):
     """
     TODO: description
     """
     File = Bxr_File(file_path)
-    File.read(t_start, t_end, ch_to_extract)
+    File.read(t_start, t_end, ch_to_extract, sort)
 
     return File
 
