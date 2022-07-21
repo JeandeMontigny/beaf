@@ -19,38 +19,38 @@ class Brw_File:
         self.recording = []
 
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
-        frame_start =  int(np.floor(t_start * self.info.sampling_rate))
-        frame_end = int(np.floor(t_end * self.info.sampling_rate))
+        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
+        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
         # resize frame_chunk if it is larger than the recording length to extract
-        if frame_chunk > self.info.recording_length / self.info.nb_channel:
+        if frame_chunk > self.info.get_recording_length():
             frame_chunk = frame_end - frame_start
 
-        if frame_start > self.info.recording_length / self.info.nb_channel:
+        if frame_start > self.info.get_recording_length():
             raise SystemExit("Requested start time of recording to extract is higher that the recording length")
 
         # comparison in bit
-        if  frame_chunk * self.info.nb_channel * 2 > psutil.virtual_memory().available:
+        if  frame_chunk * self.info.get_nb_channel() * 2 > psutil.virtual_memory().available:
             raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
 
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
-        id_frame_chunk = frame_chunk * self.info.nb_channel
+        id_frame_chunk = frame_chunk * self.info.get_nb_channel()
 
-        first_frame = frame_start * self.info.nb_channel
-        last_frame = int(first_frame + id_frame_chunk)
+        first_frame = frame_start
+        last_frame = first_frame + id_frame_chunk
         for chunk in range(0, nb_frame_chunk):
             if verbose:
                 print("Reading chunk %s out of %s" %(chunk+1, nb_frame_chunk), end = "\r")
             if chunk == nb_frame_chunk-1:
-                last_frame = frame_end * self.info.nb_channel
+                last_frame = frame_end * self.info.get_nb_channel()
 
-            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.info.nb_channel]
+            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.info.get_nb_channel()]
 
-            first_frame += id_frame_chunk + self.info.nb_channel
-            last_frame = int(first_frame + id_frame_chunk)
+            first_frame += id_frame_chunk + self.info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
 
             # for each frame in this data chunk
-            for frame_nb in range(0, self.info.recording_length):
-                frame_start_id = frame_nb*self.info.nb_channel
+            for frame_nb in range(0, int(len(data_chunk)/self.info.get_nb_channel())):
+                frame_start_id = frame_nb
 
                 for ch_id in range(0, len(ch_to_extract)):
                     ch = ch_to_extract[ch_id]
@@ -88,12 +88,12 @@ class Brw_File:
         #   i.e. range end - range begin = nb of sample for this range
 
         # get data chunk corresponding to t_start-t_end, using toc (in frame)
-        frame_start =  int(np.floor(t_start * self.info.sampling_rate))
-        frame_end = int(np.floor(t_end * self.info.sampling_rate))
+        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
+        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
         if frame_start > toc[len(toc)-1][1]:
             raise SystemExit("Requested start time of recording to extract is higher that the recording length")
         if frame_end > toc[len(toc)-1][1]:
-            frame_end = self.info.recording_length
+            frame_end = self.info.get_recording_length()
 
         chunk_nb_start = 0; chunk_nb_end = 0
         for chunk_nb in range(0, len(toc)):
@@ -194,16 +194,16 @@ class Bxr_File:
         self.sorted = []
 
     def read_spike_brx_data(self, t_start, t_end, ch_to_extract, sort):
-        frame_start =  int(np.floor(t_start * self.info.sampling_rate))
-        frame_end = int(np.floor(t_end * self.info.sampling_rate))
+        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
+        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
 
         id_start = 0; id_end = 0
         init_frame_start = False; init_frame_end = False
         if frame_start == 0:
             id_start = 0
             init_frame_start = True
-        if frame_end >= self.info.recording_length:
-            id_end = self.info.recording_length
+        if frame_end >= self.info.get_recording_length():
+            id_end = self.info.get_recording_length()
             init_frame_end = True
         if (not init_frame_start) and (not init_frame_end) :
             temps_spike_times = self.data.get('Well_A1').get('SpikeTimes')[:]
@@ -226,9 +226,9 @@ class Bxr_File:
 
         # unsorted data (spike_times, spike_channels) are more convinient to clean data (ex, spike at same frame on most channels)
         if sort:
-            self.sorted = [[] for ch in range(0, self.info.nb_channel)]
+            self.sorted = [[] for ch in range(0, self.info.get_nb_channel())]
             for i in range(0, len(self.spike_times)):
-                if len(ch_to_extract) == self.info.nb_channel or self.spike_channels[i] in ch_to_extract:
+                if len(ch_to_extract) == self.info.get_nb_channel() or self.spike_channels[i] in ch_to_extract:
                     self.sorted[self.spike_channels[i]].append(self.spike_times[i])
 
 
@@ -293,9 +293,12 @@ class Brw_Experiment_Settings:
         return self.mea_model
 
     def get_nb_channel(self):
-        return self.nb_channel
+        return int(self.nb_channel)
 
     def get_recording_length(self):
+        """
+        Return the number of frame in the recording (per channel)
+        """
         return int(self.recording_length)
 
     def get_recording_length_sec(self):
