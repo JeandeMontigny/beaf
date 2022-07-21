@@ -1,6 +1,6 @@
 import os, sys, psutil, h5py, json
 import numpy as np
-from multiprocessing import Pool
+from multiprocessing.pool import ThreadPool
 
 # ---------------------------------------------------------------- #
 #TODO: pritave/protected class members? (__name; _name respectively)
@@ -14,9 +14,18 @@ class Brw_File:
         self.data = []
         # recording info from json
         self.info = []
+        self.ch_to_extract = []
         # recording from selected channels, for selected time windows
         # [[ch nb, [rec], [frame start, frame end] ], [...]]
         self.recording = []
+        self.chunk = []
+
+
+    def get_ch_rec(self, ch) :
+        ch_id = self.ch_to_extract.index(ch)
+        for frame_nb in range(0, int(len(self.chunk)/self.info.get_nb_channel())):
+            self.recording[ch_id][1].append(convert_digital_to_analog(self.info, self.chunk[ch + self.info.get_nb_channel() * frame_nb]))
+
 
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
@@ -48,13 +57,12 @@ class Brw_File:
             first_frame += id_frame_chunk + self.info.get_nb_channel()
             last_frame = first_frame + id_frame_chunk
 
-            # for each frame in this data chunk
-            for frame_nb in range(0, int(len(data_chunk)/self.info.get_nb_channel())):
-                frame_start_id = frame_nb*self.info.nb_channel
-
-                for ch_id in range(0, len(ch_to_extract)):
-                    ch = ch_to_extract[ch_id]
-                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
+            threads_nb = int(os.cpu_count()/2)
+            self.ch_to_extract = ch_to_extract
+            self.chunk = data_chunk
+            t = ThreadPool(threads_nb)
+            t.map(self.get_ch_rec, ch_to_extract)
+            t.close()
 
         for ch_id in range (0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
