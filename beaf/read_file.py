@@ -18,7 +18,7 @@ class Brw_File:
         # [[ch nb, [rec], [frame start, frame end] ], [...]]
         self.recording = []
 
-    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, use_c_lib):
         frame_start =  int(np.floor(t_start * self.info.sampling_rate))
         frame_end = int(np.floor(t_end * self.info.sampling_rate))
         # resize frame_chunk if it is larger than the recording length to extract
@@ -48,13 +48,27 @@ class Brw_File:
             first_frame += id_frame_chunk + self.info.nb_channel
             last_frame = int(first_frame + id_frame_chunk)
 
-            # for each frame in this data chunk
-            for frame_nb in range(0, self.info.recording_length):
-                frame_start_id = frame_nb*self.info.nb_channel
+            if use_c_lib:
+                import ctypes
+                c_lib = ctypes.CDLL("../beaf/c_lib/c_lib.dll")
+                c_lib.process_raw_data_chunk.argtypes = ctypes.POINTER(ctypes.c_int), ctypes.c_int, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.POINTER(ctypes.c_double)), ctypes.c_int, ctypes.c_int, ctypes.c_int,ctypes.c_int
+                c_lib.process_raw_data_chunk.restype = None
+                rec = [[0.0] * int(self.info.recording_length)] * len(ch_to_extract)
+
+                c_lib.process_raw_data_chunk(data_chunk.tolist(), int(self.info.recording_length), ch_to_extract, rec, int(self.info.max_analog_value), int(self.info.min_analog_value), int(self.info.max_digital_value), int(self.info.min_digital_value))
 
                 for ch_id in range(0, len(ch_to_extract)):
-                    ch = ch_to_extract[ch_id]
-                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
+                    self.recording[ch_id][1] = rec[ch_id]
+                del(rec)
+
+            else:
+                # for each frame in this data chunk
+                for frame_nb in range(0, self.info.recording_length):
+                    frame_start_id = frame_nb*self.info.nb_channel
+
+                    for ch_id in range(0, len(ch_to_extract)):
+                        ch = ch_to_extract[ch_id]
+                        self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
 
         for ch_id in range (0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
@@ -141,7 +155,7 @@ class Brw_File:
                 i += size
 
 
-    def read(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+    def read(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, use_c_lib):
         self.info = get_brw_experiment_setting(self.path)
         self.data = h5py.File(self.path,'r')
 
@@ -156,7 +170,7 @@ class Brw_File:
         if t_end == "all": t_end = self.info.get_recording_length_sec()
 
         if self.info.recording_type == "RawDataSettings":
-            self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+            self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose, use_c_lib)
         elif self.info.recording_type == "NoiseBlankingCompressionSettings":
             self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
 
@@ -353,12 +367,12 @@ def convert_digital_to_analog(info, value):
     return digital_value
 
 
-def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False):
+def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False, use_c_lib = False):
     """
     TODO: description
     """
     File = Brw_File(file_path)
-    File.read(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+    File.read(t_start, t_end, ch_to_extract, frame_chunk, verbose, use_c_lib)
 
     return File
 
