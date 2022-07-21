@@ -50,7 +50,7 @@ class Brw_File:
 
             # for each frame in this data chunk
             for frame_nb in range(0, int(len(data_chunk)/self.info.get_nb_channel())):
-                frame_start_id = frame_nb
+                frame_start_id = frame_nb*self.info.nb_channel
 
                 for ch_id in range(0, len(ch_to_extract)):
                     ch = ch_to_extract[ch_id]
