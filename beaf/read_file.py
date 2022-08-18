@@ -19,6 +19,53 @@ class Brw_File:
         # [[ch nb, [rec], [frame start, frame end] ], [...]]
         self.recording = []
         self.chunk = []
+        self.ch_to_extract = []
+        self.frame_chunk = 0
+
+
+    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
+        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
+        # resize frame_chunk if it is larger than the recording length to extract
+        if frame_chunk > self.info.get_recording_length():
+            frame_chunk = frame_end - frame_start
+
+        if frame_start > self.info.get_recording_length():
+            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
+
+        # comparison in bit
+        if  frame_chunk * self.info.get_nb_channel() * 2 > psutil.virtual_memory().available:
+            raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.info.get_nb_channel()
+
+        first_frame = frame_start
+        last_frame = first_frame + id_frame_chunk
+        for chunk in range(0, nb_frame_chunk):
+            if verbose:
+                print("Reading chunk %s out of %s" %(chunk+1, nb_frame_chunk), end = "\r")
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.info.get_nb_channel()
+
+            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.info.get_nb_channel()]
+
+            first_frame += id_frame_chunk + self.info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # for each frame in this data chunk
+            for frame_nb in range(0, int(len(data_chunk)/self.info.get_nb_channel())):
+                frame_start_id = frame_nb*self.info.nb_channel
+
+                for ch_id in range(0, len(ch_to_extract)):
+                    ch = ch_to_extract[ch_id]
+                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
+
+        for ch_id in range (0, len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print("\ndone")
 
 
     def get_ch_rec(self, ch) :
@@ -27,7 +74,7 @@ class Brw_File:
             self.recording[ch_id][1].append(convert_digital_to_analog(self.info, self.chunk[ch + self.info.get_nb_channel() * frame_nb]))
 
 
-    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+    def read_raw_data_m_ch(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
         frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
         # resize frame_chunk if it is larger than the recording length to extract
@@ -69,6 +116,77 @@ class Brw_File:
 
         if verbose:
             print("\ndone")
+
+
+    def read_raw_data_m_t(self, window):
+        ch_to_extract = self.ch_to_extract
+        frame_chunk = self.frame_chunk
+
+        t_start = window[0]
+        t_end = window[1]
+
+        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
+        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
+        # resize frame_chunk if it is larger than the recording length to extract
+        if frame_chunk > self.info.get_recording_length():
+            frame_chunk = frame_end - frame_start
+
+        if frame_start > self.info.get_recording_length():
+            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
+
+        # comparison in bit
+        if  frame_chunk * self.info.get_nb_channel() * 2 > psutil.virtual_memory().available:
+            raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.info.get_nb_channel()
+
+        first_frame = frame_start
+        last_frame = first_frame + id_frame_chunk
+        for chunk in range(0, nb_frame_chunk):
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.info.get_nb_channel()
+
+            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.info.get_nb_channel()]
+
+            first_frame += id_frame_chunk + self.info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # for each frame in this data chunk
+            for frame_nb in range(0, int(len(data_chunk)/self.info.get_nb_channel())):
+                frame_start_id = frame_nb*self.info.nb_channel
+
+                for ch_id in range(0, len(ch_to_extract)):
+                    ch = ch_to_extract[ch_id]
+                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
+
+        for ch_id in range (0, len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+
+    def get_frame_ch_rec(self, frame, ch):
+        self.recording[self.ch_to_extract.index(ch)][1].append(convert_digital_to_analog(self.info, self.data.get("Well_A1").get("Raw")[frame*self.info.get_nb_channel() + ch]))
+
+
+    def read_raw_data_m_r(self, t_start, t_end, ch_to_extract):
+        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
+        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
+        self.ch_to_extract = ch_to_extract
+
+        from itertools import repeat
+
+        for frame in range(frame_start, frame_end):
+            if len(ch_to_extract) >= int(os.cpu_count()):
+                t = ThreadPool(int(os.cpu_count()))
+                t.map(self.get_frame_ch_rec, repeat(frame), ch_to_extract)
+                t.close()
+
+            else:
+                for ch in ch_to_extract:
+                    self.recording[self.ch_to_extract.index(ch)][1].append(convert_digital_to_analog(self.info, self.data.get("Well_A1").get("Raw")[frame*self.info.get_nb_channel() + ch]))
+
+        for ch_id in range (0, len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
 
 
     def read_raw_compressed_data(self, t_start, t_end, ch_to_extract, frame_chunk):
@@ -162,6 +280,35 @@ class Brw_File:
             self.recording = [[ch, [], []]  for ch in ch_to_extract]
 
         if t_end == "all": t_end = self.info.get_recording_length_sec()
+
+        m_c = False
+        m_t = False
+        m_r = False
+        if m_t:
+            threads_nb = int(os.cpu_count()/2)
+            self.ch_to_extract = ch_to_extract
+            self.frame_chunk = frame_chunk
+            windows = []
+            interval = t_end / threads_nb
+            # dividing t_start to t_end in thread nb read windows
+            for window in range(0, threads_nb):
+                windows.append([window*interval, window*interval + interval])
+
+            t = ThreadPool(threads_nb)
+            t.map(self.read_raw_data_m_t, windows)
+            t.close()
+            self.data.close()
+            return
+
+        if m_r:
+            self.read_raw_data_m_r(t_start, t_end, ch_to_extract)
+            self.data.close()
+            return
+
+        if m_c:
+            self.read_raw_data_m_ch(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+            self.data.close()
+            return
 
         if self.info.recording_type == "RawDataSettings":
             self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
