@@ -1,26 +1,23 @@
 import matplotlib.pyplot as plt
+import inspect
 from .read_file import *
 from .utils import *
 
 # ---------------------------------------------------------------- #
-def plot_raw():
-# TODO: plot for specified time windows and electrodes
-#       plot in lines or in MEA shape
-    return
+def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
+# NOTE: t_start/t_end here are depending on File.recording length (the recording snippet that has been extracted using read_brw_file), not on the brw file recording length
+# TODO: plot in lines or in MEA shape
+    ch_to_display = check_ch_to_display(File.recording, ch_to_display)
 
+    if t_start * File.info.get_sampling_rate() > len(File.recording[0][1]):
+        raise SystemExit("Requested start time of recording to display is higher than the recording length")
+    if t_end == "all":
+        t_end = len(File.recording[0][1])/File.info.get_sampling_rate()
+    if t_end * File.info.get_sampling_rate() > len(File.recording[0][1]):
+        t_end = len(File.recording[0][1])/File.info.get_sampling_rate()
 
-def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_start=0, t_stop="all"):
-# TODO: display for selected t_start, t_stop
-#       plot in lines or in MEA shape
-    if ch_to_display=="all":
-        ch_to_display = []
-        for idx in range(0, len(File.recording)):
-            ch_to_display.append(File.recording[idx][0])
-    if type(ch_to_display) == int:
-        raise SystemExit("Error in `plot_raw_compressed` function: ch_to_display is an integer. Please, enter the channel(s) to display as a list")
-
-    # if t_stop == "all":# or t_stop > `rec length`
-    #     t_stop == `rec length`
+    frame_start = t_start * File.info.get_sampling_rate()
+    frame_end = t_end * File.info.get_sampling_rate()
 
     fig = plt.figure()
 
@@ -28,7 +25,40 @@ def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_st
     for ch in ch_to_display:
         ch_id = 0
         for idx in range(0, len(File.recording)):
-            if File.recording[idx][0]== ch:
+            if File.recording[idx][0] == ch:
+                ch_id = idx
+                break
+
+        ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+        plt.plot([x/File.info.get_sampling_rate() for x in range(int(frame_start), int(frame_end))], File.recording[ch_id][1][int(frame_start):int(frame_end)], c='black')
+
+        plt.xlabel("sec")
+        plt.ylabel("µV")
+        plt.title(File.recording[ch_id][0])
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        plt.tight_layout()
+        fig_nb += 1
+
+    plt.show()
+
+
+
+def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_start=0, t_end="all"):
+# TODO: display for selected t_start, t_end
+#       plot in lines or in MEA shape
+    ch_to_display = check_ch_to_display(File, ch_to_display)
+
+    # if t_end == "all":# or t_end > `rec length`
+    #     t_end == `rec length`
+
+    fig = plt.figure()
+
+    fig_nb = 1
+    for ch in ch_to_display:
+        ch_id = 0
+        for idx in range(0, len(File.recording)):
+            if File.recording[idx][0] == ch:
                 ch_id = idx
                 break
         # create new subplot
@@ -39,15 +69,15 @@ def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_st
             temps = []
             frame_end = int(t_start*File.info.get_sampling_rate())
             snip_stop = 0
-            for snip in range(0, len(File.recording[ch_id][2])):
-                frame_start = File.recording[ch_id][2][snip][0]
+            for snip_id in range(0, len(File.recording[ch_id][2])):
+                frame_start = File.recording[ch_id][2][snip_id][0]
                 snip_start = snip_stop
-                snip_stop = snip_start + File.recording[ch_id][2][snip][1] - File.recording[ch_id][2][snip][0]
+                snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
                 temps += [0 for i in range(frame_start - frame_end)]
                 temps += File.recording[ch_id][1][snip_start:snip_stop]
-                frame_end = File.recording[ch_id][2][snip][1]
-            # add 0 data from last snippet to t_stop
-            temps += [0 for i in range(int(t_stop*File.info.get_sampling_rate()) - frame_end)]
+                frame_end = File.recording[ch_id][2][snip_id][1]
+            # add 0 data from last snippet to t_end
+            temps += [0 for i in range(int(t_end*File.info.get_sampling_rate()) - frame_end)]
             plt.plot([x/File.info.get_sampling_rate() for x in range(0, len(temps))], temps, c='black')
             plt.xlabel("sec")
             plt.ylabel("µV")
@@ -59,15 +89,15 @@ def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_st
                 plt.plot(File.recording[ch_id][1], c='black')
 
             snip_stop = 0
-            for snip in range(0, len(File.recording[ch_id][2])):
+            for snip_id in range(0, len(File.recording[ch_id][2])):
                 snip_start = snip_stop
-                snip_stop = snip_start + File.recording[ch_id][2][snip][1] - File.recording[ch_id][2][snip][0]
-                if visualisation == "continuous" and snip < len(File.recording[ch_id][2])-1:
+                snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+                if visualisation == "continuous" and snip_id < len(File.recording[ch_id][2])-1:
                     # plot line between snippets for continuous visu
                     plt.axvline(snip_stop, c='grey')
                 if visualisation == "superimposed":
                     # plot superimposed snippets
-                    plt.plot(File.recording[ch_id][1][snip_start:snip_stop], label="spike "+ str(snip), c='black')
+                    plt.plot(File.recording[ch_id][1][snip_start:snip_stop], label="spike "+ str(snip_id), c='black')
             plt.xlabel("frame")
             plt.ylabel("µV")
 
@@ -84,8 +114,7 @@ def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_st
 
 def plot_mea(File, ch_to_display="all", label=[], background=False):
 # TODO: Rotate figure to have 0,0 top left?
-    if type(ch_to_display) == int:
-        raise SystemExit("Error in `plot_raw_compressed` function: ch_to_display is an integer. Please, enter the channel(s) to display as a list")
+    ch_to_display = check_ch_to_display(File, ch_to_display)
 
     if background:
         x_coords = []
@@ -119,3 +148,15 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
 def plot_activity_map():
 # TODO: _activity map for specified time windows, electrodes and frequency
     return
+
+
+# ---------------------------------------------------------------- #
+def check_ch_to_display(rec, ch_to_display):
+    if ch_to_display=="all":
+        ch_to_display = []
+        for idx in range(0, len(rec)):
+            ch_to_display.append(rec[idx][0])
+    if type(ch_to_display) == int:
+        raise SystemExit("Error in \'" + inspect.stack()[1].function + "\' function: ch_to_display is an integer. Please, enter the channel(s) to display as a list")
+
+    return ch_to_display
