@@ -26,7 +26,7 @@ class Brw_File:
             frame_chunk = frame_end - frame_start
 
         if frame_start > self.info.get_recording_length():
-            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
+            raise SystemExit("Requested start time of recording to extract is higher than the recording length")
 
         # comparison in bit
         if  frame_chunk * self.info.get_nb_channel() * 2 > psutil.virtual_memory().available:
@@ -35,7 +35,7 @@ class Brw_File:
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
         id_frame_chunk = frame_chunk * self.info.get_nb_channel()
 
-        first_frame = frame_start
+        first_frame = frame_start * self.info.get_nb_channel()
         last_frame = first_frame + id_frame_chunk
         for chunk in range(0, nb_frame_chunk):
             if verbose:
