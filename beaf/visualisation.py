@@ -43,14 +43,21 @@ def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
     plt.show()
 
 
-
 def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_start=0, t_end="all"):
 # TODO: display for selected t_start, t_end
 #       plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
 
-    # if t_end == "all":# or t_end > `rec length`
-    #     t_end == `rec length`
+    t_last_event = 0
+    if t_end == "all":
+        # get the latest event from all channels to display
+        for ch in ch_to_display:
+            for idx in range(0, len(File.recording)):
+                if File.recording[idx][0] == ch:
+                    if t_last_event < File.recording[idx][2][len(File.recording[idx][2])-1][1]:
+                        t_last_event = File.recording[idx][2][len(File.recording[idx][2])-1][1]
+                    break
+        t_end = (t_last_event + 0.1 * File.info.get_sampling_rate() ) / File.info.get_sampling_rate()
 
     fig = plt.figure()
 
@@ -65,41 +72,9 @@ def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_st
         ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
 
         if visualisation == "reconstructed":
-            # plot raw_compressed data in sec with 0 between snippets
-            temps = []
-            frame_end = int(t_start*File.info.get_sampling_rate())
-            snip_stop = 0
-            for snip_id in range(0, len(File.recording[ch_id][2])):
-                frame_start = File.recording[ch_id][2][snip_id][0]
-                snip_start = snip_stop
-                snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
-                temps += [0 for i in range(frame_start - frame_end)]
-                temps += File.recording[ch_id][1][snip_start:snip_stop]
-                frame_end = File.recording[ch_id][2][snip_id][1]
-            # add 0 data from last snippet to t_end
-            temps += [0 for i in range(int(t_end*File.info.get_sampling_rate()) - frame_end)]
-            plt.plot([x/File.info.get_sampling_rate() for x in range(0, len(temps))], temps, c='black')
-            plt.xlabel("sec")
-            plt.ylabel("µV")
-
-        else:
-            if visualisation == "continuous":
-                # plot raw_compressed continuously
-                # TODO: display actual time on x axis
-                plt.plot(File.recording[ch_id][1], c='black')
-
-            snip_stop = 0
-            for snip_id in range(0, len(File.recording[ch_id][2])):
-                snip_start = snip_stop
-                snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
-                if visualisation == "continuous" and snip_id < len(File.recording[ch_id][2])-1:
-                    # plot line between snippets for continuous visu
-                    plt.axvline(snip_stop, c='grey')
-                if visualisation == "superimposed":
-                    # plot superimposed snippets
-                    plt.plot(File.recording[ch_id][1][snip_start:snip_stop], label="spike "+ str(snip_id), c='black')
-            plt.xlabel("frame")
-            plt.ylabel("µV")
+            plot_raw_compressed_r(File, ch_to_display, t_start, t_end, ch_id)
+        if visualisation == "continuous" or visualisation == "superimposed":
+            plot_raw_compressed_c_s(File, ch_to_display, visualisation, t_start, t_end, ch_id)
 
         plt.title(File.recording[ch_id][0])
         ax.spines['top'].set_visible(False)
@@ -109,7 +84,55 @@ def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_st
 
     plt.show()
 
-    return
+
+def plot_raw_compressed_r(File, ch_to_display, t_start, t_end, ch_id):
+    # plot raw_compressed data in sec with 0 between snippets
+    temps = []
+    frame_end = int(t_start*File.info.get_sampling_rate())
+    snip_stop = 0
+    for snip_id in range(0, len(File.recording[ch_id][2])):
+        frame_start = File.recording[ch_id][2][snip_id][0]
+        snip_start = snip_stop
+        snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+
+        if File.recording[ch_id][2][snip_id][1] < t_end * File.info.get_sampling_rate() and frame_start > t_start * File.info.get_sampling_rate():
+            # add 0 values between recordings
+            temps += [0 for i in range(frame_start - frame_end)]
+            #  add snippet
+            temps += File.recording[ch_id][1][snip_start:snip_stop]
+            frame_end = File.recording[ch_id][2][snip_id][1]
+
+    # add 0 data from last snippet to t_end
+    temps += [0 for i in range(frame_end, int(t_end*File.info.get_sampling_rate()))]
+
+    plt.plot([x/File.info.get_sampling_rate() + t_start for x in range(0, len(temps))], temps, c='black')
+    plt.xlabel("sec")
+    plt.ylabel("µV")
+
+
+def plot_raw_compressed_c_s(File, ch_to_display, visualisation, t_start, t_end, ch_id):
+    snip_stop = 0
+    temps=[]
+    for snip_id in range(0, len(File.recording[ch_id][2])):
+        if visualisation == "superimposed":
+            snip_start = snip_stop
+            snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+        if File.recording[ch_id][2][snip_id][1] < t_end * File.info.get_sampling_rate() and File.recording[ch_id][2][snip_id][0] > t_start * File.info.get_sampling_rate():
+            if visualisation == "superimposed":
+                # plot superimposed snippets
+                plt.plot(File.recording[ch_id][1][snip_start:snip_stop], label="spike "+ str(snip_id), c='black')
+            else:
+                snip_start = snip_stop
+                snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+                temps += File.recording[ch_id][1][snip_start:snip_stop]
+                # # plot line between snippets for continuous visu
+                plt.axvline(snip_stop, c='grey')
+
+    if visualisation == "continuous":
+        plt.plot(temps, c='black')
+
+    plt.xlabel("frame")
+    plt.ylabel("µV")
 
 
 def plot_mea(File, ch_to_display="all", label=[], background=False):
