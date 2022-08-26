@@ -8,6 +8,7 @@ def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
 # NOTE: t_start/t_end here are depending on File.recording length (the recording snippet that has been extracted using read_brw_file), not on the brw file recording length
 # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File.recording, ch_to_display)
+    plt.rcdefaults()
 
     if t_start * File.info.get_sampling_rate() > len(File.recording[0][1]):
         raise SystemExit("Requested start time of recording to display is higher than the recording length")
@@ -44,9 +45,9 @@ def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
 
 
 def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_start=0, t_end="all"):
-# TODO: display for selected t_start, t_end
 #       plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
+    plt.rcdefaults()
 
     t_last_event = 0
     if t_end == "all":
@@ -138,6 +139,7 @@ def plot_raw_compressed_c_s(File, ch_to_display, visualisation, t_start, t_end, 
 def plot_mea(File, ch_to_display="all", label=[], background=False):
 # TODO: Rotate figure to have 0,0 top left?
     ch_to_display = check_ch_to_display(File, ch_to_display)
+    plt.rcdefaults()
 
     if background:
         x_coords = []
@@ -146,7 +148,7 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
             for j in range(0, 64):
                 x_coords.append(i)
                 y_coords.append(j)
-        plt.plot(x_coords, y_coords,'.', markersize=1, c="gray")
+        plt.scatter(x_coords, y_coords, marker="s", s=1, c="silver")
 
     ch_list = []
     for ch in range(0, len(File.recording)):
@@ -158,7 +160,7 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
 
     for ch_id in ch_list:
         ch_coord = get_ch_coord(ch_id)
-        plt.plot(ch_coord[0], ch_coord[1], '.', c='darkred')
+        plt.scatter(ch_coord[0], ch_coord[1], marker="s", s=2, c='red')
         if ch_id in label:
             plt.text(ch_coord[0], ch_coord[1], ch_id)
 
@@ -168,10 +170,38 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
     plt.show()
 
 
-def plot_activity_map():
-# TODO: _activity map for specified time windows, electrodes and frequency
-    return
+def plot_activity_map(File, ch_to_display="all", t_start=0, t_end="all", method="std"):
+    # activity map for specified time windows, electrodes
+    # TODO: display for selected t_start, t_end
+    dark_background = False
+    if dark_background:
+        plt.style.use('dark_background')
+    plt.rcdefaults()
 
+    x_list = []
+    y_list = []
+    intensity_list = []
+    min_val = 0
+    max_val = 0
+    for ch_id in range(0, len(File.recording)):
+        val = 0
+        if method == "min-max":
+            val = ch_rec_min_max(File.recording[ch_id][1], t_start, t_end)
+        if method == "std":
+            val = ch_rec_std(File.recording[ch_id][1], t_start, t_end)
+        x, y = get_ch_coord(File.recording[ch_id][0])
+        x_list.append(x)
+        y_list.append(y)
+        intensity_list.append(val)
+
+    plt.scatter(x_list, y_list, c=intensity_list, marker="s", s=12)
+    plt.colorbar()
+    plt.gca().set_aspect('equal')
+    plt.xlim(0,64)
+    plt.ylim(0,64)
+
+    plt.show()
+    plt.rcdefaults()
 
 # ---------------------------------------------------------------- #
 def check_ch_to_display(rec, ch_to_display):
@@ -183,3 +213,22 @@ def check_ch_to_display(rec, ch_to_display):
         raise SystemExit("Error in \'" + inspect.stack()[1].function + "\' function: ch_to_display is an integer. Please, enter the channel(s) to display as a list")
 
     return ch_to_display
+
+
+def ch_rec_min_max(rec, t_start, t_end):
+    # TODO: from t_start to t_end
+    min = 0
+    max = 0
+    for val_id in range(0, len(rec)):
+        if rec[val_id] < min:
+            min = rec[val_id]
+        if rec[val_id] > max:
+            max = rec[val_id]
+    return max - min
+
+
+def ch_rec_std(rec, t_start, t_end):
+    # TODO: from t_start to t_end
+    if len(rec) == 0:
+        return 0
+    return np.std(rec)
