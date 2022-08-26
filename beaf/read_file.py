@@ -54,7 +54,7 @@ class Brw_File:
 
                 for ch_id in range(0, len(ch_to_extract)):
                     ch = ch_to_extract[ch_id]
-                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch]))
+                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch - 1]))
 
         for ch_id in range (0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
