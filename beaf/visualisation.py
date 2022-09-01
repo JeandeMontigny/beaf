@@ -2,12 +2,17 @@ import matplotlib.pyplot as plt
 import inspect
 from .read_file import *
 from .utils import *
+
 # ---------------------------------------------------------------- #
-# TODO: unique plot_raw function for both raw and raw_compressed format
-#       distribtue to sub functions plot_raw_format or plot_raw_compressed depending on format
+def plot_raw(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed"):
+    # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
+    if File.info.recording_type == "RawDataSettings":
+        plot_raw_format(File, ch_to_display, t_start, t_end)
+    if File.info.recording_type == "NoiseBlankingCompressionSettings":
+        plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation)
 
 
-def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
+def plot_raw_format(File, ch_to_display, t_start=0, t_end="all"):
 # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File.recording, ch_to_display)
     plt.rcdefaults()
@@ -50,7 +55,7 @@ def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
     plt.show()
 
 
-def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_start=0, t_end="all"):
+def plot_raw_compressed(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed"):
     # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
     plt.rcdefaults()
