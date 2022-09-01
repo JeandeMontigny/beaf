@@ -45,7 +45,7 @@ def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
 
 
 def plot_raw_compressed(File, ch_to_display, visualisation="reconstructed", t_start=0, t_end="all"):
-#       plot in lines or in MEA shape
+    # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
     plt.rcdefaults()
 
@@ -160,7 +160,7 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
 
     for ch_id in ch_list:
         ch_coord = get_ch_coord(ch_id)
-        plt.scatter(ch_coord[0], ch_coord[1], marker="s", s=2, c='red')
+        plt.scatter(ch_coord[0], ch_coord[1], marker="s", s=1, c='red')
         if ch_id in label:
             plt.text(ch_coord[0], ch_coord[1], ch_id)
 
@@ -170,38 +170,40 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
     plt.show()
 
 
-def plot_activity_map(File, ch_to_display="all", t_start=0, t_end="all", method="std"):
-    # activity map for specified time windows, electrodes
-    # TODO: display for selected t_start, t_end
-    dark_background = False
-    if dark_background:
-        plt.style.use('dark_background')
+def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", min_range=False, max_range=False, cmap='viridis'):
+    # activity map for specified time windows
+    # TODO: display for selected t_start, t_end (within ch_rec_* functions)
+    # TODO: more methods for activity map
     plt.rcdefaults()
 
     x_list = []
     y_list = []
     intensity_list = []
-    min_val = 0
-    max_val = 0
     for ch_id in range(0, len(File.recording)):
         val = 0
-        if method == "min-max":
-            val = ch_rec_min_max(File.recording[ch_id][1], t_start, t_end)
+        if method == "min" or method == "max" or method == "min-max":
+            val = ch_rec_min_max(File.recording[ch_id][1], method, t_start, t_end, min_range, max_range)
         if method == "std":
-            val = ch_rec_std(File.recording[ch_id][1], t_start, t_end)
+            val = ch_rec_std(File.recording[ch_id][1], t_start, t_end, min_range, max_range)
+
         x, y = get_ch_coord(File.recording[ch_id][0])
         x_list.append(x)
         y_list.append(y)
         intensity_list.append(val)
 
-    plt.scatter(x_list, y_list, c=intensity_list, marker="s", s=12)
-    plt.colorbar()
+    # cmap colours: viridis, plasma, magma, hot, gray
+    plt.scatter(x_list, y_list, c=intensity_list, marker="s", cmap=cmap)
+    plt.colorbar(label=method)
     plt.gca().set_aspect('equal')
     plt.xlim(0,64)
     plt.ylim(0,64)
 
+    for ch in label:
+        ch_coord = get_ch_coord(ch)
+        plt.scatter(ch_coord[0], ch_coord[1], marker='s', s=1, c='red')
+        plt.text(ch_coord[0], ch_coord[1], ch, c='red')
+
     plt.show()
-    plt.rcdefaults()
 
 # ---------------------------------------------------------------- #
 def check_ch_to_display(rec, ch_to_display):
@@ -215,20 +217,42 @@ def check_ch_to_display(rec, ch_to_display):
     return ch_to_display
 
 
-def ch_rec_min_max(rec, t_start, t_end):
+def ch_rec_min_max(rec, method, t_start, t_end, min_range, max_range):
     # TODO: from t_start to t_end
     min = 0
     max = 0
+    if len(rec) == 0:
+        if min_range:
+            return min_range
+        return 0
     for val_id in range(0, len(rec)):
         if rec[val_id] < min:
             min = rec[val_id]
         if rec[val_id] > max:
             max = rec[val_id]
-    return max - min
+    if method == "min":
+        val = min
+    elif method == "max":
+        val = max
+    else:
+        val = max - min
+
+    if min_range and val < min_range:
+        val = min_range
+    if max_range and val > max_range:
+        val = max_range
+    return val
 
 
-def ch_rec_std(rec, t_start, t_end):
+def ch_rec_std(rec, t_start, t_end, min_range, max_range):
     # TODO: from t_start to t_end
     if len(rec) == 0:
+        if min_range:
+            return min_range
         return 0
-    return np.std(rec)
+    std = np.std(rec)
+    if min_range and std < min_range:
+        std = min_range
+    if max_range and std > max_range:
+        std = max_range
+    return std
