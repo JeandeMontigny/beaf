@@ -4,15 +4,15 @@ from .read_file import *
 from .utils import *
 
 # ---------------------------------------------------------------- #
-def plot_raw(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed"):
+def plot_raw(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed", y_min=None, y_max=None):
     # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
     if File.info.recording_type == "RawDataSettings":
-        plot_raw_format(File, ch_to_display, t_start, t_end)
+        plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max)
     if File.info.recording_type == "NoiseBlankingCompressionSettings":
-        plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation)
+        plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max)
 
 
-def plot_raw_format(File, ch_to_display, t_start=0, t_end="all"):
+def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
 # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File.recording, ch_to_display)
     plt.rcdefaults()
@@ -44,6 +44,8 @@ def plot_raw_format(File, ch_to_display, t_start=0, t_end="all"):
         ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
         plt.plot([x/File.info.get_sampling_rate() for x in range(int(frame_start+rec_frame_start), int(frame_end+rec_frame_start))], File.recording[ch_id][1][int(frame_start):int(frame_end)], c='black')
 
+        if y_min or y_max:
+            plt.ylim(y_min, y_max)
         plt.xlabel("sec")
         plt.ylabel("µV")
         plt.title(File.recording[ch_id][0])
@@ -55,7 +57,7 @@ def plot_raw_format(File, ch_to_display, t_start=0, t_end="all"):
     plt.show()
 
 
-def plot_raw_compressed(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed"):
+def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max):
     # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
     plt.rcdefaults()
@@ -88,6 +90,8 @@ def plot_raw_compressed(File, ch_to_display, t_start=0, t_end="all", visualisati
         if visualisation == "continuous" or visualisation == "superimposed":
             plot_raw_compressed_c_s(File, ch_to_display, visualisation, t_start, t_end, ch_id)
 
+        if y_min or y_max:
+            plt.ylim(y_min, y_max)
         plt.title(File.recording[ch_id][0])
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
