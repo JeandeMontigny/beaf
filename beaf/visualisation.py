@@ -2,23 +2,29 @@ import matplotlib.pyplot as plt
 import inspect
 from .read_file import *
 from .utils import *
-
 # ---------------------------------------------------------------- #
+# TODO: unique plot_raw function for both raw and raw_compressed format
+#       distribtue to sub functions plot_raw_format or plot_raw_compressed depending on format
+
+
 def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
-# NOTE: t_start/t_end here are depending on File.recording length (the recording snippet that has been extracted using read_brw_file), not on the brw file recording length
 # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File.recording, ch_to_display)
     plt.rcdefaults()
 
-    if t_start * File.info.get_sampling_rate() > len(File.recording[0][1]):
-        raise SystemExit("Requested start time of recording to display is higher than the recording length")
-    if t_end == "all":
-        t_end = len(File.recording[0][1])/File.info.get_sampling_rate()
-    if t_end * File.info.get_sampling_rate() > len(File.recording[0][1]):
-        t_end = len(File.recording[0][1])/File.info.get_sampling_rate()
+    rec_frame_start = File.recording[0][2][0][0]
+    rec_frame_end = File.recording[0][2][0][1]
 
-    frame_start = t_start * File.info.get_sampling_rate()
-    frame_end = t_end * File.info.get_sampling_rate()
+    frame_start = t_start * File.info.get_sampling_rate() - rec_frame_start
+    if t_start * File.info.get_sampling_rate() < rec_frame_start:
+        frame_start = 0
+    if frame_start > len(File.recording[0][1]):
+        raise SystemExit("Requested start time of recording to display is higher than the recording length")
+
+    if t_end == "all" or t_end * File.info.get_sampling_rate() > rec_frame_end:
+        frame_end = rec_frame_end - rec_frame_start
+    else:
+        frame_end = t_end * File.info.get_sampling_rate() - rec_frame_start
 
     fig = plt.figure()
 
@@ -31,7 +37,7 @@ def plot_raw(File, ch_to_display, t_start=0, t_end="all"):
                 break
 
         ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
-        plt.plot([x/File.info.get_sampling_rate() for x in range(int(frame_start), int(frame_end))], File.recording[ch_id][1][int(frame_start):int(frame_end)], c='black')
+        plt.plot([x/File.info.get_sampling_rate() for x in range(int(frame_start+rec_frame_start), int(frame_end+rec_frame_start))], File.recording[ch_id][1][int(frame_start):int(frame_end)], c='black')
 
         plt.xlabel("sec")
         plt.ylabel("µV")
