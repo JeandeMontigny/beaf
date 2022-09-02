@@ -19,17 +19,7 @@ def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
 
     rec_frame_start = File.recording[0][2][0][0]
     rec_frame_end = File.recording[0][2][0][1]
-
-    frame_start = t_start * File.info.get_sampling_rate() - rec_frame_start
-    if t_start * File.info.get_sampling_rate() < rec_frame_start:
-        frame_start = 0
-    if frame_start > len(File.recording[0][1]):
-        raise SystemExit("Requested start time of recording to display is higher than the recording length")
-
-    if t_end == "all" or t_end * File.info.get_sampling_rate() > rec_frame_end:
-        frame_end = rec_frame_end - rec_frame_start
-    else:
-        frame_end = t_end * File.info.get_sampling_rate() - rec_frame_start
+    frame_start, frame_end = get_frame_start_end(File, t_start, t_end, ch_to_display)
 
     fig = plt.figure()
 
@@ -86,9 +76,9 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_mi
         ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
 
         if visualisation == "reconstructed":
-            plot_raw_compressed_r(File, ch_to_display, t_start, t_end, ch_id)
+            plot_raw_compressed_r(File, t_start, t_end, ch_id)
         if visualisation == "continuous" or visualisation == "superimposed":
-            plot_raw_compressed_c_s(File, ch_to_display, visualisation, t_start, t_end, ch_id)
+            plot_raw_compressed_c_s(File, visualisation, t_start, t_end, ch_id)
 
         if y_min or y_max:
             plt.ylim(y_min, y_max)
@@ -101,7 +91,7 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_mi
     plt.show()
 
 
-def plot_raw_compressed_r(File, ch_to_display, t_start, t_end, ch_id):
+def plot_raw_compressed_r(File, t_start, t_end, ch_id):
     # plot raw_compressed data in sec with 0 between snippets
     temps = []
     frame_end = int(t_start*File.info.get_sampling_rate())
@@ -126,7 +116,7 @@ def plot_raw_compressed_r(File, ch_to_display, t_start, t_end, ch_id):
     plt.ylabel("µV")
 
 
-def plot_raw_compressed_c_s(File, ch_to_display, visualisation, t_start, t_end, ch_id):
+def plot_raw_compressed_c_s(File, visualisation, t_start, t_end, ch_id):
     snip_stop = 0
     temps=[]
     for snip_id in range(0, len(File.recording[ch_id][2])):
@@ -187,19 +177,33 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
 
 def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", min_range=False, max_range=False, cmap='viridis'):
     # activity map for specified time windows
-    # TODO: display for selected t_start, t_end (within ch_rec_* functions)
     # TODO: more methods for activity map
     plt.rcdefaults()
+
+    frame_start, frame_end = get_frame_start_end(File, t_start, t_end)
 
     x_list = []
     y_list = []
     intensity_list = []
     for ch_id in range(0, len(File.recording)):
+        rec = []
+        if File.info.recording_type == "RawDataSettings":
+            rec = File.recording[ch_id][1][int(frame_start):int(frame_end)]
+        if File.info.recording_type == "NoiseBlankingCompressionSettings":
+            snip_stop = 0
+            for snip_id in range(0, len(File.recording[ch_id][2])):
+                if File.recording[ch_id][2][snip_id][1] > frame_end:
+                    break
+                if File.recording[ch_id][2][snip_id][0] > frame_start:
+                    snip_start = snip_stop
+                    snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+                    rec += File.recording[ch_id][1][snip_start:snip_stop]
+
         val = 0
         if method == "min" or method == "max" or method == "min-max":
-            val = ch_rec_min_max(File.recording[ch_id][1], method, t_start, t_end, min_range, max_range)
+            val = ch_rec_min_max(rec, method, min_range, max_range)
         if method == "std":
-            val = ch_rec_std(File.recording[ch_id][1], t_start, t_end, min_range, max_range)
+            val = ch_rec_std(rec, min_range, max_range)
 
         x, y = get_ch_coord(File.recording[ch_id][0])
         x_list.append(x)
@@ -232,7 +236,7 @@ def check_ch_to_display(rec, ch_to_display):
     return ch_to_display
 
 
-def ch_rec_min_max(rec, method, t_start, t_end, min_range, max_range):
+def ch_rec_min_max(rec, method, min_range, max_range):
     # TODO: from t_start to t_end
     min = 0
     max = 0
@@ -259,7 +263,7 @@ def ch_rec_min_max(rec, method, t_start, t_end, min_range, max_range):
     return val
 
 
-def ch_rec_std(rec, t_start, t_end, min_range, max_range):
+def ch_rec_std(rec, min_range, max_range):
     # TODO: from t_start to t_end
     if len(rec) == 0:
         if min_range:
