@@ -155,19 +155,17 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
                 y_coords.append(j)
         plt.scatter(x_coords, y_coords, marker="s", s=1, c="silver")
 
-    ch_list = []
-    for ch in range(0, len(File.recording)):
-        if ch_to_display=="all" or File.recording[ch][0] in ch_to_display:
-            ch_list.append(File.recording[ch][0])
-    if len(ch_list) == 0:
+    if len(ch_to_display) == 0:
         print("No channel to display.")
         return
 
-    for ch_id in ch_list:
-        ch_coord = get_ch_coord(ch_id)
-        plt.scatter(ch_coord[0], ch_coord[1], marker="s", s=1, c='red')
-        if ch_id in label:
-            plt.text(ch_coord[0], ch_coord[1], ch_id)
+    for ch_id in range(0, len(File.recording)):
+        ch_nb = File.recording[ch_id][0]
+        if ch_to_display=="all" or ch_nb in ch_to_display:
+            ch_coord = get_ch_coord(ch_nb)
+            plt.scatter(ch_coord[0], ch_coord[1], marker="s", s=1, c='red')
+            if ch_nb in label:
+                plt.text(ch_coord[0], ch_coord[1], ch_nb)
 
     plt.gca().set_aspect('equal')
     plt.xlim(0,64)
@@ -223,6 +221,7 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", min_
         plt.text(ch_coord[0], ch_coord[1], ch, c='red')
 
     plt.show()
+
 
 # ---------------------------------------------------------------- #
 def check_ch_to_display(rec, ch_to_display):
