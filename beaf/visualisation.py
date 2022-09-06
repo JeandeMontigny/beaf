@@ -3,13 +3,17 @@ import inspect
 from .read_file import *
 from .utils import *
 
+# WARNING: is File duplicated when used as an argument?
+#          if yes, need to move all visualisation methods to Brw_File class definition
+#          and more generally, all functions using Brw_File (recording) informatons
+
 # ---------------------------------------------------------------- #
-def plot_raw(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed", y_min=None, y_max=None):
+def plot_raw(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed", y_min=None, y_max=None, artificial_noise=True, n_std=15, seed=0):
     # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
     if File.info.recording_type == "RawDataSettings":
         plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max)
     if File.info.recording_type == "NoiseBlankingCompressionSettings":
-        plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max)
+        plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max, artificial_noise, n_std, seed)
 
 
 def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
@@ -47,7 +51,7 @@ def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
     plt.show()
 
 
-def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max):
+def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max, artificial_noise, n_std, seed):
     # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
     plt.rcdefaults()
@@ -66,17 +70,17 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_mi
     fig = plt.figure()
 
     fig_nb = 1
-    for ch in ch_to_display:
+    for ch_nb in ch_to_display:
         ch_id = 0
         for idx in range(0, len(File.recording)):
-            if File.recording[idx][0] == ch:
+            if File.recording[idx][0] == ch_nb:
                 ch_id = idx
                 break
         # create new subplot
         ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
 
         if visualisation == "reconstructed":
-            plot_raw_compressed_r(File, t_start, t_end, ch_id)
+            plot_raw_compressed_r(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed)
         if visualisation == "continuous" or visualisation == "superimposed":
             plot_raw_compressed_c_s(File, visualisation, t_start, t_end, ch_id)
 
@@ -91,27 +95,11 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_mi
     plt.show()
 
 
-def plot_raw_compressed_r(File, t_start, t_end, ch_id):
-    # plot raw_compressed data in sec with 0 between snippets
-    temps = []
-    frame_end = int(t_start*File.info.get_sampling_rate())
-    snip_stop = 0
-    for snip_id in range(0, len(File.recording[ch_id][2])):
-        frame_start = File.recording[ch_id][2][snip_id][0]
-        snip_start = snip_stop
-        snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+def plot_raw_compressed_r(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed):
+    # plot raw_compressed data in sec with 0 or artificial noise between snippets
+    ch_raw_reconst = get_reconstructed_ch_raw_compressed(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed)
 
-        if File.recording[ch_id][2][snip_id][1] < t_end * File.info.get_sampling_rate() and frame_start > t_start * File.info.get_sampling_rate():
-            # add 0 values between recordings
-            temps += [0 for i in range(frame_start - frame_end)]
-            #  add snippet
-            temps += File.recording[ch_id][1][snip_start:snip_stop]
-            frame_end = File.recording[ch_id][2][snip_id][1]
-
-    # add 0 data from last snippet to t_end
-    temps += [0 for i in range(frame_end, int(t_end*File.info.get_sampling_rate()))]
-
-    plt.plot([x/File.info.get_sampling_rate() + t_start for x in range(0, len(temps))], temps, c='black')
+    plt.plot([x/File.info.get_sampling_rate() + t_start for x in range(0, len(ch_raw_reconst))], ch_raw_reconst, c='black')
     plt.xlabel("sec")
     plt.ylabel("µV")
 
