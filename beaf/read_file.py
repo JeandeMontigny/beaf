@@ -2,8 +2,10 @@ import os, sys, psutil, h5py, json
 import numpy as np
 from multiprocessing import Pool
 
+
 # ---------------------------------------------------------------- #
 #TODO: pritave/protected class members? (__name; _name respectively)
+# TODO: directly create spikeinterface NumpyRecording from the brw recording file, and no Brw_File object
 class Brw_File:
     """
     TODO: description
@@ -273,6 +275,7 @@ class Brw_Experiment_Settings:
         self.nb_channel = len(self.channel_idx)
 
         if self.recording_type == "RawDataSettings":
+            # TODO: do not get full Raw data. info in RawTOC?
             self.recording_length = len(self.data.get("Well_A1").get("Raw")) / self.nb_channel
         elif self.recording_type == "NoiseBlankingCompressionSettings":
             self.recording_length = self.data.get("TOC")[len(self.data.get("TOC"))-1][1]

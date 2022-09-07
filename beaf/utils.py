@@ -1,6 +1,7 @@
 import numpy as np
 import spikeinterface.extractors as se
 import spikeinterface.sorters as ss
+from probeinterface import Probe
 
 
 # ---------------------------------------------------------------- #
@@ -98,9 +99,11 @@ def get_reconstructed_ch_raw_compressed(File, t_start, t_end, ch_nb, artificial_
     return ch_raw_reconst
 
 
-def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all", artificial_noise=True, n_std=15, seed=0):
-    # WARNING: potentlal memory issues
+def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all", reconstruct=True, artificial_noise=True, n_std=15, seed=0):
+    # WARNING: potentlal memory issues. File and NR object exist at the same time (+ traces_list)
     # TODO: option to create a RecordingExtractor segment for each snippet in NoiseBlankingCompressionSettings
+    #       ie, create NR with non reconstructed data, but continuous raw_compressed data
+    #       using NumpyRecordingSegment(traces, sampling_frequency, t_start)?
     if ch_to_extract == "all":
         ch_to_extract = [File.recording[ch_id][0] for ch_id in range(0, len(File.recording))]
 
@@ -112,20 +115,33 @@ def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all",
             if File.recording[idx][0] == ch_nb:
                 ch_id = idx
                 break
+
         ch_coord = get_ch_coord(File.recording[ch_id][0])
-        z = 0
         if File.info.recording_type == "RawDataSettings":
             frame_start, frame_end = get_frame_start_end(File, t_start, t_end, ch=ch_nb)
             traces_list.append(File.recording[ch_id][1][frame_start:frame_end])
         if File.info.recording_type == "NoiseBlankingCompressionSettings":
-            z = 60
-            traces_list.append(get_reconstructed_ch_raw_compressed(File, t_start, t_end, ch_nb, artificial_noise, n_std))
+            if reconstruct:
+                traces_list.append(get_reconstructed_ch_raw_compressed(File, t_start, t_end, ch_nb, artificial_noise, n_std))
+            else:
+                # TODO: continuous raw_compressed data
+                #       problem with recording not of the same length. solution using RecordingSegment?
+                traces_list.append([0])
 
-        geom.append([ch_coord[0]*60, ch_coord[1]*60, z])
+        geom.append([ch_coord[0]*60, ch_coord[1]*60])
 
-    RX = se.NumpyRecording(traces_list=np.transpose(traces_list), sampling_frequency=File.info.get_sampling_rate(), channel_ids=ch_to_extract)
+    NR = se.NumpyRecording(traces_list=np.transpose(traces_list), sampling_frequency=File.info.get_sampling_rate(), channel_ids=ch_to_extract)
 
-    return RX, geom
+    # create and attach probe
+    probe = Probe(ndim=2, si_units='um')
+    probe.set_contacts(positions=geom, shapes='square', shape_params={'width': 21})
+    square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+    probe.set_planar_contour(square_contour)
+    # WARNING: device_channel_indices does not match channel number
+    probe.set_device_channel_indices(range(len(ch_to_extract)))
+    NR = NR.set_probe(probe)
+
+    return NR
 
 
 # def sorting_extractor(unit_ids):
