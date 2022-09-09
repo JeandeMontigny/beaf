@@ -107,6 +107,9 @@ def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all",
     if ch_to_extract == "all":
         ch_to_extract = [File.recording[ch_id][0] for ch_id in range(0, len(File.recording))]
 
+    if File.info.recording_type == "RawDataSettings":
+        frame_start, frame_end = get_frame_start_end(File, t_start, t_end, ch_to_extract)
+
     traces_list = []
     geom = []
     for ch_nb in ch_to_extract:
@@ -118,15 +121,27 @@ def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all",
 
         ch_coord = get_ch_coord(File.recording[ch_id][0])
         if File.info.recording_type == "RawDataSettings":
-            frame_start, frame_end = get_frame_start_end(File, t_start, t_end, ch=ch_nb)
             traces_list.append(File.recording[ch_id][1][frame_start:frame_end])
         if File.info.recording_type == "NoiseBlankingCompressionSettings":
             if reconstruct:
                 traces_list.append(get_reconstructed_ch_raw_compressed(File, t_start, t_end, ch_nb, artificial_noise, n_std))
             else:
-                # TODO: continuous raw_compressed data
-                #       problem with recording not of the same length. solution using RecordingSegment?
-                traces_list.append([0])
+                # continuous raw_compressed data
+                # WARNING: problem with recording not of the same length
+                # TODO: solution using RecordingSegment?
+                if len(ch_to_extract) > 1:
+                    print("NumpyRecording object is not supported yet for more than one channel without signal reconstruction")
+                    return
+                snip_stop = 0
+                temps=[]
+                frame_end = t_end * File.info.get_sampling_rate()
+                frame_start = t_start * File.info.get_sampling_rate()
+                for snip_id in range(0, len(File.recording[ch_id][2])):
+                    if File.recording[ch_id][2][snip_id][1] < frame_end and File.recording[ch_id][2][snip_id][0] > frame_start:
+                        snip_start = snip_stop
+                        snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+                        temps += File.recording[ch_id][1][snip_start:snip_stop]
+                traces_list.append(temps)
 
         geom.append([ch_coord[0]*60, ch_coord[1]*60])
 
