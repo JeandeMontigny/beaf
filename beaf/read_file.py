@@ -1,11 +1,132 @@
 import os, sys, psutil, h5py, json
 import numpy as np
 from multiprocessing import Pool
+import spikeinterface.extractors as se
+from .utils import *
 
-
+# TODO: reduce code repetition between read_raw_* functions
+# TODO: pritave/protected class members? (__name; _name respectively)
 # ---------------------------------------------------------------- #
-#TODO: pritave/protected class members? (__name; _name respectively)
-# TODO: directly create spikeinterface NumpyRecording from the brw recording file, and no Brw_File object
+class Brw_SpikeInterface:
+    """
+    TODO: description
+    """
+    def read_raw_data_recording(self, brw_path, info, t_start, t_end, ch_to_extract, frame_chunk):
+        frame_start, frame_end = get_file_frame_start_end(info, t_start, t_end, frame_chunk)
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * info.get_nb_channel()
+        first_frame = frame_start * info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+
+        hdf_file = h5py.File(brw_path,'r')
+        traces_list = []
+        for chunk in range(0, nb_frame_chunk):
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * info.get_nb_channel()
+
+            data_chunk = hdf_file.get("Well_A1").get("Raw")[first_frame:last_frame+info.get_nb_channel()]
+
+            first_frame += id_frame_chunk + info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            for frame_nb in range(0, int(len(data_chunk)/info.get_nb_channel())):
+                frame_data = []
+                frame_start_id = frame_nb*info.get_nb_channel()
+
+                for ch_id in range(0, len(ch_to_extract)):
+                    ch = ch_to_extract[ch_id]
+                    frame_data.append(convert_digital_to_analog(info, data_chunk[frame_start_id + ch - 1]))
+                traces_list.append(frame_data)
+
+        hdf_file.close()
+
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+        return NR
+
+
+    def read_raw_compressed_data(self, brw_path, info, t_start, t_end, ch_to_extract, frame_chunk):
+        # TODO: create spikeinterface NumpyRecording object
+        #       problem with recording not of the same length
+        #           solution using RecordingSegment? a RecordingExtractor segment for each snippet
+        #       reconstruct ch? using get_reconstructed_ch_raw_compressed
+        #           heavy and time consuming
+
+        # data chunk [start-end[ in number of frame
+        toc = self.data.get("TOC")
+        # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+        event_sparse_raw_toc = self.data.get("Well_A1").get("EventsBasedSparseRawTOC")
+        frame_start, frame_end = get_file_frame_start_end(info, t_start, t_end)
+
+        chunk_nb_start = 0; chunk_nb_end = 0
+        for chunk_nb in range(0, len(toc)):
+            if toc[chunk_nb][0] <= frame_start:
+                chunk_nb_start = chunk_nb
+            if toc[chunk_nb][1] >= frame_end:
+                chunk_nb_end = chunk_nb +1
+                break
+
+        traces_list = []
+        for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+            if data_chunk_nb < len(event_sparse_raw_toc)-1:
+                chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+            else:
+                chunk_end_id = len(self.data.get("Well_A1").get("EventsBasedSparseRaw"))
+
+            data_chunk = self.data.get("Well_A1").get("EventsBasedSparseRaw")[chunk_start_id:chunk_end_id]
+
+            # get the time of the first snippet  within t_start-t_end
+            # check if any other channel in ch_to_extract has data for this time t
+            #   if not, add 0 or np.nan for this time t
+            #   if yes, extract these data as well to create the first frame in traces_list
+            # get the following snippet (that can have already been partially extracted during the previous snippet)
+
+            # naive algo:
+            # for t in range(frame_start, frame_end):
+            #   frame_data = []
+            #   for ch with data at this time t:
+            #       frame_data.append(channel's data)
+            #   if no ch with data: skip to next snippet (or fill with 0 or artificial noise)
+
+        hdf_file = h5py.File(brw_path,'r')
+        hdf_file.close()
+
+        return 0
+
+
+    def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe):
+        info = get_brw_experiment_setting(brw_path)
+
+        if t_end == "all": t_end = info.get_recording_length_sec()
+        if ch_to_extract == "all":
+            ch_to_extract = []
+            for ch in range (0, 4096):
+                ch_to_extract.append(ch)
+
+        if info.get_recording_type() == "RawDataSettings":
+            NR = self.read_raw_data_recording(brw_path, info, t_start, t_end, ch_to_extract, frame_chunk)
+        if info.get_recording_type() == "NoiseBlankingCompressionSettings":
+            NR = self.read_raw_compressed_data(brw_path, info, t_start, t_end, ch_to_extract, frame_chunk)
+
+        if attach_probe:
+            geom = []
+            for ch_nb in ch_to_extract:
+                ch_coord = get_ch_coord(ch_nb)
+                geom.append([ch_coord[0]*60, ch_coord[1]*60])
+
+            # create and attach probe
+            probe = Probe(ndim=2, si_units='um')
+            probe.set_contacts(positions=geom, shapes='square', shape_params={'width': 21})
+            square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+            probe.set_planar_contour(square_contour)
+            # WARNING: device_channel_indices does not match channel number
+            probe.set_device_channel_indices(range(len(ch_to_extract)))
+            NR = NR.set_probe(probe)
+
+        return NR
+
+
 class Brw_File:
     """
     TODO: description
@@ -21,18 +142,7 @@ class Brw_File:
         self.recording = []
 
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
-        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
-        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
-        # resize frame_chunk if it is larger than the recording length to extract
-        if frame_chunk > self.info.get_recording_length():
-            frame_chunk = frame_end - frame_start
-
-        if frame_start > self.info.get_recording_length():
-            raise SystemExit("Requested start time of recording to extract is higher than the recording length")
-
-        # comparison in bit
-        if  frame_chunk * self.info.get_nb_channel() * 2 > psutil.virtual_memory().available:
-            raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
+        frame_start, frame_end = get_file_frame_start_end(self.info, t_start, t_end, frame_chunk)
 
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
         id_frame_chunk = frame_chunk * self.info.get_nb_channel()
@@ -90,12 +200,7 @@ class Brw_File:
         #   i.e. range end - range begin = nb of sample for this range
 
         # get data chunk corresponding to t_start-t_end, using toc (in frame)
-        frame_start =  int(np.floor(t_start * self.info.get_sampling_rate()))
-        frame_end = int(np.floor(t_end * self.info.get_sampling_rate()))
-        if frame_start > toc[len(toc)-1][1]:
-            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
-        if frame_end > toc[len(toc)-1][1]:
-            frame_end = self.info.get_recording_length()
+        frame_start, frame_end = get_file_frame_start_end(self.info, t_start, t_end)
 
         chunk_nb_start = 0; chunk_nb_end = 0
         for chunk_nb in range(0, len(toc)):
@@ -117,15 +222,15 @@ class Brw_File:
 
             i = 0
             while i < len(data_chunk):
-                ch_id = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder='little')
+                ch_nb = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder='little')
                 size = int.from_bytes([data_chunk[i+4], data_chunk[i+5], data_chunk[i+6], data_chunk[i+7]], byteorder='little')
                 # update i to be the index of first range
                 i += 8
-                if len(ch_to_extract) == 4096 or (ch_id in ch_to_extract):
-                    rec_ch_id = 0
+                if len(ch_to_extract) == 4096 or (ch_nb in ch_to_extract):
+                    ch_id = 0
                     for ch in range(0, len(ch_to_extract)):
-                        if self.recording[ch][0] == ch_id:
-                            rec_ch_id = ch
+                        if self.recording[ch][0] == ch_nb:
+                            ch_id = ch
                     j = 0
                     while j < size:
                         range_begin = int.from_bytes([data_chunk[i+j+k] for k in range(0, 8)], byteorder='little')
@@ -135,8 +240,8 @@ class Brw_File:
                             break
                         for k in range(0, range_end - range_begin):
                             sample = int.from_bytes([data_chunk[i+16+k*2], data_chunk[i+17+k*2]], byteorder='little')
-                            self.recording[rec_ch_id][1].append(convert_digital_to_analog(self.info, sample))
-                        self.recording[rec_ch_id][2].append([range_begin, range_end])
+                            self.recording[ch_id][1].append(convert_digital_to_analog(self.info, sample))
+                        self.recording[ch_id][2].append([range_begin, range_end])
                         j += 16 + (range_end - range_begin)*2
 
                 # update i to be the index of next ChData
@@ -251,6 +356,7 @@ class Bxr_File:
 
         self.data.close()
 
+
 class Brw_Experiment_Settings:
     """
     TODO: description
@@ -349,7 +455,36 @@ class Bxr_Experiment_Settings:
     def close(self):
         self.data.close()
 
+
 # ---------------------------------------------------------------- #
+def get_file_frame_start_end(info, t_start, t_end, frame_chunk=None):
+    frame_start =  int(np.floor(t_start * info.get_sampling_rate()))
+    frame_end = int(np.floor(t_end * info.get_sampling_rate()))
+
+    if info.get_recording_type() == "RawDataSettings":
+        # resize frame_chunk if it is larger than the recording length to extract
+        if frame_chunk > info.get_recording_length():
+            frame_chunk = frame_end - frame_start
+
+        if frame_start > info.get_recording_length():
+            raise SystemExit("Requested start time of recording to extract is higher than the recording length")
+        # comparison in bit
+        if  frame_chunk * info.get_nb_channel() * 2 > psutil.virtual_memory().available:
+            raise SystemExit("Memory size of the recording chunk to extract is bigger than your available system memory. Try again using a smaller frame_chunk value")
+
+    if info.get_recording_type == "NoiseBlankingCompressionSettings":
+        hdf_file = h5py.File(info.file_path,'r')
+        toc = hdf_file.get("TOC")
+        if frame_start > toc[len(toc)-1][1]:
+            raise SystemExit("Requested start time of recording to extract is higher that the recording length")
+        if frame_end > toc[len(toc)-1][1]:
+            frame_end = self.info.get_recording_length()
+
+        hdf_file.close()
+
+    return frame_start, frame_end
+
+
 def convert_digital_to_analog(info, value):
     digital_value = info.min_analog_value + value * (info.max_analog_value - info.min_analog_value) / (info.max_digital_value - info.min_digital_value)
     # clean saturated values
@@ -357,6 +492,12 @@ def convert_digital_to_analog(info, value):
     if digital_value > 4095 or digital_value < -4095:
         digital_value = 0
     return digital_value
+
+
+def read_brw_SpikeInterface(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, attach_probe=True):
+    BNR = Brw_SpikeInterface()
+    NR = BNR.read(file_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe)
+    return NR
 
 
 def read_brw_file(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False):
