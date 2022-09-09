@@ -8,12 +8,12 @@ from .utils import *
 #          and more generally, all functions using Brw_File (recording) informatons
 
 # ---------------------------------------------------------------- #
-def plot_raw(File, ch_to_display, t_start=0, t_end="all", visualisation="reconstructed", y_min=None, y_max=None, artificial_noise=True, n_std=15, seed=0):
+def plot_raw(File, ch_to_display, t_start=0, t_end="all", y_min=None, y_max=None, visualisation="aligned", artificial_noise=False, n_std=15, seed=0):
     # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
     if File.info.recording_type == "RawDataSettings":
         plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max)
     if File.info.recording_type == "NoiseBlankingCompressionSettings":
-        plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max, artificial_noise, n_std, seed)
+        plot_raw_compressed(File, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed)
 
 
 def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
@@ -51,7 +51,7 @@ def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
     plt.show()
 
 
-def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_min, y_max, artificial_noise, n_std, seed):
+def plot_raw_compressed(File, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed):
     # TODO: plot in lines or in MEA shape
     ch_to_display = check_ch_to_display(File, ch_to_display)
     plt.rcdefaults()
@@ -79,6 +79,8 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_mi
         # create new subplot
         ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
 
+        if visualisation == "aligned":
+            plot_raw_compressed_a(File, t_start, t_end, ch_nb)
         if visualisation == "reconstructed":
             plot_raw_compressed_r(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed)
         if visualisation == "continuous" or visualisation == "superimposed":
@@ -95,13 +97,49 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, visualisation, y_mi
     plt.show()
 
 
-def plot_raw_compressed_r(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed):
-    # plot raw_compressed data in sec with 0 or artificial noise between snippets
-    ch_raw_reconst = get_reconstructed_ch_raw_compressed(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed)
+def plot_raw_compressed_a(File, t_start, t_end, ch_nb, plot_zeros=False, artificial_noise=False, n_std=15, seed=0):
+    ch_id = 0
+    for idx in range(0, len(File.recording)):
+        if File.recording[idx][0] == ch_nb:
+            ch_id = idx
+            break
 
-    plt.plot([x/File.info.get_sampling_rate() + t_start for x in range(0, len(ch_raw_reconst))], ch_raw_reconst, c='black')
+    frame_end = int(t_start*File.info.get_sampling_rate())
+    snip_stop = 0
+    for snip_id in range(0, len(File.recording[ch_id][2])):
+        frame_start = File.recording[ch_id][2][snip_id][0]
+        snip_start = snip_stop
+        snip_stop = snip_start + File.recording[ch_id][2][snip_id][1] - File.recording[ch_id][2][snip_id][0]
+
+        if File.recording[ch_id][2][snip_id][1] < t_end * File.info.get_sampling_rate() and frame_start > t_start * File.info.get_sampling_rate():
+            if artificial_noise:
+                # add artificial noise before this snippet
+                plt.plot([x/File.info.get_sampling_rate() for x in range(frame_end, frame_start)], [np.random.normal(0, n_std) for y in range(frame_start - frame_end)], c='black')
+            if plot_zeros:
+                # add horizontal line at y=0 before this snippet
+                plt.hlines(y=0, xmin=frame_end/File.info.get_sampling_rate(), xmax=frame_start/File.info.get_sampling_rate(), color='black')
+            # plot snippet
+            plt.plot([x/File.info.get_sampling_rate() for x in range(File.recording[ch_id][2][snip_id][0], File.recording[ch_id][2][snip_id][1])], File.recording[ch_id][1][snip_start:snip_stop], c='black')
+            frame_end = File.recording[ch_id][2][snip_id][1]
+
+    if artificial_noise:
+        # add artificial noise from last snippet to t_end
+        plt.plot([x/File.info.get_sampling_rate() for x in range(frame_end, int(t_end*File.info.get_sampling_rate()))], [np.random.normal(0, n_std) for y in range(frame_end, int(t_end*File.info.get_sampling_rate()))], c='black')
+    if plot_zeros:
+        # add 0 data from last snippet to t_end
+        plt.hlines(y=0, xmin=frame_end/File.info.get_sampling_rate(), xmax=t_end, color='black')
+
+    plt.xlim(t_start, t_end)
     plt.xlabel("sec")
     plt.ylabel("µV")
+
+
+def plot_raw_compressed_r(File, t_start, t_end, ch_nb, artificial_noise, n_std, seed):
+    # plot raw_compressed data in sec with 0 or artificial noise between snippets
+    if artificial_noise:
+        plot_raw_compressed_a(File, t_start, t_end, ch_nb, False, artificial_noise, n_std, seed)
+    else:
+        plot_raw_compressed_a(File, t_start, t_end, ch_nb, plot_zeros=True)
 
 
 def plot_raw_compressed_c_s(File, visualisation, t_start, t_end, ch_id):
@@ -139,8 +177,8 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
         y_coords = []
         for i in range(0, 64):
             for j in range(0, 64):
-                x_coords.append(i)
-                y_coords.append(j)
+                x_coords.append(i*60)
+                y_coords.append(j*60)
         plt.scatter(x_coords, y_coords, marker="s", s=1, c="silver")
 
     if len(ch_to_display) == 0:
@@ -151,17 +189,19 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
         ch_nb = File.recording[ch_id][0]
         if ch_to_display=="all" or ch_nb in ch_to_display:
             ch_coord = get_ch_coord(ch_nb)
-            plt.scatter(ch_coord[0], ch_coord[1], marker="s", s=1, c='red')
+            plt.scatter(ch_coord[0]*60, ch_coord[1]*60, marker="s", s=1, c='red')
             if ch_nb in label:
-                plt.text(ch_coord[0], ch_coord[1], ch_nb)
+                plt.text(ch_coord[0]*60, ch_coord[1]*60, ch_nb)
 
     plt.gca().set_aspect('equal')
-    plt.xlim(0,64)
-    plt.ylim(0,64)
+    plt.xlim(0, 3840)
+    plt.ylim(0, 3840)
+    plt.xlabel("x (µm)")
+    plt.ylabel("y (µm)")
     plt.show()
 
 
-def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", min_range=False, max_range=False, cmap='viridis'):
+def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=False, max_range=False, cmap='viridis'):
     # activity map for specified time windows
     # TODO: more methods for activity map
     plt.rcdefaults()
@@ -190,6 +230,8 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", min_
             val = ch_rec_min_max(rec, method, min_range, max_range)
         if method == "std":
             val = ch_rec_std(rec, min_range, max_range)
+        if method == "spike_number":
+            val = ch_rec_spikenb(rec, threshold, min_range, max_range)
 
         x, y = get_ch_coord(File.recording[ch_id][0])
         x_list.append(x)
@@ -224,7 +266,6 @@ def check_ch_to_display(rec, ch_to_display):
 
 
 def ch_rec_min_max(rec, method, min_range, max_range):
-    # TODO: from t_start to t_end
     min = 0
     max = 0
     if len(rec) == 0:
@@ -251,7 +292,6 @@ def ch_rec_min_max(rec, method, min_range, max_range):
 
 
 def ch_rec_std(rec, min_range, max_range):
-    # TODO: from t_start to t_end
     if len(rec) == 0:
         if min_range:
             return min_range
@@ -262,3 +302,13 @@ def ch_rec_std(rec, min_range, max_range):
     if max_range and std > max_range:
         std = max_range
     return std
+
+
+def ch_rec_spike_nb(rec, threshold, min_range, max_range):
+    # TODO: simple spike detection
+    if len(rec) == 0:
+        if min_range:
+            return min_range
+        return 0
+    nb_spike = 0
+    return nb_spike
