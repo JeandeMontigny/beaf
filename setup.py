@@ -6,7 +6,6 @@ requirements = [
     "numpy",
     "spikeinterface",
     "h5py",
-    "json",
     "psutil",
 ]
 
