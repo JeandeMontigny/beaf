@@ -168,7 +168,7 @@ class Brw_File:
                     ch = ch_to_extract[ch_id]
                     self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch - 1]))
 
-        for ch_id in range (0, len(ch_to_extract)):
+        for ch_id in range(0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
 
         if verbose:
@@ -363,6 +363,7 @@ class Brw_Experiment_Settings:
     """
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')
+        self.name = os.path.basename(file_path)
         self.recording_type = ""
         # in frame
         self.recording_length = np.nan
@@ -379,13 +380,7 @@ class Brw_Experiment_Settings:
         #TODO: check that recorded channels are actually listed in data.get("Well_A1").get("StoredChIdxs")
         self.channel_idx = self.data.get("Well_A1").get("StoredChIdxs")[:]
         self.nb_channel = len(self.channel_idx)
-
-        if self.recording_type == "RawDataSettings":
-            # TODO: do not get full Raw data. info in RawTOC?
-            self.recording_length = len(self.data.get("Well_A1").get("Raw")) / self.nb_channel
-        elif self.recording_type == "NoiseBlankingCompressionSettings":
-            self.recording_length = self.data.get("TOC")[len(self.data.get("TOC"))-1][1]
-
+        self.recording_length = self.data.get("TOC")[len(self.data.get("TOC"))-1][1]
         self.min_analog_value = experiment_settings['ValueConverter']['MinAnalogValue']
         self.max_analog_value = experiment_settings['ValueConverter']['MaxAnalogValue']
         self.min_digital_value = experiment_settings['ValueConverter']['MinDigitalValue']
