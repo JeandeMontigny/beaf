@@ -49,6 +49,7 @@ def plot_raw_format(File, ch_to_display, t_start, t_end, y_min, y_max):
         fig_nb += 1
 
     plt.show()
+    plt.close()
 
 
 def plot_raw_compressed(File, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed):
@@ -95,6 +96,7 @@ def plot_raw_compressed(File, ch_to_display, t_start, t_end, y_min, y_max, visua
         fig_nb += 1
 
     plt.show()
+    plt.close()
 
 
 def plot_raw_compressed_a(File, t_start, t_end, ch_nb, plot_zeros=False, artificial_noise=False, n_std=15, seed=0):
@@ -199,9 +201,10 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
     plt.xlabel("x (µm)")
     plt.ylabel("y (µm)")
     plt.show()
+    plt.close()
 
 
-def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=False, max_range=False, cmap='viridis'):
+def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=False, max_range=False, cmap='viridis', save_path=False):
     # activity map for specified time windows
     # TODO: more methods for activity map
     plt.rcdefaults()
@@ -239,7 +242,7 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", thre
         intensity_list.append(val)
 
     # cmap colours: viridis, plasma, magma, hot, gray
-    plt.scatter(x_list, y_list, c=intensity_list, marker="s", cmap=cmap)
+    plt.scatter(x_list, y_list, c=intensity_list, marker="s", cmap=cmap, vmin=min_range, vmax=max_range)
     plt.colorbar(label=method)
     plt.gca().set_aspect('equal')
     plt.xlim(0,64)
@@ -250,7 +253,11 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", thre
         plt.scatter(ch_coord[0], ch_coord[1], marker='s', s=1, c='red')
         plt.text(ch_coord[0], ch_coord[1], ch, c='red')
 
+    if save_path:
+        plt.savefig(save_path + ".png")
+
     plt.show()
+    plt.close()
 
 
 # ---------------------------------------------------------------- #
@@ -283,11 +290,6 @@ def ch_rec_min_max(rec, method, min_range, max_range):
         val = max
     else:
         val = max - min
-
-    if min_range and val < min_range:
-        val = min_range
-    if max_range and val > max_range:
-        val = max_range
     return val
 
 
@@ -297,18 +299,12 @@ def ch_rec_std(rec, min_range, max_range):
             return min_range
         return 0
     std = np.std(rec)
-    if min_range and std < min_range:
-        std = min_range
-    if max_range and std > max_range:
-        std = max_range
     return std
 
 
 def ch_rec_spike_nb(rec, threshold, min_range, max_range):
     # TODO: simple spike detection
     if len(rec) == 0:
-        if min_range:
-            return min_range
         return 0
     nb_spike = 0
     return nb_spike
