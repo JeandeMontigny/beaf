@@ -204,7 +204,7 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
     plt.close()
 
 
-def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=False, max_range=False, cmap='viridis', save_path=False):
+def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=None, max_range=None, cmap='viridis', save_path=False):
     # activity map for specified time windows
     # TODO: more methods for activity map
     plt.rcdefaults()
@@ -230,11 +230,11 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", thre
 
         val = 0
         if method == "min" or method == "max" or method == "min-max":
-            val = ch_rec_min_max(rec, method, min_range, max_range)
+            val = ch_rec_min_max(rec, method)
         if method == "std":
-            val = ch_rec_std(rec, min_range, max_range)
+            val = ch_rec_std(rec)
         if method == "spike_number":
-            val = ch_rec_spikenb(rec, threshold, min_range, max_range)
+            val = ch_rec_spikenb(rec, threshold)
 
         x, y = get_ch_coord(File.recording[ch_id][0])
         x_list.append(x)
@@ -272,12 +272,10 @@ def check_ch_to_display(rec, ch_to_display):
     return ch_to_display
 
 
-def ch_rec_min_max(rec, method, min_range, max_range):
+def ch_rec_min_max(rec, method):
     min = 0
     max = 0
     if len(rec) == 0:
-        if min_range:
-            return min_range
         return 0
     for val_id in range(0, len(rec)):
         if rec[val_id] < min:
@@ -293,16 +291,14 @@ def ch_rec_min_max(rec, method, min_range, max_range):
     return val
 
 
-def ch_rec_std(rec, min_range, max_range):
+def ch_rec_std(rec):
     if len(rec) == 0:
-        if min_range:
-            return min_range
         return 0
     std = np.std(rec)
     return std
 
 
-def ch_rec_spike_nb(rec, threshold, min_range, max_range):
+def ch_rec_spike_nb(rec, threshold):
     # TODO: simple spike detection
     if len(rec) == 0:
         return 0
