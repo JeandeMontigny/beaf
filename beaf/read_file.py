@@ -364,11 +364,7 @@ class Brw_Experiment_Settings:
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')
         self.name = os.path.basename(file_path)
-        self.recording_type = ""
-        # in frame
-        self.recording_length = np.nan
 
-    def read(self):
         experiment_settings = json.loads(self.data.get("ExperimentSettings").__getitem__(0))
         try:
             self.recording_type = experiment_settings['DataSettings']['Raw']['$type']
@@ -380,12 +376,14 @@ class Brw_Experiment_Settings:
         #TODO: check that recorded channels are actually listed in data.get("Well_A1").get("StoredChIdxs")
         self.channel_idx = self.data.get("Well_A1").get("StoredChIdxs")[:]
         self.nb_channel = len(self.channel_idx)
+        # in frame
         self.recording_length = self.data.get("TOC")[len(self.data.get("TOC"))-1][1]
         self.min_analog_value = experiment_settings['ValueConverter']['MinAnalogValue']
         self.max_analog_value = experiment_settings['ValueConverter']['MaxAnalogValue']
         self.min_digital_value = experiment_settings['ValueConverter']['MinDigitalValue']
         self.max_digital_value = experiment_settings['ValueConverter']['MaxDigitalValue']
 
+        self.data.close()
 
     def get_recording_type(self):
         return self.recording_type
@@ -408,9 +406,6 @@ class Brw_Experiment_Settings:
     def get_recording_length_sec(self):
         return self.recording_length / self.get_sampling_rate()
 
-    def close(self):
-        self.data.close()
-
 
 class Bxr_Experiment_Settings:
     """
@@ -418,19 +413,16 @@ class Bxr_Experiment_Settings:
     """
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')
-        # in frame
-        self.recording_length = 0
-
-    def read(self):
         # TODO: other brx event than spikes
         experiment_settings = json.loads(self.data.get("ExperimentSettings").__getitem__(0))
-
         self.mea_model = experiment_settings['MeaPlate']['Model']
         self.sampling_rate = experiment_settings['TimeConverter']['FrameRate']
         self.channel_idx = self.data.get('Well_A1').get('StoredChIdxs')[:]
         self.nb_channel = len(self.channel_idx)
+        # in frame
         self.recording_length = self.data.get('Well_A1').get('SpikeTimes')[len(self.data.get('Well_A1').get('SpikeTimes'))-1]
 
+        self.data.close()
 
     def get_mea_model(self):
         return self.mea_model
@@ -447,12 +439,9 @@ class Bxr_Experiment_Settings:
     def get_recording_length_sec(self):
         return self.recording_length / self.get_sampling_rate()
 
-    def close(self):
-        self.data.close()
-
 
 # ---------------------------------------------------------------- #
-def get_file_frame_start_end(info, t_start, t_end, frame_chunk=None):
+def get_file_frame_start_end(info, t_start, t_end, frame_chunk=100000):
     frame_start =  int(np.floor(t_start * info.get_sampling_rate()))
     frame_end = int(np.floor(t_end * info.get_sampling_rate()))
 
@@ -483,7 +472,6 @@ def get_file_frame_start_end(info, t_start, t_end, frame_chunk=None):
 def convert_digital_to_analog(info, value):
     digital_value = info.min_analog_value + value * (info.max_analog_value - info.min_analog_value) / (info.max_digital_value - info.min_digital_value)
     # clean saturated values
-    #NOTE: keep? need implement a proper clean signal method
     if digital_value > 4095 or digital_value < -4095:
         digital_value = 0
     return digital_value
@@ -519,19 +507,11 @@ def get_brw_experiment_setting(file_path):
     """
     TODO: description
     """
-    experiment_setting = Brw_Experiment_Settings(file_path)
-    experiment_setting.read()
-    experiment_setting.close()
-
-    return experiment_setting
+    return Brw_Experiment_Settings(file_path)
 
 
 def get_bxr_experiment_setting(file_path):
     """
     TODO: description
     """
-    experiment_setting = Bxr_Experiment_Settings(file_path)
-    experiment_setting.read()
-    experiment_setting.close()
-
-    return experiment_setting
+    return Bxr_Experiment_Settings(file_path)
