@@ -4,6 +4,7 @@ from setuptools import setup
 
 requirements = [
     "numpy",
+    "scipy",
     "spikeinterface",
     "h5py",
     "psutil",
