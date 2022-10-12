@@ -204,7 +204,7 @@ def plot_mea(File, ch_to_display="all", label=[], background=False):
     plt.close()
 
 
-def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=None, max_range=None, cmap='viridis', save_path=False):
+def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", threshold=-100, min_range=None, max_range=None, cmap='viridis', save_path=False, flip=False):
     # activity map for specified time windows
     # TODO: more methods for activity map
     plt.rcdefaults()
@@ -237,8 +237,13 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", thre
             val = ch_rec_spikenb(rec, threshold)
 
         x, y = get_ch_coord(File.recording[ch_id][0])
-        x_list.append(x)
-        y_list.append(y)
+        if flip:
+            # flip map to match BrainWave visualisation (0,0 top left)
+            x_list.append(y)
+            y_list.append(-x)
+        else:
+            x_list.append(x)
+            y_list.append(y)
         intensity_list.append(val)
 
     # cmap colours: viridis, plasma, magma, hot, gray
@@ -247,6 +252,8 @@ def plot_activity_map(File, label=[], t_start=0, t_end="all", method="std", thre
     plt.gca().set_aspect('equal')
     plt.xlim(0,64)
     plt.ylim(0,64)
+    if flip:
+        plt.ylim(-64,0)
 
     for ch in label:
         ch_coord = get_ch_coord(ch)
