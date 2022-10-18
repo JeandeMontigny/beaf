@@ -144,6 +144,8 @@ class Brw_File:
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start, frame_end = get_file_frame_start_end(self.info, t_start, t_end, frame_chunk)
 
+        converter_x = (self.info.max_analog_value - self.info.min_analog_value) / (self.info.max_digital_value - self.info.min_digital_value)
+
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
         id_frame_chunk = frame_chunk * self.info.get_nb_channel()
 
@@ -166,7 +168,7 @@ class Brw_File:
 
                 for ch_id in range(0, len(ch_to_extract)):
                     ch = ch_to_extract[ch_id]
-                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info, data_chunk[frame_start_id + ch - 1]))
+                    self.recording[ch_id][1].append(convert_digital_to_analog(self.info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x))
 
         for ch_id in range(0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
@@ -201,6 +203,8 @@ class Brw_File:
 
         # get data chunk corresponding to t_start-t_end, using toc (in frame)
         frame_start, frame_end = get_file_frame_start_end(self.info, t_start, t_end)
+
+        converter_x = (self.info.max_analog_value - self.info.min_analog_value) / (self.info.max_digital_value - self.info.min_digital_value)
 
         chunk_nb_start = 0; chunk_nb_end = 0
         for chunk_nb in range(0, len(toc)):
@@ -240,7 +244,7 @@ class Brw_File:
                             break
                         for k in range(0, range_end - range_begin):
                             sample = int.from_bytes([data_chunk[i+16+k*2], data_chunk[i+17+k*2]], byteorder='little')
-                            self.recording[ch_id][1].append(convert_digital_to_analog(self.info, sample))
+                            self.recording[ch_id][1].append(convert_digital_to_analog(self.info.min_analog_value, sample, converter_x))
                         self.recording[ch_id][2].append([range_begin, range_end])
                         j += 16 + (range_end - range_begin)*2
 
@@ -468,9 +472,8 @@ def get_file_frame_start_end(info, t_start, t_end, frame_chunk=100000):
 
     return frame_start, frame_end
 
-
-def convert_digital_to_analog(info, value):
-    digital_value = info.min_analog_value + value * (info.max_analog_value - info.min_analog_value) / (info.max_digital_value - info.min_digital_value)
+def convert_digital_to_analog(min_analog_value, value, x):
+    digital_value = min_analog_value + value * x
     # clean saturated values
     if digital_value > 4095 or digital_value < -4095:
         digital_value = 0
