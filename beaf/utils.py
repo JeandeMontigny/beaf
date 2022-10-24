@@ -13,8 +13,6 @@ def get_ch_number(x, y):
 def get_ch_coord(ch_nb):
     x = ch_nb // 64
     y = ch_nb % 64
-    if y == 0:
-        y = 64
 
     return x, y
 
@@ -133,7 +131,7 @@ def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all",
                     print("NumpyRecording object is not supported yet for more than one channel without signal reconstruction")
                     return
                 snip_stop = 0
-                temps=[]
+                temps = []
                 frame_end = t_end * File.info.get_sampling_rate()
                 frame_start = t_start * File.info.get_sampling_rate()
                 for snip_id in range(0, len(File.recording[ch_id][2])):
@@ -157,8 +155,3 @@ def get_spikeinterface_struct(File, t_start=0, t_end="all", ch_to_extract="all",
     NR = NR.set_probe(probe)
 
     return NR
-
-
-# def sorting_extractor(unit_ids):
-#     # TODO
-#     ss.NumpySorting(unit_ids)
