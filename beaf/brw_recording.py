@@ -50,6 +50,9 @@ class Brw_Recording:
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
 
+        for ch_id in range(0, len(ch_to_extract)):
+            self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+
         converter_x = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
 
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
@@ -74,7 +77,7 @@ class Brw_Recording:
 
                 for ch_id in range(0, len(ch_to_extract)):
                     ch = ch_to_extract[ch_id]
-                    self.recording[ch_id][1].append(convert_digital_to_analog(self.Info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x))
+                    self.recording[ch_id][1][frame_nb+(chunk*frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x)
 
         for ch_id in range(0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
