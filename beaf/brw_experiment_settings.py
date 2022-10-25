@@ -27,6 +27,7 @@ class Brw_Experiment_Settings:
         self.max_digital_value = experiment_settings['ValueConverter']['MaxDigitalValue']
 
         self.data.close()
+        del(self.data)
 
     def get_recording_type(self):
         return self.recording_type

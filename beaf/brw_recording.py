@@ -23,6 +23,17 @@ class Brw_Recording:
         # [[ch nb, [rec], [frame start, frame end] ], [...]]
         self.recording = []
 
+        # list of ch to extract
+        self.ch_to_extract = []
+        # the current data chunk (used for multiprocessing)
+        self.data_chunk = []
+        # digital to analog x value
+        self.converter_x = 0
+        # the size, if frame, of each data chunk
+        self.frame_chunk = 0
+        # the current chunk number
+        self.chunk_nb = 0
+
 
     # -------- getters -------- #
 
@@ -47,6 +58,64 @@ class Brw_Recording:
 
     # -------- read -------- #
 
+    def get_ch_rec(self, ch) :
+        ch_id = self.ch_to_extract.index(ch)
+
+        for frame_nb in range(0, int(len(self.data_chunk)/self.Info.get_nb_channel())):
+            frame_start_id = frame_nb * self.Info.get_nb_channel()
+            self.recording[ch_id][1][frame_nb+(self.chunk_nb*self.frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, self.data_chunk[frame_start_id + ch - 1], self.converter_x)
+
+
+    def read_raw_data_multiproc(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        self.ch_to_extract = ch_to_extract
+        self.frame_chunk = frame_chunk
+
+        for ch_id in range(0, len(ch_to_extract)):
+            self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+
+        self.converter_x = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+        first_frame = frame_start * self.Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+        for chunk in range(0, nb_frame_chunk):
+            if verbose:
+                print("Reading chunk %s out of %s" %(chunk+1, nb_frame_chunk), end = "\r")
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.Info.get_nb_channel()
+
+            self.data = h5py.File(self.path,'r')
+            data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.Info.get_nb_channel()]
+            self.chunk_nb = chunk
+            # TODO: object is duplicated when run with t.map
+            #       thus, memory size is thread_nb times greater
+            self.data_chunk = data_chunk
+
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            first_frame += id_frame_chunk + self.Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # python does not take advantage of multi threading, so better to use cpu_count (i.e. nb of thread) / 2
+            thread_nb = int(os.cpu_count()/2)
+            t = Pool(thread_nb)
+            t.map(self.get_ch_rec, ch_to_extract)
+            t.close()
+            self.data_chunk = []
+
+        for ch_id in range(0, len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print("\ndone")
+
+
     def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
 
@@ -66,7 +135,11 @@ class Brw_Recording:
             if chunk == nb_frame_chunk-1:
                 last_frame = frame_end * self.Info.get_nb_channel()
 
+            self.data = h5py.File(self.path,'r')
             data_chunk = self.data.get("Well_A1").get("Raw")[first_frame:last_frame+self.Info.get_nb_channel()]
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
 
             first_frame += id_frame_chunk + self.Info.get_nb_channel()
             last_frame = first_frame + id_frame_chunk
@@ -125,6 +198,7 @@ class Brw_Recording:
         print(chunk_nb_end - chunk_nb_start, "data chunks to read")
 
         for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            self.data = h5py.File(self.path,'r')
             chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
             if data_chunk_nb < len(event_sparse_raw_toc)-1:
                 chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
@@ -132,6 +206,9 @@ class Brw_Recording:
                 chunk_end_id = len(self.data.get("Well_A1").get("EventsBasedSparseRaw"))
 
             data_chunk = self.data.get("Well_A1").get("EventsBasedSparseRaw")[chunk_start_id:chunk_end_id]
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
 
             i = 0
             while i < len(data_chunk):
@@ -161,9 +238,8 @@ class Brw_Recording:
                 i += size
 
 
-    def read(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+    def read(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, multiproc):
         self.Info = get_brw_experiment_setting(self.path)
-        self.data = h5py.File(self.path,'r')
 
         if len(ch_to_extract) == 0 or ch_to_extract == "all":
             ch_to_extract = []
@@ -176,11 +252,12 @@ class Brw_Recording:
         if t_end == "all": t_end = self.Info.get_recording_length_sec()
 
         if self.Info.recording_type == "RawDataSettings":
-            self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+            if multiproc:
+                self.read_raw_data_multiproc(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+            else:
+                self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
         elif self.Info.recording_type == "NoiseBlankingCompressionSettings":
             self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
-
-        self.data.close()
 
 
     # -------- visualisation -------- #
@@ -542,11 +619,11 @@ class Brw_Recording:
         return int(frame_start), int(frame_end)
 
 # ---------------------------------------------------------------- #
-def read_brw_recording(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False):
+def read_brw_recording(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False, multiproc=False):
     """
     TODO: description
     """
     Recording = Brw_Recording(file_path)
-    Recording.read(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+    Recording.read(t_start, t_end, ch_to_extract, frame_chunk, verbose, multiproc)
 
     return Recording
