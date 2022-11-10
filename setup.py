@@ -8,6 +8,8 @@ requirements = [
     "spikeinterface",
     "h5py",
     "psutil",
+    "multiprocessing",
+    "pickle",
 ]
 
 # Usage: pip install -e .[dev]
