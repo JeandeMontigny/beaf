@@ -1,4 +1,4 @@
-import os, sys, h5py
+import os, sys, h5py, pickle
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
@@ -66,6 +66,9 @@ class Brw_Recording:
             self.recording[ch_id][1][frame_nb+(self.chunk_nb*self.frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, self.data_chunk[frame_start_id + ch - 1], self.converter_x)
 
 
+    # TODO: not working. modifying an object passed as argument duplicate that object.
+    #       modifications are then done only to that copied object, and not on the original one.
+    #       try using shared memory
     def read_raw_data_multiproc(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
         frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
         self.ch_to_extract = ch_to_extract
@@ -258,6 +261,32 @@ class Brw_Recording:
                 self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
         elif self.Info.recording_type == "NoiseBlankingCompressionSettings":
             self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
+
+
+
+    def save_recording(self, file_path):
+        with open(file_path, "wb") as file_handler:
+            pickle.dump(self, file_handler)
+
+
+    def merge_recordings(self, Rec_b):
+        if self.Info.get_sampling_rate() != Rec_b.Info.get_sampling_rate():
+            print("Recordings to merge must have the same sampling rate, but have", self.Info.get_sampling_rate(), "and", Rec_b.Info.get_sampling_rate(), "respectively.")
+            return
+
+        if self.Info.recording_type == "RawDataSettings":
+            if len(self.recording) != len(Rec_b.recording):
+                print("Recordings to merge must have the same number of channels, but have", len(self.recording[1]), "and", len(Rec_b.recording[1]), "respectively.")
+                return
+
+            for ch_id in range(0, len(self.recording)):
+                self.recording[ch_id][1] = np.concatenate((self.recording[ch_id][1], Rec_b.recording[ch_id][1]))
+                self.recording[ch_id][2] = [[self.recording[ch_id][2][0][0], Rec_b.recording[ch_id][2][0][1]]]
+
+        if self.Info.recording_type == "NoiseBlankingCompressionSettings":
+            # TODO
+            print("not implemented yet for NoiseBlankingCompression format.")
+            return
 
 
     # -------- visualisation -------- #
@@ -556,7 +585,7 @@ class Brw_Recording:
 
         frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_process)
         # number of sample to get from the initial data
-        samps = int((frame_end/self.Info.get_sampling_rate() - frame_start/self.Info.get_sampling_rate()) * freq)
+        samps = int(np.ceil((frame_end/self.Info.get_sampling_rate() - frame_start/self.Info.get_sampling_rate()) * freq))
 
         if self.Info.recording_type == "RawDataSettings":
             down_sampled_data = []
@@ -569,7 +598,7 @@ class Brw_Recording:
                 if overwrite:
                     self.recording[ch_id][1] = down_sampled_ch_data
                     for rec_segment in range(0, len(self.recording[ch_id][2])):
-                        self.recording[ch_id][2][rec_segment][0] = np.floor(self.recording[ch_id][2][rec_segment][0] / (self.Info.get_sampling_rate()/ freq))
+                        self.recording[ch_id][2][rec_segment][0] = np.ceil(self.recording[ch_id][2][rec_segment][0] / (self.Info.get_sampling_rate()/ freq))
                         self.recording[ch_id][2][rec_segment][1] = np.floor(self.recording[ch_id][2][rec_segment][1] / (self.Info.get_sampling_rate()/ freq))
 
                     self.Info.sampling_rate = freq
@@ -580,7 +609,7 @@ class Brw_Recording:
 
         if self.Info.recording_type == "NoiseBlankingCompressionSettings":
             # TODO
-            print("not implemented yet.")
+            print("not implemented yet for NoiseBlankingCompression format.")
             return
 
 
@@ -627,3 +656,8 @@ def read_brw_recording(file_path, t_start = 0, t_end = 60, ch_to_extract = [], f
     Recording.read(t_start, t_end, ch_to_extract, frame_chunk, verbose, multiproc)
 
     return Recording
+
+
+def load_recording(file_path):
+    with open(file_path, "rb") as file_handler:
+        return pickle.load(file_handler)
