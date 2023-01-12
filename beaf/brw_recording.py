@@ -58,6 +58,7 @@ class Brw_Recording:
 
     # -------- read -------- #
 
+    # TODO: try using a simple return, containing all frame for this channel
     def get_ch_rec(self, ch) :
         ch_id = self.ch_to_extract.index(ch)
 
@@ -111,6 +112,53 @@ class Brw_Recording:
             t.map(self.get_ch_rec, ch_to_extract)
             t.close()
             self.data_chunk = []
+
+        for ch_id in range(0, len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print("\ndone")
+
+
+    def read_raw_data_dll(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path):
+        import clr
+        clr.AddReference(os.path.join(dll_path, "3Brain.BrainWave.IO.dll"))
+        clr.AddReference(os.path.join(dll_path, "3Brain.BrainWave.Common.dll"))
+
+        from System import Int32, Double, Boolean
+        from _3Brain.BrainWave.IO import BrwFile
+        from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+        from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+        consumer = object()
+
+        data = BrwFile.Open(self.path)
+        info = data.get_MeaExperimentInfo()
+
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        data_chunk = []
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print("Reading chunk %s out of %s" %(chunk+1, nb_frame_chunk), end = "\r")
+            # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the BRW-file stream
+            if chunk == nb_frame_chunk-1:
+                last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+            # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+            # second index is the channel, third index the time frame
+            else:
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+            for ch_id in range(len(ch_to_extract)):
+                # convert to voltage
+                ch_data = np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float)
+                # add this chunk data at the end of this ch data array
+                self.recording[ch_id][1] = np.concatenate([self.recording[ch_id][1], ch_data])
+
+        # Close Files
+        data.Close()
 
         for ch_id in range(0, len(ch_to_extract)):
             self.recording[ch_id][2].append([frame_start, frame_end])
@@ -241,7 +289,7 @@ class Brw_Recording:
                 i += size
 
 
-    def read(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, multiproc):
+    def read(self, t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll):
         self.Info = get_brw_experiment_setting(self.path)
 
         if len(ch_to_extract) == 0 or ch_to_extract == "all":
@@ -254,11 +302,19 @@ class Brw_Recording:
 
         if t_end == "all": t_end = self.Info.get_recording_length_sec()
 
+        if frame_chunk > (t_end - t_start) * self.Info.get_sampling_rate():
+            frame_chunk = int((t_end - t_start) * self.Info.get_sampling_rate())
+
         if self.Info.recording_type == "RawDataSettings":
-            if multiproc:
-                self.read_raw_data_multiproc(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+            if use_dll:
+                dll_path = "C:\\Program Files\\3Brain\\BrainWave 5"
+                self.read_raw_data_dll(t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path)
             else:
-                self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+                if multiproc:
+                    self.read_raw_data_multiproc(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+                else:
+                    self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+
         elif self.Info.recording_type == "NoiseBlankingCompressionSettings":
             self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
 
@@ -648,12 +704,13 @@ class Brw_Recording:
         return int(frame_start), int(frame_end)
 
 # ---------------------------------------------------------------- #
-def read_brw_recording(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, verbose=False, multiproc=False):
+def read_brw_recording(file_path, t_start=0, t_end=60, ch_to_extract=[], frame_chunk=100000,
+                       multiproc=False, verbose=False, use_dll=False):
     """
     TODO: description
     """
     Recording = Brw_Recording(file_path)
-    Recording.read(t_start, t_end, ch_to_extract, frame_chunk, verbose, multiproc)
+    Recording.read(t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll)
 
     return Recording
 
