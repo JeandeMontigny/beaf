@@ -3,11 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from .utils import *
-from .brw_experiment_settings import *
+from .bxr_experiment_settings import *
 
 # ---------------------------------------------------------------- #
 class Bxr_Recording:
-"""
+    """
     TODO: description
     """
     def __init__(self, bxr_path):
