@@ -1,5 +1,6 @@
 import os, sys, h5py
 import spikeinterface.extractors as se
+from probeinterface import *
 
 from .brw_recording import *
 
@@ -9,41 +10,43 @@ class Brw_SpikeInterface:
     """
     TODO: description
     """
-    def read_raw_data_recording(self, brw_path, info, t_start, t_end, ch_to_extract, frame_chunk):
-        frame_start, frame_end = get_file_frame_start_end(info, t_start, t_end, frame_chunk)
+    def read_raw_data_recording(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
-        id_frame_chunk = frame_chunk * info.get_nb_channel()
-        first_frame = frame_start * info.get_nb_channel()
+        id_frame_chunk = frame_chunk * Info.get_nb_channel()
+        first_frame = frame_start * Info.get_nb_channel()
         last_frame = first_frame + id_frame_chunk
 
         hdf_file = h5py.File(brw_path,'r')
+        converter_x = (Info.max_analog_value - Info.min_analog_value) / (Info.max_digital_value - Info.min_digital_value)
+
         traces_list = []
         for chunk in range(0, nb_frame_chunk):
             if chunk == nb_frame_chunk-1:
-                last_frame = frame_end * info.get_nb_channel()
+                last_frame = frame_end * Info.get_nb_channel()
 
-            data_chunk = hdf_file.get("Well_A1").get("Raw")[first_frame:last_frame+info.get_nb_channel()]
+            data_chunk = hdf_file.get("Well_A1").get("Raw")[first_frame:last_frame+Info.get_nb_channel()]
 
-            first_frame += id_frame_chunk + info.get_nb_channel()
+            first_frame += id_frame_chunk + Info.get_nb_channel()
             last_frame = first_frame + id_frame_chunk
 
-            for frame_nb in range(0, int(len(data_chunk)/info.get_nb_channel())):
+            for frame_nb in range(0, int(len(data_chunk)/Info.get_nb_channel())):
                 frame_data = []
-                frame_start_id = frame_nb*info.get_nb_channel()
+                frame_start_id = frame_nb*Info.get_nb_channel()
 
                 for ch_id in range(0, len(ch_to_extract)):
                     ch = ch_to_extract[ch_id]
-                    frame_data.append(convert_digital_to_analog(info, data_chunk[frame_start_id + ch - 1]))
+                    frame_data.append(convert_digital_to_analog(Info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x))
                 traces_list.append(frame_data)
 
         hdf_file.close()
 
-        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=info.get_sampling_rate(), channel_ids=ch_to_extract)
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
 
         return NR
 
 
-    def read_raw_compressed_data(self, brw_path, info, t_start, t_end, ch_to_extract, frame_chunk):
+    def read_raw_compressed_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
         # TODO: create spikeinterface NumpyRecording object
         #       problem with recording not of the same length
         #           solution using RecordingSegment? a RecordingExtractor segment for each snippet
@@ -52,7 +55,7 @@ class Brw_SpikeInterface:
         toc = self.data.get("TOC")
         # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
         event_sparse_raw_toc = self.data.get("Well_A1").get("EventsBasedSparseRawTOC")
-        frame_start, frame_end = get_file_frame_start_end(info, t_start, t_end)
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end)
 
         chunk_nb_start = 0; chunk_nb_end = 0
         for chunk_nb in range(0, len(toc)):
@@ -92,18 +95,18 @@ class Brw_SpikeInterface:
 
 
     def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe):
-        info = get_brw_experiment_setting(brw_path)
+        Info = get_brw_experiment_setting(brw_path)
 
-        if t_end == "all": t_end = info.get_recording_length_sec()
+        if t_end == "all": t_end = Info.get_recording_length_sec()
         if ch_to_extract == "all":
             ch_to_extract = []
             for ch in range (0, 4096):
                 ch_to_extract.append(ch)
 
-        if info.get_recording_type() == "RawDataSettings":
-            NR = self.read_raw_data_recording(brw_path, info, t_start, t_end, ch_to_extract, frame_chunk)
-        if info.get_recording_type() == "NoiseBlankingCompressionSettings":
-            NR = self.read_raw_compressed_data(brw_path, info, t_start, t_end, ch_to_extract, frame_chunk)
+        if Info.get_recording_type() == "RawDataSettings":
+            NR = self.read_raw_data_recording(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+        if Info.get_recording_type() == "NoiseBlankingCompressionSettings":
+            NR = self.read_raw_compressed_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
 
         if attach_probe:
             geom = []
