@@ -10,7 +10,64 @@ class Brw_SpikeInterface:
     """
     TODO: description
     """
-    def read_raw_data_recording(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+    def read_raw_data_dll(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path):
+        import clr
+        clr.AddReference(os.path.join(dll_path, "3Brain.BrainWave.IO.dll"))
+        clr.AddReference(os.path.join(dll_path, "3Brain.BrainWave.Common.dll"))
+
+        from System import Int32, Double, Boolean
+        from _3Brain.BrainWave.IO import BrwFile
+        from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+        from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+        consumer = object()
+
+        data = BrwFile.Open(brw_path)
+        info = data.get_MeaExperimentInfo()
+        Info = get_brw_experiment_setting(brw_path)
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+        # get required number of frame chunk from frame_start to frame_end depending on frame_chunk size
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        data_chunk = []
+        traces_list = []
+        for chunk in range(nb_frame_chunk):
+            # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the BRW-file stream
+            if chunk == nb_frame_chunk-1:
+                last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+            # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+            # second index is the channel, third index the time frame
+            else:
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+            chunk_ch_data = []
+            for ch_id in range(len(ch_to_extract)):
+                # convert to voltage and add this chunk data at the end of this ch data array
+                chunk_ch_data.append(np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float))
+
+            # format data to match spikeinterface structure: [ [f0ch0, f0ch1, ...], [f1ch0, f1ch1, ...], ... ]
+            # for each frame in this data chunk
+            for frame_nb in range(len(chunk_ch_data[0])):
+                # frame_data will contain each ch value for a single frame
+                frame_data = []
+                # for each ch to extract
+                for ch_id in range(len(ch_to_extract)):
+                    # add this ch value for this frame in frame_data list
+                    frame_data.append(chunk_ch_data[ch_id][frame_nb])
+                # add this frame_data to traces_list
+                traces_list.append(frame_data)
+
+        # Close Files
+        data.Close()
+        # create the NumpyRecording
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+        return NR
+
+
+    def read_raw_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
         frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
         nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
         id_frame_chunk = frame_chunk * Info.get_nb_channel()
@@ -94,7 +151,7 @@ class Brw_SpikeInterface:
         return 0
 
 
-    def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe):
+    def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path):
         Info = get_brw_experiment_setting(brw_path)
 
         if t_end == "all": t_end = Info.get_recording_length_sec()
@@ -104,7 +161,10 @@ class Brw_SpikeInterface:
                 ch_to_extract.append(ch)
 
         if Info.get_recording_type() == "RawDataSettings":
-            NR = self.read_raw_data_recording(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+            if use_dll:
+                NR = self.read_raw_data_dll(brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path)
+            else:
+                NR = self.read_raw_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
         if Info.get_recording_type() == "NoiseBlankingCompressionSettings":
             NR = self.read_raw_compressed_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
 
@@ -127,9 +187,10 @@ class Brw_SpikeInterface:
 
 
 # ---------------------------------------------------------------- #
-def read_brw_SpikeInterface(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000, attach_probe=True):
+def read_brw_SpikeInterface(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000,
+                            attach_probe=True, use_dll=False, dll_path="C:\\Program Files\\3Brain\\BrainWave 5"):
     BNR = Brw_SpikeInterface()
-    NR = BNR.read(file_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe)
+    NR = BNR.read(file_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path)
     return NR
 
 
