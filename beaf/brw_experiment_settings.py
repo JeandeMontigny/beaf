@@ -1,5 +1,6 @@
 import os, h5py, json
 
+# ---------------------------------------------------------------- #
 class Brw_Experiment_Settings:
     """
     TODO: description
@@ -40,6 +41,9 @@ class Brw_Experiment_Settings:
 
     def get_nb_channel(self):
         return int(self.nb_channel)
+
+    def get_channel_idx(self):
+        return self.channel_idx
 
     def get_recording_length(self):
         """
