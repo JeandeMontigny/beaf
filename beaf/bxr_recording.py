@@ -8,7 +8,7 @@ from .bxr_experiment_settings import *
 # ---------------------------------------------------------------- #
 class Bxr_Recording:
     """
-    TODO: description
+    Bxr_Recording class to read and store .bxr files containing spike data
     """
     def __init__(self, bxr_path):
         self.path = bxr_path
@@ -22,6 +22,7 @@ class Bxr_Recording:
         frame_start =  int(np.floor(t_start * self.Info.get_sampling_rate()))
         frame_end = int(np.floor(t_end * self.Info.get_sampling_rate()))
 
+        # get the id of the first spike time > frame_start and last spike time < frame_end
         id_start = 0; id_end = 0
         init_frame_start = False; init_frame_end = False
         if frame_start == 0:
@@ -30,8 +31,11 @@ class Bxr_Recording:
         if frame_end >= self.Info.get_recording_length():
             id_end = self.Info.get_recording_length()
             init_frame_end = True
-        if (not init_frame_start) and (not init_frame_end) :
+        # if the first or the last spike id has not been set
+        if (not init_frame_start) or (not init_frame_end) :
+            # get all spike times
             temps_spike_times = self.data.get('Well_A1').get('SpikeTimes')[:]
+            # for each spike
             for i in range(0, len(temps_spike_times)):
                 # find first spike time > frame_start
                 if (not init_frame_start) and temps_spike_times[i] >= frame_start:
@@ -42,10 +46,12 @@ class Bxr_Recording:
                 if (not init_frame_end) and temps_spike_times[i] >= frame_end:
                     id_end = i
                     init_frame_end = True
+                # if both first and last spike id have been set, break
                 if init_frame_start and init_frame_end:
                     break
             del(temps_spike_times)
 
+        # get all spikes between t_start and t_end
         self.spike_times = self.data.get('Well_A1').get('SpikeTimes')[id_start:id_end]
         self.spike_channels = self.data.get('Well_A1').get('SpikeChIdxs')[id_start:id_end]
 
@@ -62,6 +68,7 @@ class Bxr_Recording:
         self.Info = get_bxr_experiment_setting(self.path)
         self.data = h5py.File(self.path,'r')
 
+        # if all channels are to be extracted
         if len(ch_to_extract) == 0 or ch_to_extract == "all":
             ch_to_extract = []
             for ch in range (0, 4096):
@@ -73,6 +80,8 @@ class Bxr_Recording:
         self.read_spike_brx_data(t_start, t_end, ch_to_extract, sort)
 
         self.data.close()
+        # data has to be cleared as h5py objects cannot be pickled
+        self.data = []
 
 
 # ---------------------------------------------------------------- #

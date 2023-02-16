@@ -3,7 +3,7 @@ import os, h5py, json
 # ---------------------------------------------------------------- #
 class Brw_Experiment_Settings:
     """
-    TODO: description
+    Brw_Experiment_Settings class to read and store .brw recordings experimental settings
     """
     def __init__(self, file_path):
         self.data = h5py.File(file_path,'r')

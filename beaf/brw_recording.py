@@ -11,7 +11,7 @@ from .brw_experiment_settings import *
 # ---------------------------------------------------------------- #
 class Brw_Recording:
     """
-    TODO: description
+    Brw_Recording class to read, store and visualise .brw recordings datas
     """
     def __init__(self, brw_path):
         self.path = brw_path
@@ -842,6 +842,9 @@ class Brw_Recording:
     # -------- utils -------- #
 
     def get_frame_start_end(self, t_start, t_end, ch_list="all"):
+        """
+        get the first and last frame position number of a recording corresponding to the specified t_start and t_end
+        """
         frame_start = 0
         frame_end = 0
         if self.Info.recording_type == "RawDataSettings":
@@ -860,17 +863,24 @@ class Brw_Recording:
                 frame_end = t_end * self.Info.get_sampling_rate() - rec_frame_start
 
         elif self.Info.recording_type == "NoiseBlankingCompressionSettings":
+            # set frame_start
             frame_start = t_start * self.Info.get_sampling_rate()
+
             if t_end == "all":
+                # it t_end is all the recording, set frame_end to last frame of the recording
+                frame_end = t_end * self.Info.get_sampling_rate()
+
+            # if t_end is not the end of the recording, have to find the last event before t_end
+            else:
                 if ch_list == "all":
                     ch_list = [i for i in range(4096)]
+                # will store the frame time of the last event before t_end
                 t_last_event = 0
                 for idx in range(len(self.recording)):
                     if len(self.recording[idx][2]) != 0 and t_last_event < self.recording[idx][2][len(self.recording[idx][2])-1][1] and self.recording[idx][0] in ch_list:
                         t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
                 frame_end = t_last_event
-            else:
-                frame_end = t_end * self.Info.get_sampling_rate()
+
         return int(frame_start), int(frame_end)
 
 # ---------------------------------------------------------------- #
