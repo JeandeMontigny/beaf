@@ -1,0 +1,3135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>beaf.brw_recording API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>beaf.brw_recording</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import os, sys, h5py, pickle
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
+from multiprocessing import Pool
+
+from .utils import *
+from .brw_experiment_settings import *
+
+# TODO: pritave/protected class members? (__name; _name respectively)
+# ---------------------------------------------------------------- #
+class Brw_Recording:
+    &#34;&#34;&#34;
+    Brw_Recording class to read, store and visualise .brw recordings datas
+    &#34;&#34;&#34;
+    def __init__(self, brw_path):
+        self.path = brw_path
+        # dataset. is emptied at the end of data extraction
+        self.data = []
+        # Brw_Experiment_Settings object, recording info from json
+        self.Info = []
+        # recording from selected channels, for selected time windows
+        # [[ch nb, [rec], [frame start, frame end] ], [...]]
+        self.recording = []
+
+        # WIP: list of ch to extract. only potentially used for multiprocessing
+        self.ch_to_extract = []
+        # WIP: the current data chunk. only potentially used for multiprocessing
+        self.data_chunk = []
+        # WIP: digital to analog invariant value. only potentially used for multiprocessing
+        self.converter_invariant = 0
+        # WIP: the size, if frame, of each data chunk. only potentially used for multiprocessing
+        self.frame_chunk = 0
+        # WIP: the current chunk number. only potentially used for multiprocessing
+        self.chunk_nb = 0
+
+
+    # -------- getters -------- #
+
+    def get_path(self):
+        &#34;&#34;&#34;
+        Return the path of the rdw file.
+        &#34;&#34;&#34;
+        return self.path
+
+    def get_Info(self):
+        &#34;&#34;&#34;
+        Return the Info object attached to this Brw_Recording. See Brw_Experiment_Settings for more information.
+        &#34;&#34;&#34;
+        return self.Info
+
+    def get_recording(self):
+        &#34;&#34;&#34;
+        Return the lists of recordings.
+        &#34;&#34;&#34;
+        return self.recording
+
+
+    # -------- read -------- #
+
+    # TODO: try using a simple return, containing all frame for this channel
+    def get_ch_rec(self, ch) :
+        ch_id = self.ch_to_extract.index(ch)
+
+        for frame_nb in range(int(len(self.data_chunk)/self.Info.get_nb_channel())):
+            frame_start_id = frame_nb * self.Info.get_nb_channel()
+            self.recording[ch_id][1][frame_nb+(self.chunk_nb*self.frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, self.data_chunk[frame_start_id + ch - 1], self.converter_invariant)
+
+
+    # TODO: not working. modifying an object passed as argument duplicate that object.
+    #       modifications are then done only to that copied object, and not on the original one.
+    #       try using shared memory
+    def read_raw_data_multiproc(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        self.ch_to_extract = ch_to_extract
+        self.frame_chunk = frame_chunk
+
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+
+        self.converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+        first_frame = frame_start * self.Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.Info.get_nb_channel()
+
+            self.data = h5py.File(self.path,&#39;r&#39;)
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+self.Info.get_nb_channel()]
+            self.chunk_nb = chunk
+            # TODO: object is duplicated when run with t.map
+            #       thus, memory size is thread_nb times greater
+            self.data_chunk = data_chunk
+
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            first_frame += id_frame_chunk + self.Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # python does not take advantage of multi threading, so better to use cpu_count (i.e. nb of thread) / 2
+            thread_nb = int(os.cpu_count()/2)
+            t = Pool(thread_nb)
+            t.map(self.get_ch_rec, ch_to_extract)
+            t.close()
+            self.data_chunk = []
+
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print(&#34;\ndone&#34;)
+
+
+    def read_raw_data_dll(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path):
+        import clr
+        # add reference to IO.dll and Common.dll
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.IO.dll&#34;))
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.Common.dll&#34;))
+
+        # import C variable types and 3Brain methods
+        from System import Int32, Double, Boolean
+        from _3Brain.BrainWave.IO import BrwFile
+        from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+        from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+        consumer = object()
+
+        # open hdf5 file using dll method
+        data = BrwFile.Open(self.path)
+        # get this hdf5 recording info using dll method
+        info = data.get_MeaExperimentInfo()
+
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        # will contain the data of the currend chunk, read using dll ReadRawData method
+        data_chunk = []
+        # for each chunk needed to read the recording from t_start to t_end
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+            # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the brw file
+            if chunk == nb_frame_chunk-1:
+                last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+                # read this chunk
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+            # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+            # second index is the channel, third index the time frame
+            else:
+                # read this chunk
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+            # for each channel to extract
+            for ch_id in range(len(ch_to_extract)):
+                # convert to voltage
+                ch_data = np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float)
+                # add this chunk data at the end of this ch data array
+                self.recording[ch_id][1] = np.concatenate([self.recording[ch_id][1], ch_data])
+
+        # Close Files
+        data.Close()
+
+        # for each extracted channel, add the recording snippet frame_start and frame_end to their corresponding self.recording
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print(&#34;\ndone&#34;)
+
+
+    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        # create 0 lists of desired recording length to avoid memory reallocation
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+        # calculate the invariant term for digital to analog conversion
+        converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+        # used to get the proper point value for each channel from the data_chunk
+        rec_ch_idx = {}
+        for id in range(self.Info.get_nb_channel()):
+            rec_ch_idx[self.Info.get_channel_idx()[id]] = id
+
+        # first frame position of the first chunk
+        first_frame = frame_start * self.Info.get_nb_channel()
+        # last frame position of the first chunk
+        last_frame = first_frame + id_frame_chunk
+
+        # for each chunk needed to read the recording from t_start to t_end
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+            # if this is the last chunk of data, need to update last_frame to be the index of last needed frame (avoid out of bound)
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.Info.get_nb_channel()
+
+            # open hdf5 file
+            self.data = h5py.File(self.path,&#39;r&#39;)
+            # read data from first_frame to last_frame of this data chunk
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+self.Info.get_nb_channel()]
+            # close the hdf5 file
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            # update first_frame and last_frame position for next data chunk
+            first_frame += id_frame_chunk + self.Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # for each frame in this data chunk
+            for frame_nb in range(int(len(data_chunk)/self.Info.get_nb_channel())):
+                # get the position of the current frame
+                frame_start_id = frame_nb * self.Info.get_nb_channel()
+
+                # for each channel to extract
+                for ch_id in range(len(ch_to_extract)):
+                    # get the channel number
+                    ch = ch_to_extract[ch_id]
+                    # convert digital value to analog and add this frame for this channel to corresponding self.recording list
+                    self.recording[ch_id][1][frame_nb+(chunk*frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, data_chunk[frame_start_id + rec_ch_idx.get(ch) - 1], converter_invariant)
+
+        # for each extracted channel, add the recording snippet frame_start and frame_end to their corresponding self.recording
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print(&#34;\ndone&#34;)
+
+
+    def read_raw_compressed_data(self, t_start, t_end, ch_to_extract, frame_chunk):
+        self.data = h5py.File(self.path,&#39;r&#39;)
+        # data chunk [start-end[ in number of frame
+        toc = self.data.get(&#34;TOC&#34;)
+        # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+        event_sparse_raw_toc = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRawTOC&#34;)
+
+        # EventsBasedSparseRaw dataset is stored in byte (8 bit). Values have different format:
+        #     &#39;ChId&#39; and  &#39;Size&#39; are int (32 bit) values: encoded on bytes of EventsBasedSparseRaw
+        #     &#39;range begin&#39; and &#39;range end&#39; are long (64 bit): encoded on 8 bytes of EventsBasedSparseRaw
+        #     &#39;sample&#39; values are short (16 bit); encoded on 2 bytes of EventsBasedSparseRaw
+        #
+        #             Data chunk n                        Data chunk n+1
+        # ¦                                ¦                                  ¦
+        # ChData 1, ChData 2, ..., ChData n; ChData 1, ChData 2, ..., ChData n;
+        #     _____¦        ¦___________________________
+        #     ChID, size, range 1, range 2, ..., range n
+        #     ___________¦       ¦_______________________________________
+        #     range beging, range end, sample 1, sample 2, ...., sample n
+
+        # size: number of bytes composing the ranges of this ChData (so ChData size without ChID + size)
+        # range begin: frame number relative to the begininng of the rec of sample 1
+        # range end: frame number +1 relative to the begininng of the rec of next last sample of this range data
+        #   i.e. range end - range begin = nb of sample for this range
+
+        # get frame_start and frame_end corresponding to t_start t_end
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end)
+        # calculate the invariant term for digital to analog conversion
+        converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+        # get the first and last chunk of data to read to get the recording from t_start to t_end
+        chunk_nb_start = 0; chunk_nb_end = 0
+        for chunk_nb in range(len(toc)):
+            if toc[chunk_nb][0] &lt;= frame_start:
+                chunk_nb_start = chunk_nb
+            if toc[chunk_nb][1] &gt;= frame_end:
+                chunk_nb_end = chunk_nb +1
+                break
+        print(chunk_nb_end - chunk_nb_start, &#34;data chunks to read&#34;)
+
+        # for each chunk between the first and last chunk
+        for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            # # open hdf5 file
+            self.data = h5py.File(self.path,&#39;r&#39;)
+            # get the start id of this chunk
+            chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+            # get the end id of this chunk
+            if data_chunk_nb &lt; len(event_sparse_raw_toc)-1:
+                chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+            else:
+                # if this is the last chunk of the brw file
+                chunk_end_id = len(self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;))
+
+            # read data from chunk_start_id to chunk_end_id of this data chunk
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;)[chunk_start_id:chunk_end_id]
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            # index to parse the data
+            i = 0
+            # for each ChData to read
+            while i &lt; len(data_chunk):
+                # get the channel number from bytes to int
+                ch_nb = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder=&#39;little&#39;)
+                # get the size of this ChData from bytes to int
+                size = int.from_bytes([data_chunk[i+4], data_chunk[i+5], data_chunk[i+6], data_chunk[i+7]], byteorder=&#39;little&#39;)
+                # update i to be the index of first range
+                i += 8
+
+                # if need to extract this channel (ch_nb)
+                if len(ch_to_extract) == 4096 or (ch_nb in ch_to_extract):
+                    ch_id = 0
+                    # get the id of this channel
+                    for ch in range(len(ch_to_extract)):
+                        if self.recording[ch][0] == ch_nb:
+                            ch_id = ch
+
+                    j = 0
+                    # for each range in this ChData
+                    while j &lt; size:
+                        # get the range begin for this range from bytes
+                        range_begin = int.from_bytes([data_chunk[i+j+k] for k in range(8)], byteorder=&#39;little&#39;)
+                        # get the range end for this range from bytes
+                        range_end = int.from_bytes([data_chunk[i+j+k+8] for k in range(8)], byteorder=&#39;little&#39;)
+                        # if is not within desired time windows to extrat, break
+                        if range_begin &lt; frame_start or range_begin &gt; frame_end:
+                            break
+
+                        # get each frame in this range
+                        for k in range(range_end - range_begin):
+                            # get frame for bytes
+                            sample = int.from_bytes([data_chunk[i+16+k*2], data_chunk[i+17+k*2]], byteorder=&#39;little&#39;)
+                            # convert digital value to analog and add this frame corresponding self.recording list channel
+                            self.recording[ch_id][1].append(convert_digital_to_analog(self.Info.min_analog_value, sample, converter_invariant))
+                        # add the recording snippet frame start and frame end to their corresponding self.recording
+                        self.recording[ch_id][2].append([range_begin, range_end])
+                        # update the index j to be the next range of this ChData
+                        j += 16 + (range_end - range_begin)*2
+
+                # update i to be the index of next ChData
+                i += size
+
+
+    def read(self, t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll, dll_path):
+        # get Brw_Experiment_Settings info for this brw file
+        self.Info = get_brw_experiment_setting(self.path)
+
+        # if all channels are to be extracted
+        if len(ch_to_extract) == 0 or ch_to_extract == &#34;all&#34;:
+            ch_to_extract = []
+            for ch in self.Info.get_channel_idx():
+                # add this channel to the list of channels to extract
+                ch_to_extract.append(ch)
+                # initialise self.recording for this channel
+                self.recording.append([ch, [], []])
+        # if only want to extract channels specified is ch_to_extract
+        else:
+            for ch in ch_to_extract:
+                if ch in self.Info.get_channel_idx():
+                    # initialise self.recording for this channel
+                    self.recording.append([ch, [], []])
+                else:
+                    print(&#34;Channel&#34;, ch, &#34;is not in the recording.&#34;)
+
+        # t_end is &#34;all&#34;, set t_end to recording length
+        if t_end == &#34;all&#34;: t_end = self.Info.get_recording_length_sec()
+        # if the specified frame_chunk is larger than the number of frame in the interval to extract
+        if frame_chunk &gt; (t_end - t_start) * self.Info.get_sampling_rate():
+            # set frame_chunk to the number of frame in the interval to extract
+            frame_chunk = int((t_end - t_start) * self.Info.get_sampling_rate())
+
+        # check recording type and use the relevant method to read data
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            if use_dll:
+                self.read_raw_data_dll(t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path)
+            else:
+                if multiproc:
+                    self.read_raw_data_multiproc(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+                else:
+                    self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+
+        elif self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
+
+
+
+    def save_recording(self, file_path):
+        &#34;&#34;&#34;
+        Save the Brw_Recording object as a pickle file
+        &#34;&#34;&#34;
+        with open(file_path, &#34;wb&#34;) as file_handler:
+            pickle.dump(self, file_handler)
+
+
+    def merge_recordings(self, Rec_b):
+        &#34;&#34;&#34;
+        merge two Brw_Recording object if they are of the same sampling frequency and have the same number of channels
+        &#34;&#34;&#34;
+        if self.Info.get_sampling_rate() != Rec_b.Info.get_sampling_rate():
+            print(&#34;Recordings to merge must have the same sampling rate, but have&#34;, self.Info.get_sampling_rate(), &#34;and&#34;, Rec_b.Info.get_sampling_rate(), &#34;respectively.&#34;)
+            return
+
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            if len(self.recording) != len(Rec_b.recording):
+                print(&#34;Recordings to merge must have the same number of channels, but have&#34;, len(self.recording[1]), &#34;and&#34;, len(Rec_b.recording[1]), &#34;respectively.&#34;)
+                return
+
+            for ch_id in range(len(self.recording)):
+                self.recording[ch_id][1] = np.concatenate((self.recording[ch_id][1], Rec_b.recording[ch_id][1]))
+                self.recording[ch_id][2] = [[self.recording[ch_id][2][0][0], Rec_b.recording[ch_id][2][0][1]]]
+
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # TODO
+            print(&#34;not implemented yet for NoiseBlankingCompression format.&#34;)
+            return
+
+
+    # -------- visualisation -------- #
+
+    def plot_raw(self, ch_to_display, t_start=0, t_end=&#34;all&#34;, y_min=None, y_max=None, visualisation=&#34;aligned&#34;, artificial_noise=False, n_std=15, seed=0):
+        &#34;&#34;&#34;
+        Plot the raw signal (time series) for the specified channels and time interval.
+
+        Parameters
+        ----------
+        ch_to_display: list
+            channels to extract
+        t_start: float
+            first time point, in seconds
+        t_end: float
+            last time point, in seconds
+        y_min: None or float
+            when specified, set the minimum value for the y axis
+        y_max: None or float
+            when specified, set the maximum value for the y axis
+        visualisation: string
+            Specify the dispay mode for raw compressed format. default value is &#34;aligned&#34;. Can be &#34;aligned&#34;, &#34;reconstructed&#34;, &#34;continuous&#34; or &#34;superimposed&#34;
+        artificial_noise: Bool
+            Specific to raw compressed format. If True, add artificial noise to the recording
+        n_std: float
+            Specific to raw compressed format. If artificial_noise is True, set the standard deviation of the artificial noise
+        seed: int
+            Specific to raw compressed format. If artificial_noise is True, set the random generator seed to create artificial noise
+        &#34;&#34;&#34;
+        # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            self.plot_raw_format(ch_to_display, t_start, t_end, y_min, y_max)
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            self.plot_raw_compressed(ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed)
+
+
+    def plot_raw_format(self, ch_to_display, t_start, t_end, y_min, y_max):
+    # TODO: plot in lines or in MEA shape
+        ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+        plt.rcdefaults()
+
+        rec_frame_start = self.recording[0][2][0][0]
+        rec_frame_end = self.recording[0][2][0][1]
+        frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_display)
+
+        fig = plt.figure()
+
+        fig_nb = 1
+        for ch in ch_to_display:
+            ch_id = 0
+            for idx in range(len(self.recording)):
+                if self.recording[idx][0] == ch:
+                    ch_id = idx
+                    break
+
+            ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+            plt.plot([x/self.Info.get_sampling_rate() for x in range(int(frame_start+rec_frame_start), int(frame_end+rec_frame_start))], self.recording[ch_id][1][int(frame_start):int(frame_end)], c=&#39;black&#39;)
+
+            if y_min or y_max:
+                plt.ylim(y_min, y_max)
+            plt.xlabel(&#34;sec&#34;)
+            plt.ylabel(&#34;µV&#34;)
+            plt.title(self.recording[ch_id][0])
+            ax.spines[&#39;top&#39;].set_visible(False)
+            ax.spines[&#39;right&#39;].set_visible(False)
+            plt.tight_layout()
+            fig_nb += 1
+
+        plt.show()
+        plt.close()
+
+
+    def plot_raw_compressed(self, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed):
+        # TODO: plot in lines or in MEA shape
+        ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+        plt.rcdefaults()
+
+        t_last_event = 0
+        if t_end == &#34;all&#34;:
+            # get the latest event from all channels to display
+            for ch in ch_to_display:
+                for idx in range(self.Info.get_nb_channel()):
+                    if self.recording[idx][0] == ch:
+                        if self.recording[idx][1] and t_last_event &lt; self.recording[idx][2][len(self.recording[idx][2])-1][1]:
+                            t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                        break
+            t_end = (t_last_event + 0.1 * self.Info.get_sampling_rate() ) / self.Info.get_sampling_rate()
+
+        fig = plt.figure()
+
+        fig_nb = 1
+        for ch_nb in ch_to_display:
+            ch_id = 0
+            for idx in range(len(self.recording)):
+                if self.recording[idx][0] == ch_nb:
+                    ch_id = idx
+                    break
+            # create new subplot
+            ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+
+            if visualisation == &#34;aligned&#34;:
+                self.plot_raw_compressed_a(t_start, t_end, ch_nb)
+            if visualisation == &#34;reconstructed&#34;:
+                self.plot_raw_compressed_r(t_start, t_end, ch_nb, artificial_noise, n_std, seed)
+            if visualisation == &#34;continuous&#34; or visualisation == &#34;superimposed&#34;:
+                self.plot_raw_compressed_c_s(visualisation, t_start, t_end, ch_id)
+
+            if y_min or y_max:
+                plt.ylim(y_min, y_max)
+            plt.title(self.recording[ch_id][0])
+            ax.spines[&#39;top&#39;].set_visible(False)
+            ax.spines[&#39;right&#39;].set_visible(False)
+            plt.tight_layout()
+            fig_nb += 1
+
+        plt.show()
+        plt.close()
+
+
+    def plot_raw_compressed_a(self, t_start, t_end, ch_nb, plot_zeros=False, artificial_noise=False, n_std=15, seed=0):
+        ch_id = 0
+        for idx in range(len(self.recording)):
+            if self.recording[idx][0] == ch_nb:
+                ch_id = idx
+                break
+
+        frame_end = int(t_start*self.Info.get_sampling_rate())
+        snip_stop = 0
+        for snip_id in range(len(self.recording[ch_id][2])):
+            frame_start = self.recording[ch_id][2][snip_id][0]
+            snip_start = snip_stop
+            snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+
+            if self.recording[ch_id][2][snip_id][1] &lt; t_end * self.Info.get_sampling_rate() and frame_start &gt; t_start * self.Info.get_sampling_rate():
+                if artificial_noise:
+                    # add artificial noise before this snippet
+                    plt.plot([x/self.Info.get_sampling_rate() for x in range(frame_end, frame_start)], [np.random.normal(0, n_std) for y in range(frame_start - frame_end)], c=&#39;black&#39;)
+                if plot_zeros:
+                    # add horizontal line at y=0 before this snippet
+                    plt.hlines(y=0, xmin=frame_end/self.Info.get_sampling_rate(), xmax=frame_start/self.Info.get_sampling_rate(), color=&#39;black&#39;)
+                # plot snippet
+                plt.plot([x/self.Info.get_sampling_rate() for x in range(self.recording[ch_id][2][snip_id][0], self.recording[ch_id][2][snip_id][1])], self.recording[ch_id][1][snip_start:snip_stop], c=&#39;black&#39;)
+                frame_end = self.recording[ch_id][2][snip_id][1]
+
+        if artificial_noise:
+            # add artificial noise from last snippet to t_end
+            plt.plot([x/self.Info.get_sampling_rate() for x in range(frame_end, int(t_end*self.Info.get_sampling_rate()))], [np.random.normal(0, n_std) for y in range(frame_end, int(t_end*self.Info.get_sampling_rate()))], c=&#39;black&#39;)
+        if plot_zeros:
+            # add 0 data from last snippet to t_end
+            plt.hlines(y=0, xmin=frame_end/self.Info.get_sampling_rate(), xmax=t_end, color=&#39;black&#39;)
+
+        plt.xlim(t_start, t_end)
+        plt.xlabel(&#34;sec&#34;)
+        plt.ylabel(&#34;µV&#34;)
+
+
+    def plot_raw_compressed_r(self, t_start, t_end, ch_nb, artificial_noise, n_std, seed):
+        # plot raw_compressed data in sec with 0 or artificial noise between snippets
+        if artificial_noise:
+            self.plot_raw_compressed_a(t_start, t_end, ch_nb, False, artificial_noise, n_std, seed)
+        else:
+            self.plot_raw_compressed_a(t_start, t_end, ch_nb, plot_zeros=True)
+
+
+    def plot_raw_compressed_c_s(self, visualisation, t_start, t_end, ch_id):
+        snip_stop = 0
+        temps=[]
+        for snip_id in range(len(self.recording[ch_id][2])):
+            if visualisation == &#34;superimposed&#34;:
+                snip_start = snip_stop
+                snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+            if self.recording[ch_id][2][snip_id][1] &lt; t_end * self.Info.get_sampling_rate() and self.recording[ch_id][2][snip_id][0] &gt; t_start * self.Info.get_sampling_rate():
+                if visualisation == &#34;superimposed&#34;:
+                    # plot superimposed snippets
+                    plt.plot(self.recording[ch_id][1][snip_start:snip_stop], label=&#34;spike &#34;+ str(snip_id), c=&#39;black&#39;)
+                else:
+                    snip_start = snip_stop
+                    snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+                    temps += self.recording[ch_id][1][snip_start:snip_stop]
+                    # # plot line between snippets for continuous visu
+                    plt.axvline(snip_stop, c=&#39;grey&#39;)
+
+        if visualisation == &#34;continuous&#34;:
+            plt.plot(temps, c=&#39;black&#39;)
+
+        plt.xlabel(&#34;frame&#34;)
+        plt.ylabel(&#34;µV&#34;)
+
+
+    def plot_mea(self, ch_to_display=&#34;all&#34;, label=[], background=False, flip=False):
+        &#34;&#34;&#34;
+        Plot the position of specified electrodes on a representation of the MEA.
+
+        Parameters
+        ----------
+        ch_to_display: list of int, or &#34;all&#34;
+            list of electrode to display
+        label: list of int
+            if the list is not empty, will display the electrode number in red, above the specified electrode
+        background: Bool
+            if True, plot all electrodes in gray as a background
+        flip: Bool
+            if True, flip the array to match the way it is displayed on the BrainWave software (electrode 0,0 top lef)
+        &#34;&#34;&#34;
+        ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+        plt.rcdefaults()
+        # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+
+        # if background is True, plot all electrodes in gray
+        if background:
+            x_coords = []
+            y_coords = []
+            for i in range(64):
+                for j in range(64):
+                    x_coords.append(i*60)
+                    y_coords.append(j*60)
+            plt.scatter(x_coords, y_coords, marker=&#34;s&#34;, s=1, c=&#34;silver&#34;)
+
+        if len(ch_to_display) == 0:
+            print(&#34;No channel to display.&#34;)
+            return
+
+        for ch_id in range(len(self.recording)):
+            ch_nb = self.recording[ch_id][0]
+            if ch_to_display==&#34;all&#34; or ch_nb in ch_to_display:
+                ch_coord = get_ch_coord(ch_nb)
+                if flip:
+                    # flip map to match BrainWave visualisation (0,0 top left)
+                    plt.scatter(ch_coord[1]*60, -ch_coord[0]*60, marker=&#34;s&#34;, s=1, c=&#39;red&#39;)
+                else:
+                    plt.scatter(ch_coord[0]*60, ch_coord[1]*60, marker=&#34;s&#34;, s=1, c=&#39;red&#39;)
+                if ch_nb in label:
+                    plt.text(ch_coord[0]*60, ch_coord[1]*60, ch_nb)
+
+        plt.gca().set_aspect(&#39;equal&#39;)
+        plt.xlim(0, 3839)
+        plt.ylim(0, 3839)
+        plt.xlabel(&#34;x (µm)&#34;)
+        plt.ylabel(&#34;y (µm)&#34;)
+        plt.show()
+        plt.close()
+
+
+    def plot_activity_map(self, label=[], t_start=0, t_end=&#34;all&#34;, method=&#34;std&#34;, threshold=-100, min_range=None, max_range=None, cmap=&#39;viridis&#39;, save_path=False, flip=False):
+        &#34;&#34;&#34;
+        Plot the activity map (heatmap) for the specified time window.
+
+        Parameters
+        ----------
+        label:  list of int
+            list of channel to label on the activity map
+        t_start: float
+            first time point, in seconds
+        t_end: float
+            last time point, in seconds
+        method: string
+            set the method to use for the activity value calculation. can be &#34;min&#34;, &#34;max&#34;, &#34;min-max&#34; or &#34;std&#34;. default value is &#34;std&#34;
+        min_range: None or float
+            set the vmin value of the pyplot scatter plot
+        max_range: None or float
+            set the vmax value of the pyplot scatter plot
+        cmap: string
+            set the cmap colours. Can for instance be viridis, plasma, magma, hot or gray
+        save_path: None or string
+            if not None, set the path and file name to save this activity plot as a png file
+        flip: Bool
+            if True, flip the activity map to match BrainWave visualisation (0,0 top left)
+        &#34;&#34;&#34;
+        # TODO: more methods for activity map
+        plt.rcdefaults()
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = self.get_frame_start_end(t_start, t_end)
+
+        # store x and y coordinates
+        x_list = []
+        y_list = []
+        # store the activity value, used for the colour map
+        intensity_list = []
+        # for each channel in the recording
+        for ch_id in range(len(self.recording)):
+            rec = []
+            if self.Info.recording_type == &#34;RawDataSettings&#34;:
+                rec = self.recording[ch_id][1][int(frame_start):int(frame_end)]
+            if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+                snip_stop = 0
+                for snip_id in range(len(self.recording[ch_id][2])):
+                    if self.recording[ch_id][2][snip_id][1] &gt; frame_end:
+                        break
+                    if self.recording[ch_id][2][snip_id][0] &gt; frame_start:
+                        snip_start = snip_stop
+                        snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+                        rec += self.recording[ch_id][1][snip_start:snip_stop]
+
+            # choose what function to use, depending on selected method. these fonctions are in utils.py
+            val = 0
+            if method == &#34;min&#34; or method == &#34;max&#34; or method == &#34;min-max&#34;:
+                val = ch_rec_min_max(rec, method)
+            if method == &#34;std&#34;:
+                val = ch_rec_std(rec)
+            if method == &#34;spike_number&#34;:
+                val = ch_rec_spikenb(rec, threshold)
+
+            # get ch coord for this channel
+            x, y = get_ch_coord(self.recording[ch_id][0])
+            if flip:
+                # flip map to match BrainWave visualisation (0,0 top left)
+                x_list.append(y)
+                y_list.append(-x)
+            else:
+                x_list.append(x)
+                y_list.append(y)
+            intensity_list.append(val)
+
+        # cmap colours: viridis, plasma, magma, hot, gray
+        plt.scatter(x_list, y_list, c=intensity_list, marker=&#34;s&#34;, cmap=cmap, vmin=min_range, vmax=max_range)
+        plt.colorbar(label=method)
+        # set the plot square
+        plt.gca().set_aspect(&#39;equal&#39;)
+        plt.xlim(0,63)
+        plt.ylim(0,63)
+        if flip:
+            plt.ylim(-63,0)
+
+        # add label for ch in label list
+        for ch in label:
+            if flip:
+                x, y = get_ch_coord(ch)
+                ch_coord = [y, -x]
+            else:
+                ch_coord = get_ch_coord(ch)
+            plt.scatter(ch_coord[0], ch_coord[1], marker=&#39;s&#39;, s=1, c=&#39;red&#39;)
+            plt.text(ch_coord[0], ch_coord[1], ch, c=&#39;red&#39;)
+
+        if save_path:
+            # save plot as a png file
+            plt.savefig(save_path + &#34;.png&#34;)
+
+        plt.show()
+        plt.close()
+
+
+    # -------- processing -------- #
+
+    def low_pass_filter(self, ch_to_process, highcut):
+        if ch_to_process == &#34;all&#34;:
+            ch_to_process = [self.recording[ch_id][0] for ch_id in range(len(self.recording))]
+
+        b, a = scipy.signal.butter(order, Wn, btype=&#39;lowpass&#39;)
+
+        for ch_nb in ch_to_process:
+            filtered_data = scipy.signal.filtfilt(b, a, signal)
+
+
+    def high_pass_filter(self, ch_to_process, lowcut):
+        # TODO
+        return
+
+
+    def band_pass_filter():
+        # TODO
+        return
+
+
+    def down_sample(self, freq, ch_to_process, t_start=0, t_end=&#34;all&#34;, overwrite=False):
+        &#34;&#34;&#34;
+        Perform a down sampling on the raw signal for the specified channels and time interval. Can either retun a down sample data, or overwrite the existing data.
+
+        Parameters
+        ----------
+        freq: foat
+            frequency to down sample the recording to
+        ch_to_process: list of int
+            list of channels to process
+        t_start: float
+            first time point, in seconds
+        t_end: float
+            last time point, in seconds
+        overwrite: Bool
+            if set to True, will overwrite the data of the Brw_Recording object that called this method
+        &#34;&#34;&#34;
+        if freq &gt; self.Info.get_sampling_rate():
+            print(&#34;required resampling rate is higher than the initial sampling rate&#34;)
+        if ch_to_process == &#34;all&#34;:
+            ch_to_process = [self.recording[ch_id][0] for ch_id in range(len(self.recording))]
+
+        frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_process)
+        # number of sample to get from the initial data
+        samps = int(np.ceil((frame_end/self.Info.get_sampling_rate() - frame_start/self.Info.get_sampling_rate()) * freq))
+
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            down_sampled_data = []
+            # for each channel to process
+            for ch_nb in ch_to_process:
+                # get the channel id corresponding to this channel number
+                for ch_id in range(len(self.recording)):
+                    if self.recording[ch_id][0] == ch_nb:
+                        break
+                # re sample this channel
+                down_sampled_ch_data = signal.resample(self.recording[ch_id][1][frame_start:frame_end], samps)
+
+                if overwrite:
+                    # overwrite this channel data with new sampling data
+                    self.recording[ch_id][1] = down_sampled_ch_data
+                    # update the recording snippet frame_start and frame_end accordingly to new sampling rate
+                    for rec_segment in range(len(self.recording[ch_id][2])):
+                        self.recording[ch_id][2][rec_segment][0] = np.ceil(self.recording[ch_id][2][rec_segment][0] / (self.Info.get_sampling_rate()/ freq))
+                        self.recording[ch_id][2][rec_segment][1] = np.floor(self.recording[ch_id][2][rec_segment][1] / (self.Info.get_sampling_rate()/ freq))
+                    # update Info.sampling_rate
+                    self.Info.sampling_rate = freq
+                # if no overwrite
+                else:
+                    # add channel data to down_sampled_data list
+                    down_sampled_data.append([ch_nb, down_sampled_ch_data, [int(np.floor(frame_start/self.Info.get_sampling_rate() * freq)), int(np.floor(frame_end/self.Info.get_sampling_rate() * freq))]])
+
+            return down_sampled_data
+
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # TODO
+            print(&#34;not implemented yet for NoiseBlankingCompression format.&#34;)
+            return
+
+
+    # -------- utils -------- #
+
+    def get_frame_start_end(self, t_start, t_end, ch_list=&#34;all&#34;):
+        &#34;&#34;&#34;
+        get the first and last frame position number of a recording corresponding to the specified t_start and t_end
+        &#34;&#34;&#34;
+        frame_start = 0
+        frame_end = 0
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            rec_frame_start = self.recording[0][2][0][0]
+            rec_frame_end = self.recording[0][2][0][1]
+
+            frame_start = t_start * self.Info.get_sampling_rate() - rec_frame_start
+            if t_start * self.Info.get_sampling_rate() &lt; rec_frame_start:
+                frame_start = 0
+            if frame_start &gt; len(self.recording[0][1]):
+                raise SystemExit(&#34;Requested start time of recording to display is higher than the recording length&#34;)
+
+            if t_end == &#34;all&#34; or t_end * self.Info.get_sampling_rate() &gt; rec_frame_end:
+                frame_end = rec_frame_end - rec_frame_start
+            else:
+                frame_end = t_end * self.Info.get_sampling_rate() - rec_frame_start
+
+        elif self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # set frame_start
+            frame_start = t_start * self.Info.get_sampling_rate()
+
+            if t_end == &#34;all&#34;:
+                # it t_end is all the recording, set frame_end to last frame of the recording
+                frame_end = self.Info.get_recording_length()
+
+            # if t_end is not the end of the recording, have to find the last event before t_end
+            else:
+                if ch_list == &#34;all&#34;:
+                    ch_list = [i for i in range(4096)]
+                # will store the frame time of the last event before t_end
+                t_last_event = 0
+                for idx in range(len(self.recording)):
+                    if len(self.recording[idx][2]) != 0 and t_last_event &lt; self.recording[idx][2][len(self.recording[idx][2])-1][1] and self.recording[idx][0] in ch_list:
+                        t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                frame_end = t_last_event
+
+        return int(frame_start), int(frame_end)
+
+# ---------------------------------------------------------------- #
+def read_brw_recording(file_path, t_start=0, t_end=60, ch_to_extract=[], frame_chunk=100000,
+                       multiproc=False, verbose=False, use_dll=False, dll_path=&#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;):
+    &#34;&#34;&#34;
+    Extract data from a brw file and return a Brw_Recording object.
+
+    Parameters
+    ----------
+    file_path: String
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    ch_to_extract: list of int
+        channels to extract
+    frame_chunk: int
+        set the chunk size of data to read at a time. Large frame_chunk require more memory.
+    multiproc: Bool
+        WIP, not implemented yet. it set to True, use multiprocessing to read raw data
+    verbose: Bool
+        if set to True, will print more information during read operation
+    use_dll: Bool
+        if set to True, will use 3Brain dll during read operation
+    dll_path: String
+        set the path of 3Brain dll. Default value, is &#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;
+    &#34;&#34;&#34;
+    # check if ch_to_extract is a single int
+    if type(ch_to_extract) == int:
+        # if it is, raise SystemExit
+        raise SystemExit(&#34;Error in \&#39;&#34; + inspect.stack()[1].function + &#34;\&#39; function: ch_to_extract is an integer. Please, enter the channel(s) to extract as a list of integers&#34;)
+
+    Recording = Brw_Recording(file_path)
+    Recording.read(t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll, dll_path)
+
+    return Recording
+
+
+def load_recording(file_path):
+    &#34;&#34;&#34;
+    Load a Brw_Recording object from a pickle file.
+
+    Parameters
+    ----------
+    file_path: string
+        path of the pickle file
+    &#34;&#34;&#34;
+    with open(file_path, &#34;rb&#34;) as file_handler:
+        return pickle.load(file_handler)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="beaf.brw_recording.load_recording"><code class="name flex">
+<span>def <span class="ident">load_recording</span></span>(<span>file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Load a Brw_Recording object from a pickle file.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>string</code></dt>
+<dd>path of the pickle file</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def load_recording(file_path):
+    &#34;&#34;&#34;
+    Load a Brw_Recording object from a pickle file.
+
+    Parameters
+    ----------
+    file_path: string
+        path of the pickle file
+    &#34;&#34;&#34;
+    with open(file_path, &#34;rb&#34;) as file_handler:
+        return pickle.load(file_handler)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.read_brw_recording"><code class="name flex">
+<span>def <span class="ident">read_brw_recording</span></span>(<span>file_path, t_start=0, t_end=60, ch_to_extract=[], frame_chunk=100000, multiproc=False, verbose=False, use_dll=False, dll_path='C:\\Program Files\\3Brain\\BrainWave 5')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract data from a brw file and return a Brw_Recording object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>String</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>t_start</code></strong> :&ensp;<code>float</code></dt>
+<dd>first time point, in seconds</dd>
+<dt><strong><code>t_end</code></strong> :&ensp;<code>float</code></dt>
+<dd>last time point, in seconds</dd>
+<dt><strong><code>ch_to_extract</code></strong> :&ensp;<code>list</code> of <code>int</code></dt>
+<dd>channels to extract</dd>
+<dt><strong><code>frame_chunk</code></strong> :&ensp;<code>int</code></dt>
+<dd>set the chunk size of data to read at a time. Large frame_chunk require more memory.</dd>
+<dt><strong><code>multiproc</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>WIP, not implemented yet. it set to True, use multiprocessing to read raw data</dd>
+<dt><strong><code>verbose</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if set to True, will print more information during read operation</dd>
+<dt><strong><code>use_dll</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if set to True, will use 3Brain dll during read operation</dd>
+<dt><strong><code>dll_path</code></strong> :&ensp;<code>String</code></dt>
+<dd>set the path of 3Brain dll. Default value, is "C:\Program Files\3Brain\BrainWave 5"</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_brw_recording(file_path, t_start=0, t_end=60, ch_to_extract=[], frame_chunk=100000,
+                       multiproc=False, verbose=False, use_dll=False, dll_path=&#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;):
+    &#34;&#34;&#34;
+    Extract data from a brw file and return a Brw_Recording object.
+
+    Parameters
+    ----------
+    file_path: String
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    ch_to_extract: list of int
+        channels to extract
+    frame_chunk: int
+        set the chunk size of data to read at a time. Large frame_chunk require more memory.
+    multiproc: Bool
+        WIP, not implemented yet. it set to True, use multiprocessing to read raw data
+    verbose: Bool
+        if set to True, will print more information during read operation
+    use_dll: Bool
+        if set to True, will use 3Brain dll during read operation
+    dll_path: String
+        set the path of 3Brain dll. Default value, is &#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;
+    &#34;&#34;&#34;
+    # check if ch_to_extract is a single int
+    if type(ch_to_extract) == int:
+        # if it is, raise SystemExit
+        raise SystemExit(&#34;Error in \&#39;&#34; + inspect.stack()[1].function + &#34;\&#39; function: ch_to_extract is an integer. Please, enter the channel(s) to extract as a list of integers&#34;)
+
+    Recording = Brw_Recording(file_path)
+    Recording.read(t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll, dll_path)
+
+    return Recording</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="beaf.brw_recording.Brw_Recording"><code class="flex name class">
+<span>class <span class="ident">Brw_Recording</span></span>
+<span>(</span><span>brw_path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Brw_Recording class to read, store and visualise .brw recordings datas</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Brw_Recording:
+    &#34;&#34;&#34;
+    Brw_Recording class to read, store and visualise .brw recordings datas
+    &#34;&#34;&#34;
+    def __init__(self, brw_path):
+        self.path = brw_path
+        # dataset. is emptied at the end of data extraction
+        self.data = []
+        # Brw_Experiment_Settings object, recording info from json
+        self.Info = []
+        # recording from selected channels, for selected time windows
+        # [[ch nb, [rec], [frame start, frame end] ], [...]]
+        self.recording = []
+
+        # WIP: list of ch to extract. only potentially used for multiprocessing
+        self.ch_to_extract = []
+        # WIP: the current data chunk. only potentially used for multiprocessing
+        self.data_chunk = []
+        # WIP: digital to analog invariant value. only potentially used for multiprocessing
+        self.converter_invariant = 0
+        # WIP: the size, if frame, of each data chunk. only potentially used for multiprocessing
+        self.frame_chunk = 0
+        # WIP: the current chunk number. only potentially used for multiprocessing
+        self.chunk_nb = 0
+
+
+    # -------- getters -------- #
+
+    def get_path(self):
+        &#34;&#34;&#34;
+        Return the path of the rdw file.
+        &#34;&#34;&#34;
+        return self.path
+
+    def get_Info(self):
+        &#34;&#34;&#34;
+        Return the Info object attached to this Brw_Recording. See Brw_Experiment_Settings for more information.
+        &#34;&#34;&#34;
+        return self.Info
+
+    def get_recording(self):
+        &#34;&#34;&#34;
+        Return the lists of recordings.
+        &#34;&#34;&#34;
+        return self.recording
+
+
+    # -------- read -------- #
+
+    # TODO: try using a simple return, containing all frame for this channel
+    def get_ch_rec(self, ch) :
+        ch_id = self.ch_to_extract.index(ch)
+
+        for frame_nb in range(int(len(self.data_chunk)/self.Info.get_nb_channel())):
+            frame_start_id = frame_nb * self.Info.get_nb_channel()
+            self.recording[ch_id][1][frame_nb+(self.chunk_nb*self.frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, self.data_chunk[frame_start_id + ch - 1], self.converter_invariant)
+
+
+    # TODO: not working. modifying an object passed as argument duplicate that object.
+    #       modifications are then done only to that copied object, and not on the original one.
+    #       try using shared memory
+    def read_raw_data_multiproc(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        self.ch_to_extract = ch_to_extract
+        self.frame_chunk = frame_chunk
+
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+
+        self.converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+        first_frame = frame_start * self.Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.Info.get_nb_channel()
+
+            self.data = h5py.File(self.path,&#39;r&#39;)
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+self.Info.get_nb_channel()]
+            self.chunk_nb = chunk
+            # TODO: object is duplicated when run with t.map
+            #       thus, memory size is thread_nb times greater
+            self.data_chunk = data_chunk
+
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            first_frame += id_frame_chunk + self.Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # python does not take advantage of multi threading, so better to use cpu_count (i.e. nb of thread) / 2
+            thread_nb = int(os.cpu_count()/2)
+            t = Pool(thread_nb)
+            t.map(self.get_ch_rec, ch_to_extract)
+            t.close()
+            self.data_chunk = []
+
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print(&#34;\ndone&#34;)
+
+
+    def read_raw_data_dll(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path):
+        import clr
+        # add reference to IO.dll and Common.dll
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.IO.dll&#34;))
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.Common.dll&#34;))
+
+        # import C variable types and 3Brain methods
+        from System import Int32, Double, Boolean
+        from _3Brain.BrainWave.IO import BrwFile
+        from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+        from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+        consumer = object()
+
+        # open hdf5 file using dll method
+        data = BrwFile.Open(self.path)
+        # get this hdf5 recording info using dll method
+        info = data.get_MeaExperimentInfo()
+
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        # will contain the data of the currend chunk, read using dll ReadRawData method
+        data_chunk = []
+        # for each chunk needed to read the recording from t_start to t_end
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+            # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the brw file
+            if chunk == nb_frame_chunk-1:
+                last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+                # read this chunk
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+            # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+            # second index is the channel, third index the time frame
+            else:
+                # read this chunk
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+            # for each channel to extract
+            for ch_id in range(len(ch_to_extract)):
+                # convert to voltage
+                ch_data = np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float)
+                # add this chunk data at the end of this ch data array
+                self.recording[ch_id][1] = np.concatenate([self.recording[ch_id][1], ch_data])
+
+        # Close Files
+        data.Close()
+
+        # for each extracted channel, add the recording snippet frame_start and frame_end to their corresponding self.recording
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print(&#34;\ndone&#34;)
+
+
+    def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+        # create 0 lists of desired recording length to avoid memory reallocation
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+        # calculate the invariant term for digital to analog conversion
+        converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+        # used to get the proper point value for each channel from the data_chunk
+        rec_ch_idx = {}
+        for id in range(self.Info.get_nb_channel()):
+            rec_ch_idx[self.Info.get_channel_idx()[id]] = id
+
+        # first frame position of the first chunk
+        first_frame = frame_start * self.Info.get_nb_channel()
+        # last frame position of the first chunk
+        last_frame = first_frame + id_frame_chunk
+
+        # for each chunk needed to read the recording from t_start to t_end
+        for chunk in range(nb_frame_chunk):
+            if verbose:
+                print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+            # if this is the last chunk of data, need to update last_frame to be the index of last needed frame (avoid out of bound)
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * self.Info.get_nb_channel()
+
+            # open hdf5 file
+            self.data = h5py.File(self.path,&#39;r&#39;)
+            # read data from first_frame to last_frame of this data chunk
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+self.Info.get_nb_channel()]
+            # close the hdf5 file
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            # update first_frame and last_frame position for next data chunk
+            first_frame += id_frame_chunk + self.Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # for each frame in this data chunk
+            for frame_nb in range(int(len(data_chunk)/self.Info.get_nb_channel())):
+                # get the position of the current frame
+                frame_start_id = frame_nb * self.Info.get_nb_channel()
+
+                # for each channel to extract
+                for ch_id in range(len(ch_to_extract)):
+                    # get the channel number
+                    ch = ch_to_extract[ch_id]
+                    # convert digital value to analog and add this frame for this channel to corresponding self.recording list
+                    self.recording[ch_id][1][frame_nb+(chunk*frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, data_chunk[frame_start_id + rec_ch_idx.get(ch) - 1], converter_invariant)
+
+        # for each extracted channel, add the recording snippet frame_start and frame_end to their corresponding self.recording
+        for ch_id in range(len(ch_to_extract)):
+            self.recording[ch_id][2].append([frame_start, frame_end])
+
+        if verbose:
+            print(&#34;\ndone&#34;)
+
+
+    def read_raw_compressed_data(self, t_start, t_end, ch_to_extract, frame_chunk):
+        self.data = h5py.File(self.path,&#39;r&#39;)
+        # data chunk [start-end[ in number of frame
+        toc = self.data.get(&#34;TOC&#34;)
+        # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+        event_sparse_raw_toc = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRawTOC&#34;)
+
+        # EventsBasedSparseRaw dataset is stored in byte (8 bit). Values have different format:
+        #     &#39;ChId&#39; and  &#39;Size&#39; are int (32 bit) values: encoded on bytes of EventsBasedSparseRaw
+        #     &#39;range begin&#39; and &#39;range end&#39; are long (64 bit): encoded on 8 bytes of EventsBasedSparseRaw
+        #     &#39;sample&#39; values are short (16 bit); encoded on 2 bytes of EventsBasedSparseRaw
+        #
+        #             Data chunk n                        Data chunk n+1
+        # ¦                                ¦                                  ¦
+        # ChData 1, ChData 2, ..., ChData n; ChData 1, ChData 2, ..., ChData n;
+        #     _____¦        ¦___________________________
+        #     ChID, size, range 1, range 2, ..., range n
+        #     ___________¦       ¦_______________________________________
+        #     range beging, range end, sample 1, sample 2, ...., sample n
+
+        # size: number of bytes composing the ranges of this ChData (so ChData size without ChID + size)
+        # range begin: frame number relative to the begininng of the rec of sample 1
+        # range end: frame number +1 relative to the begininng of the rec of next last sample of this range data
+        #   i.e. range end - range begin = nb of sample for this range
+
+        # get frame_start and frame_end corresponding to t_start t_end
+        frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end)
+        # calculate the invariant term for digital to analog conversion
+        converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+        # get the first and last chunk of data to read to get the recording from t_start to t_end
+        chunk_nb_start = 0; chunk_nb_end = 0
+        for chunk_nb in range(len(toc)):
+            if toc[chunk_nb][0] &lt;= frame_start:
+                chunk_nb_start = chunk_nb
+            if toc[chunk_nb][1] &gt;= frame_end:
+                chunk_nb_end = chunk_nb +1
+                break
+        print(chunk_nb_end - chunk_nb_start, &#34;data chunks to read&#34;)
+
+        # for each chunk between the first and last chunk
+        for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            # # open hdf5 file
+            self.data = h5py.File(self.path,&#39;r&#39;)
+            # get the start id of this chunk
+            chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+            # get the end id of this chunk
+            if data_chunk_nb &lt; len(event_sparse_raw_toc)-1:
+                chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+            else:
+                # if this is the last chunk of the brw file
+                chunk_end_id = len(self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;))
+
+            # read data from chunk_start_id to chunk_end_id of this data chunk
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;)[chunk_start_id:chunk_end_id]
+            self.data.close()
+            # data has to be cleared as h5py objects cannot be pickled
+            self.data = []
+
+            # index to parse the data
+            i = 0
+            # for each ChData to read
+            while i &lt; len(data_chunk):
+                # get the channel number from bytes to int
+                ch_nb = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder=&#39;little&#39;)
+                # get the size of this ChData from bytes to int
+                size = int.from_bytes([data_chunk[i+4], data_chunk[i+5], data_chunk[i+6], data_chunk[i+7]], byteorder=&#39;little&#39;)
+                # update i to be the index of first range
+                i += 8
+
+                # if need to extract this channel (ch_nb)
+                if len(ch_to_extract) == 4096 or (ch_nb in ch_to_extract):
+                    ch_id = 0
+                    # get the id of this channel
+                    for ch in range(len(ch_to_extract)):
+                        if self.recording[ch][0] == ch_nb:
+                            ch_id = ch
+
+                    j = 0
+                    # for each range in this ChData
+                    while j &lt; size:
+                        # get the range begin for this range from bytes
+                        range_begin = int.from_bytes([data_chunk[i+j+k] for k in range(8)], byteorder=&#39;little&#39;)
+                        # get the range end for this range from bytes
+                        range_end = int.from_bytes([data_chunk[i+j+k+8] for k in range(8)], byteorder=&#39;little&#39;)
+                        # if is not within desired time windows to extrat, break
+                        if range_begin &lt; frame_start or range_begin &gt; frame_end:
+                            break
+
+                        # get each frame in this range
+                        for k in range(range_end - range_begin):
+                            # get frame for bytes
+                            sample = int.from_bytes([data_chunk[i+16+k*2], data_chunk[i+17+k*2]], byteorder=&#39;little&#39;)
+                            # convert digital value to analog and add this frame corresponding self.recording list channel
+                            self.recording[ch_id][1].append(convert_digital_to_analog(self.Info.min_analog_value, sample, converter_invariant))
+                        # add the recording snippet frame start and frame end to their corresponding self.recording
+                        self.recording[ch_id][2].append([range_begin, range_end])
+                        # update the index j to be the next range of this ChData
+                        j += 16 + (range_end - range_begin)*2
+
+                # update i to be the index of next ChData
+                i += size
+
+
+    def read(self, t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll, dll_path):
+        # get Brw_Experiment_Settings info for this brw file
+        self.Info = get_brw_experiment_setting(self.path)
+
+        # if all channels are to be extracted
+        if len(ch_to_extract) == 0 or ch_to_extract == &#34;all&#34;:
+            ch_to_extract = []
+            for ch in self.Info.get_channel_idx():
+                # add this channel to the list of channels to extract
+                ch_to_extract.append(ch)
+                # initialise self.recording for this channel
+                self.recording.append([ch, [], []])
+        # if only want to extract channels specified is ch_to_extract
+        else:
+            for ch in ch_to_extract:
+                if ch in self.Info.get_channel_idx():
+                    # initialise self.recording for this channel
+                    self.recording.append([ch, [], []])
+                else:
+                    print(&#34;Channel&#34;, ch, &#34;is not in the recording.&#34;)
+
+        # t_end is &#34;all&#34;, set t_end to recording length
+        if t_end == &#34;all&#34;: t_end = self.Info.get_recording_length_sec()
+        # if the specified frame_chunk is larger than the number of frame in the interval to extract
+        if frame_chunk &gt; (t_end - t_start) * self.Info.get_sampling_rate():
+            # set frame_chunk to the number of frame in the interval to extract
+            frame_chunk = int((t_end - t_start) * self.Info.get_sampling_rate())
+
+        # check recording type and use the relevant method to read data
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            if use_dll:
+                self.read_raw_data_dll(t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path)
+            else:
+                if multiproc:
+                    self.read_raw_data_multiproc(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+                else:
+                    self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+
+        elif self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)
+
+
+
+    def save_recording(self, file_path):
+        &#34;&#34;&#34;
+        Save the Brw_Recording object as a pickle file
+        &#34;&#34;&#34;
+        with open(file_path, &#34;wb&#34;) as file_handler:
+            pickle.dump(self, file_handler)
+
+
+    def merge_recordings(self, Rec_b):
+        &#34;&#34;&#34;
+        merge two Brw_Recording object if they are of the same sampling frequency and have the same number of channels
+        &#34;&#34;&#34;
+        if self.Info.get_sampling_rate() != Rec_b.Info.get_sampling_rate():
+            print(&#34;Recordings to merge must have the same sampling rate, but have&#34;, self.Info.get_sampling_rate(), &#34;and&#34;, Rec_b.Info.get_sampling_rate(), &#34;respectively.&#34;)
+            return
+
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            if len(self.recording) != len(Rec_b.recording):
+                print(&#34;Recordings to merge must have the same number of channels, but have&#34;, len(self.recording[1]), &#34;and&#34;, len(Rec_b.recording[1]), &#34;respectively.&#34;)
+                return
+
+            for ch_id in range(len(self.recording)):
+                self.recording[ch_id][1] = np.concatenate((self.recording[ch_id][1], Rec_b.recording[ch_id][1]))
+                self.recording[ch_id][2] = [[self.recording[ch_id][2][0][0], Rec_b.recording[ch_id][2][0][1]]]
+
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # TODO
+            print(&#34;not implemented yet for NoiseBlankingCompression format.&#34;)
+            return
+
+
+    # -------- visualisation -------- #
+
+    def plot_raw(self, ch_to_display, t_start=0, t_end=&#34;all&#34;, y_min=None, y_max=None, visualisation=&#34;aligned&#34;, artificial_noise=False, n_std=15, seed=0):
+        &#34;&#34;&#34;
+        Plot the raw signal (time series) for the specified channels and time interval.
+
+        Parameters
+        ----------
+        ch_to_display: list
+            channels to extract
+        t_start: float
+            first time point, in seconds
+        t_end: float
+            last time point, in seconds
+        y_min: None or float
+            when specified, set the minimum value for the y axis
+        y_max: None or float
+            when specified, set the maximum value for the y axis
+        visualisation: string
+            Specify the dispay mode for raw compressed format. default value is &#34;aligned&#34;. Can be &#34;aligned&#34;, &#34;reconstructed&#34;, &#34;continuous&#34; or &#34;superimposed&#34;
+        artificial_noise: Bool
+            Specific to raw compressed format. If True, add artificial noise to the recording
+        n_std: float
+            Specific to raw compressed format. If artificial_noise is True, set the standard deviation of the artificial noise
+        seed: int
+            Specific to raw compressed format. If artificial_noise is True, set the random generator seed to create artificial noise
+        &#34;&#34;&#34;
+        # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            self.plot_raw_format(ch_to_display, t_start, t_end, y_min, y_max)
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            self.plot_raw_compressed(ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed)
+
+
+    def plot_raw_format(self, ch_to_display, t_start, t_end, y_min, y_max):
+    # TODO: plot in lines or in MEA shape
+        ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+        plt.rcdefaults()
+
+        rec_frame_start = self.recording[0][2][0][0]
+        rec_frame_end = self.recording[0][2][0][1]
+        frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_display)
+
+        fig = plt.figure()
+
+        fig_nb = 1
+        for ch in ch_to_display:
+            ch_id = 0
+            for idx in range(len(self.recording)):
+                if self.recording[idx][0] == ch:
+                    ch_id = idx
+                    break
+
+            ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+            plt.plot([x/self.Info.get_sampling_rate() for x in range(int(frame_start+rec_frame_start), int(frame_end+rec_frame_start))], self.recording[ch_id][1][int(frame_start):int(frame_end)], c=&#39;black&#39;)
+
+            if y_min or y_max:
+                plt.ylim(y_min, y_max)
+            plt.xlabel(&#34;sec&#34;)
+            plt.ylabel(&#34;µV&#34;)
+            plt.title(self.recording[ch_id][0])
+            ax.spines[&#39;top&#39;].set_visible(False)
+            ax.spines[&#39;right&#39;].set_visible(False)
+            plt.tight_layout()
+            fig_nb += 1
+
+        plt.show()
+        plt.close()
+
+
+    def plot_raw_compressed(self, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed):
+        # TODO: plot in lines or in MEA shape
+        ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+        plt.rcdefaults()
+
+        t_last_event = 0
+        if t_end == &#34;all&#34;:
+            # get the latest event from all channels to display
+            for ch in ch_to_display:
+                for idx in range(self.Info.get_nb_channel()):
+                    if self.recording[idx][0] == ch:
+                        if self.recording[idx][1] and t_last_event &lt; self.recording[idx][2][len(self.recording[idx][2])-1][1]:
+                            t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                        break
+            t_end = (t_last_event + 0.1 * self.Info.get_sampling_rate() ) / self.Info.get_sampling_rate()
+
+        fig = plt.figure()
+
+        fig_nb = 1
+        for ch_nb in ch_to_display:
+            ch_id = 0
+            for idx in range(len(self.recording)):
+                if self.recording[idx][0] == ch_nb:
+                    ch_id = idx
+                    break
+            # create new subplot
+            ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+
+            if visualisation == &#34;aligned&#34;:
+                self.plot_raw_compressed_a(t_start, t_end, ch_nb)
+            if visualisation == &#34;reconstructed&#34;:
+                self.plot_raw_compressed_r(t_start, t_end, ch_nb, artificial_noise, n_std, seed)
+            if visualisation == &#34;continuous&#34; or visualisation == &#34;superimposed&#34;:
+                self.plot_raw_compressed_c_s(visualisation, t_start, t_end, ch_id)
+
+            if y_min or y_max:
+                plt.ylim(y_min, y_max)
+            plt.title(self.recording[ch_id][0])
+            ax.spines[&#39;top&#39;].set_visible(False)
+            ax.spines[&#39;right&#39;].set_visible(False)
+            plt.tight_layout()
+            fig_nb += 1
+
+        plt.show()
+        plt.close()
+
+
+    def plot_raw_compressed_a(self, t_start, t_end, ch_nb, plot_zeros=False, artificial_noise=False, n_std=15, seed=0):
+        ch_id = 0
+        for idx in range(len(self.recording)):
+            if self.recording[idx][0] == ch_nb:
+                ch_id = idx
+                break
+
+        frame_end = int(t_start*self.Info.get_sampling_rate())
+        snip_stop = 0
+        for snip_id in range(len(self.recording[ch_id][2])):
+            frame_start = self.recording[ch_id][2][snip_id][0]
+            snip_start = snip_stop
+            snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+
+            if self.recording[ch_id][2][snip_id][1] &lt; t_end * self.Info.get_sampling_rate() and frame_start &gt; t_start * self.Info.get_sampling_rate():
+                if artificial_noise:
+                    # add artificial noise before this snippet
+                    plt.plot([x/self.Info.get_sampling_rate() for x in range(frame_end, frame_start)], [np.random.normal(0, n_std) for y in range(frame_start - frame_end)], c=&#39;black&#39;)
+                if plot_zeros:
+                    # add horizontal line at y=0 before this snippet
+                    plt.hlines(y=0, xmin=frame_end/self.Info.get_sampling_rate(), xmax=frame_start/self.Info.get_sampling_rate(), color=&#39;black&#39;)
+                # plot snippet
+                plt.plot([x/self.Info.get_sampling_rate() for x in range(self.recording[ch_id][2][snip_id][0], self.recording[ch_id][2][snip_id][1])], self.recording[ch_id][1][snip_start:snip_stop], c=&#39;black&#39;)
+                frame_end = self.recording[ch_id][2][snip_id][1]
+
+        if artificial_noise:
+            # add artificial noise from last snippet to t_end
+            plt.plot([x/self.Info.get_sampling_rate() for x in range(frame_end, int(t_end*self.Info.get_sampling_rate()))], [np.random.normal(0, n_std) for y in range(frame_end, int(t_end*self.Info.get_sampling_rate()))], c=&#39;black&#39;)
+        if plot_zeros:
+            # add 0 data from last snippet to t_end
+            plt.hlines(y=0, xmin=frame_end/self.Info.get_sampling_rate(), xmax=t_end, color=&#39;black&#39;)
+
+        plt.xlim(t_start, t_end)
+        plt.xlabel(&#34;sec&#34;)
+        plt.ylabel(&#34;µV&#34;)
+
+
+    def plot_raw_compressed_r(self, t_start, t_end, ch_nb, artificial_noise, n_std, seed):
+        # plot raw_compressed data in sec with 0 or artificial noise between snippets
+        if artificial_noise:
+            self.plot_raw_compressed_a(t_start, t_end, ch_nb, False, artificial_noise, n_std, seed)
+        else:
+            self.plot_raw_compressed_a(t_start, t_end, ch_nb, plot_zeros=True)
+
+
+    def plot_raw_compressed_c_s(self, visualisation, t_start, t_end, ch_id):
+        snip_stop = 0
+        temps=[]
+        for snip_id in range(len(self.recording[ch_id][2])):
+            if visualisation == &#34;superimposed&#34;:
+                snip_start = snip_stop
+                snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+            if self.recording[ch_id][2][snip_id][1] &lt; t_end * self.Info.get_sampling_rate() and self.recording[ch_id][2][snip_id][0] &gt; t_start * self.Info.get_sampling_rate():
+                if visualisation == &#34;superimposed&#34;:
+                    # plot superimposed snippets
+                    plt.plot(self.recording[ch_id][1][snip_start:snip_stop], label=&#34;spike &#34;+ str(snip_id), c=&#39;black&#39;)
+                else:
+                    snip_start = snip_stop
+                    snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+                    temps += self.recording[ch_id][1][snip_start:snip_stop]
+                    # # plot line between snippets for continuous visu
+                    plt.axvline(snip_stop, c=&#39;grey&#39;)
+
+        if visualisation == &#34;continuous&#34;:
+            plt.plot(temps, c=&#39;black&#39;)
+
+        plt.xlabel(&#34;frame&#34;)
+        plt.ylabel(&#34;µV&#34;)
+
+
+    def plot_mea(self, ch_to_display=&#34;all&#34;, label=[], background=False, flip=False):
+        &#34;&#34;&#34;
+        Plot the position of specified electrodes on a representation of the MEA.
+
+        Parameters
+        ----------
+        ch_to_display: list of int, or &#34;all&#34;
+            list of electrode to display
+        label: list of int
+            if the list is not empty, will display the electrode number in red, above the specified electrode
+        background: Bool
+            if True, plot all electrodes in gray as a background
+        flip: Bool
+            if True, flip the array to match the way it is displayed on the BrainWave software (electrode 0,0 top lef)
+        &#34;&#34;&#34;
+        ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+        plt.rcdefaults()
+        # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+
+        # if background is True, plot all electrodes in gray
+        if background:
+            x_coords = []
+            y_coords = []
+            for i in range(64):
+                for j in range(64):
+                    x_coords.append(i*60)
+                    y_coords.append(j*60)
+            plt.scatter(x_coords, y_coords, marker=&#34;s&#34;, s=1, c=&#34;silver&#34;)
+
+        if len(ch_to_display) == 0:
+            print(&#34;No channel to display.&#34;)
+            return
+
+        for ch_id in range(len(self.recording)):
+            ch_nb = self.recording[ch_id][0]
+            if ch_to_display==&#34;all&#34; or ch_nb in ch_to_display:
+                ch_coord = get_ch_coord(ch_nb)
+                if flip:
+                    # flip map to match BrainWave visualisation (0,0 top left)
+                    plt.scatter(ch_coord[1]*60, -ch_coord[0]*60, marker=&#34;s&#34;, s=1, c=&#39;red&#39;)
+                else:
+                    plt.scatter(ch_coord[0]*60, ch_coord[1]*60, marker=&#34;s&#34;, s=1, c=&#39;red&#39;)
+                if ch_nb in label:
+                    plt.text(ch_coord[0]*60, ch_coord[1]*60, ch_nb)
+
+        plt.gca().set_aspect(&#39;equal&#39;)
+        plt.xlim(0, 3839)
+        plt.ylim(0, 3839)
+        plt.xlabel(&#34;x (µm)&#34;)
+        plt.ylabel(&#34;y (µm)&#34;)
+        plt.show()
+        plt.close()
+
+
+    def plot_activity_map(self, label=[], t_start=0, t_end=&#34;all&#34;, method=&#34;std&#34;, threshold=-100, min_range=None, max_range=None, cmap=&#39;viridis&#39;, save_path=False, flip=False):
+        &#34;&#34;&#34;
+        Plot the activity map (heatmap) for the specified time window.
+
+        Parameters
+        ----------
+        label:  list of int
+            list of channel to label on the activity map
+        t_start: float
+            first time point, in seconds
+        t_end: float
+            last time point, in seconds
+        method: string
+            set the method to use for the activity value calculation. can be &#34;min&#34;, &#34;max&#34;, &#34;min-max&#34; or &#34;std&#34;. default value is &#34;std&#34;
+        min_range: None or float
+            set the vmin value of the pyplot scatter plot
+        max_range: None or float
+            set the vmax value of the pyplot scatter plot
+        cmap: string
+            set the cmap colours. Can for instance be viridis, plasma, magma, hot or gray
+        save_path: None or string
+            if not None, set the path and file name to save this activity plot as a png file
+        flip: Bool
+            if True, flip the activity map to match BrainWave visualisation (0,0 top left)
+        &#34;&#34;&#34;
+        # TODO: more methods for activity map
+        plt.rcdefaults()
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = self.get_frame_start_end(t_start, t_end)
+
+        # store x and y coordinates
+        x_list = []
+        y_list = []
+        # store the activity value, used for the colour map
+        intensity_list = []
+        # for each channel in the recording
+        for ch_id in range(len(self.recording)):
+            rec = []
+            if self.Info.recording_type == &#34;RawDataSettings&#34;:
+                rec = self.recording[ch_id][1][int(frame_start):int(frame_end)]
+            if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+                snip_stop = 0
+                for snip_id in range(len(self.recording[ch_id][2])):
+                    if self.recording[ch_id][2][snip_id][1] &gt; frame_end:
+                        break
+                    if self.recording[ch_id][2][snip_id][0] &gt; frame_start:
+                        snip_start = snip_stop
+                        snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+                        rec += self.recording[ch_id][1][snip_start:snip_stop]
+
+            # choose what function to use, depending on selected method. these fonctions are in utils.py
+            val = 0
+            if method == &#34;min&#34; or method == &#34;max&#34; or method == &#34;min-max&#34;:
+                val = ch_rec_min_max(rec, method)
+            if method == &#34;std&#34;:
+                val = ch_rec_std(rec)
+            if method == &#34;spike_number&#34;:
+                val = ch_rec_spikenb(rec, threshold)
+
+            # get ch coord for this channel
+            x, y = get_ch_coord(self.recording[ch_id][0])
+            if flip:
+                # flip map to match BrainWave visualisation (0,0 top left)
+                x_list.append(y)
+                y_list.append(-x)
+            else:
+                x_list.append(x)
+                y_list.append(y)
+            intensity_list.append(val)
+
+        # cmap colours: viridis, plasma, magma, hot, gray
+        plt.scatter(x_list, y_list, c=intensity_list, marker=&#34;s&#34;, cmap=cmap, vmin=min_range, vmax=max_range)
+        plt.colorbar(label=method)
+        # set the plot square
+        plt.gca().set_aspect(&#39;equal&#39;)
+        plt.xlim(0,63)
+        plt.ylim(0,63)
+        if flip:
+            plt.ylim(-63,0)
+
+        # add label for ch in label list
+        for ch in label:
+            if flip:
+                x, y = get_ch_coord(ch)
+                ch_coord = [y, -x]
+            else:
+                ch_coord = get_ch_coord(ch)
+            plt.scatter(ch_coord[0], ch_coord[1], marker=&#39;s&#39;, s=1, c=&#39;red&#39;)
+            plt.text(ch_coord[0], ch_coord[1], ch, c=&#39;red&#39;)
+
+        if save_path:
+            # save plot as a png file
+            plt.savefig(save_path + &#34;.png&#34;)
+
+        plt.show()
+        plt.close()
+
+
+    # -------- processing -------- #
+
+    def low_pass_filter(self, ch_to_process, highcut):
+        if ch_to_process == &#34;all&#34;:
+            ch_to_process = [self.recording[ch_id][0] for ch_id in range(len(self.recording))]
+
+        b, a = scipy.signal.butter(order, Wn, btype=&#39;lowpass&#39;)
+
+        for ch_nb in ch_to_process:
+            filtered_data = scipy.signal.filtfilt(b, a, signal)
+
+
+    def high_pass_filter(self, ch_to_process, lowcut):
+        # TODO
+        return
+
+
+    def band_pass_filter():
+        # TODO
+        return
+
+
+    def down_sample(self, freq, ch_to_process, t_start=0, t_end=&#34;all&#34;, overwrite=False):
+        &#34;&#34;&#34;
+        Perform a down sampling on the raw signal for the specified channels and time interval. Can either retun a down sample data, or overwrite the existing data.
+
+        Parameters
+        ----------
+        freq: foat
+            frequency to down sample the recording to
+        ch_to_process: list of int
+            list of channels to process
+        t_start: float
+            first time point, in seconds
+        t_end: float
+            last time point, in seconds
+        overwrite: Bool
+            if set to True, will overwrite the data of the Brw_Recording object that called this method
+        &#34;&#34;&#34;
+        if freq &gt; self.Info.get_sampling_rate():
+            print(&#34;required resampling rate is higher than the initial sampling rate&#34;)
+        if ch_to_process == &#34;all&#34;:
+            ch_to_process = [self.recording[ch_id][0] for ch_id in range(len(self.recording))]
+
+        frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_process)
+        # number of sample to get from the initial data
+        samps = int(np.ceil((frame_end/self.Info.get_sampling_rate() - frame_start/self.Info.get_sampling_rate()) * freq))
+
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            down_sampled_data = []
+            # for each channel to process
+            for ch_nb in ch_to_process:
+                # get the channel id corresponding to this channel number
+                for ch_id in range(len(self.recording)):
+                    if self.recording[ch_id][0] == ch_nb:
+                        break
+                # re sample this channel
+                down_sampled_ch_data = signal.resample(self.recording[ch_id][1][frame_start:frame_end], samps)
+
+                if overwrite:
+                    # overwrite this channel data with new sampling data
+                    self.recording[ch_id][1] = down_sampled_ch_data
+                    # update the recording snippet frame_start and frame_end accordingly to new sampling rate
+                    for rec_segment in range(len(self.recording[ch_id][2])):
+                        self.recording[ch_id][2][rec_segment][0] = np.ceil(self.recording[ch_id][2][rec_segment][0] / (self.Info.get_sampling_rate()/ freq))
+                        self.recording[ch_id][2][rec_segment][1] = np.floor(self.recording[ch_id][2][rec_segment][1] / (self.Info.get_sampling_rate()/ freq))
+                    # update Info.sampling_rate
+                    self.Info.sampling_rate = freq
+                # if no overwrite
+                else:
+                    # add channel data to down_sampled_data list
+                    down_sampled_data.append([ch_nb, down_sampled_ch_data, [int(np.floor(frame_start/self.Info.get_sampling_rate() * freq)), int(np.floor(frame_end/self.Info.get_sampling_rate() * freq))]])
+
+            return down_sampled_data
+
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # TODO
+            print(&#34;not implemented yet for NoiseBlankingCompression format.&#34;)
+            return
+
+
+    # -------- utils -------- #
+
+    def get_frame_start_end(self, t_start, t_end, ch_list=&#34;all&#34;):
+        &#34;&#34;&#34;
+        get the first and last frame position number of a recording corresponding to the specified t_start and t_end
+        &#34;&#34;&#34;
+        frame_start = 0
+        frame_end = 0
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            rec_frame_start = self.recording[0][2][0][0]
+            rec_frame_end = self.recording[0][2][0][1]
+
+            frame_start = t_start * self.Info.get_sampling_rate() - rec_frame_start
+            if t_start * self.Info.get_sampling_rate() &lt; rec_frame_start:
+                frame_start = 0
+            if frame_start &gt; len(self.recording[0][1]):
+                raise SystemExit(&#34;Requested start time of recording to display is higher than the recording length&#34;)
+
+            if t_end == &#34;all&#34; or t_end * self.Info.get_sampling_rate() &gt; rec_frame_end:
+                frame_end = rec_frame_end - rec_frame_start
+            else:
+                frame_end = t_end * self.Info.get_sampling_rate() - rec_frame_start
+
+        elif self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # set frame_start
+            frame_start = t_start * self.Info.get_sampling_rate()
+
+            if t_end == &#34;all&#34;:
+                # it t_end is all the recording, set frame_end to last frame of the recording
+                frame_end = self.Info.get_recording_length()
+
+            # if t_end is not the end of the recording, have to find the last event before t_end
+            else:
+                if ch_list == &#34;all&#34;:
+                    ch_list = [i for i in range(4096)]
+                # will store the frame time of the last event before t_end
+                t_last_event = 0
+                for idx in range(len(self.recording)):
+                    if len(self.recording[idx][2]) != 0 and t_last_event &lt; self.recording[idx][2][len(self.recording[idx][2])-1][1] and self.recording[idx][0] in ch_list:
+                        t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                frame_end = t_last_event
+
+        return int(frame_start), int(frame_end)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="beaf.brw_recording.Brw_Recording.band_pass_filter"><code class="name flex">
+<span>def <span class="ident">band_pass_filter</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def band_pass_filter():
+    # TODO
+    return</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.down_sample"><code class="name flex">
+<span>def <span class="ident">down_sample</span></span>(<span>self, freq, ch_to_process, t_start=0, t_end='all', overwrite=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Perform a down sampling on the raw signal for the specified channels and time interval. Can either retun a down sample data, or overwrite the existing data.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>freq</code></strong> :&ensp;<code>foat</code></dt>
+<dd>frequency to down sample the recording to</dd>
+<dt><strong><code>ch_to_process</code></strong> :&ensp;<code>list</code> of <code>int</code></dt>
+<dd>list of channels to process</dd>
+<dt><strong><code>t_start</code></strong> :&ensp;<code>float</code></dt>
+<dd>first time point, in seconds</dd>
+<dt><strong><code>t_end</code></strong> :&ensp;<code>float</code></dt>
+<dd>last time point, in seconds</dd>
+<dt><strong><code>overwrite</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if set to True, will overwrite the data of the Brw_Recording object that called this method</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def down_sample(self, freq, ch_to_process, t_start=0, t_end=&#34;all&#34;, overwrite=False):
+    &#34;&#34;&#34;
+    Perform a down sampling on the raw signal for the specified channels and time interval. Can either retun a down sample data, or overwrite the existing data.
+
+    Parameters
+    ----------
+    freq: foat
+        frequency to down sample the recording to
+    ch_to_process: list of int
+        list of channels to process
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    overwrite: Bool
+        if set to True, will overwrite the data of the Brw_Recording object that called this method
+    &#34;&#34;&#34;
+    if freq &gt; self.Info.get_sampling_rate():
+        print(&#34;required resampling rate is higher than the initial sampling rate&#34;)
+    if ch_to_process == &#34;all&#34;:
+        ch_to_process = [self.recording[ch_id][0] for ch_id in range(len(self.recording))]
+
+    frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_process)
+    # number of sample to get from the initial data
+    samps = int(np.ceil((frame_end/self.Info.get_sampling_rate() - frame_start/self.Info.get_sampling_rate()) * freq))
+
+    if self.Info.recording_type == &#34;RawDataSettings&#34;:
+        down_sampled_data = []
+        # for each channel to process
+        for ch_nb in ch_to_process:
+            # get the channel id corresponding to this channel number
+            for ch_id in range(len(self.recording)):
+                if self.recording[ch_id][0] == ch_nb:
+                    break
+            # re sample this channel
+            down_sampled_ch_data = signal.resample(self.recording[ch_id][1][frame_start:frame_end], samps)
+
+            if overwrite:
+                # overwrite this channel data with new sampling data
+                self.recording[ch_id][1] = down_sampled_ch_data
+                # update the recording snippet frame_start and frame_end accordingly to new sampling rate
+                for rec_segment in range(len(self.recording[ch_id][2])):
+                    self.recording[ch_id][2][rec_segment][0] = np.ceil(self.recording[ch_id][2][rec_segment][0] / (self.Info.get_sampling_rate()/ freq))
+                    self.recording[ch_id][2][rec_segment][1] = np.floor(self.recording[ch_id][2][rec_segment][1] / (self.Info.get_sampling_rate()/ freq))
+                # update Info.sampling_rate
+                self.Info.sampling_rate = freq
+            # if no overwrite
+            else:
+                # add channel data to down_sampled_data list
+                down_sampled_data.append([ch_nb, down_sampled_ch_data, [int(np.floor(frame_start/self.Info.get_sampling_rate() * freq)), int(np.floor(frame_end/self.Info.get_sampling_rate() * freq))]])
+
+        return down_sampled_data
+
+    if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+        # TODO
+        print(&#34;not implemented yet for NoiseBlankingCompression format.&#34;)
+        return</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.get_Info"><code class="name flex">
+<span>def <span class="ident">get_Info</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the Info object attached to this Brw_Recording. See Brw_Experiment_Settings for more information.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_Info(self):
+    &#34;&#34;&#34;
+    Return the Info object attached to this Brw_Recording. See Brw_Experiment_Settings for more information.
+    &#34;&#34;&#34;
+    return self.Info</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.get_ch_rec"><code class="name flex">
+<span>def <span class="ident">get_ch_rec</span></span>(<span>self, ch)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_ch_rec(self, ch) :
+    ch_id = self.ch_to_extract.index(ch)
+
+    for frame_nb in range(int(len(self.data_chunk)/self.Info.get_nb_channel())):
+        frame_start_id = frame_nb * self.Info.get_nb_channel()
+        self.recording[ch_id][1][frame_nb+(self.chunk_nb*self.frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, self.data_chunk[frame_start_id + ch - 1], self.converter_invariant)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.get_frame_start_end"><code class="name flex">
+<span>def <span class="ident">get_frame_start_end</span></span>(<span>self, t_start, t_end, ch_list='all')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>get the first and last frame position number of a recording corresponding to the specified t_start and t_end</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_frame_start_end(self, t_start, t_end, ch_list=&#34;all&#34;):
+    &#34;&#34;&#34;
+    get the first and last frame position number of a recording corresponding to the specified t_start and t_end
+    &#34;&#34;&#34;
+    frame_start = 0
+    frame_end = 0
+    if self.Info.recording_type == &#34;RawDataSettings&#34;:
+        rec_frame_start = self.recording[0][2][0][0]
+        rec_frame_end = self.recording[0][2][0][1]
+
+        frame_start = t_start * self.Info.get_sampling_rate() - rec_frame_start
+        if t_start * self.Info.get_sampling_rate() &lt; rec_frame_start:
+            frame_start = 0
+        if frame_start &gt; len(self.recording[0][1]):
+            raise SystemExit(&#34;Requested start time of recording to display is higher than the recording length&#34;)
+
+        if t_end == &#34;all&#34; or t_end * self.Info.get_sampling_rate() &gt; rec_frame_end:
+            frame_end = rec_frame_end - rec_frame_start
+        else:
+            frame_end = t_end * self.Info.get_sampling_rate() - rec_frame_start
+
+    elif self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+        # set frame_start
+        frame_start = t_start * self.Info.get_sampling_rate()
+
+        if t_end == &#34;all&#34;:
+            # it t_end is all the recording, set frame_end to last frame of the recording
+            frame_end = self.Info.get_recording_length()
+
+        # if t_end is not the end of the recording, have to find the last event before t_end
+        else:
+            if ch_list == &#34;all&#34;:
+                ch_list = [i for i in range(4096)]
+            # will store the frame time of the last event before t_end
+            t_last_event = 0
+            for idx in range(len(self.recording)):
+                if len(self.recording[idx][2]) != 0 and t_last_event &lt; self.recording[idx][2][len(self.recording[idx][2])-1][1] and self.recording[idx][0] in ch_list:
+                    t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
+            frame_end = t_last_event
+
+    return int(frame_start), int(frame_end)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.get_path"><code class="name flex">
+<span>def <span class="ident">get_path</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the path of the rdw file.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_path(self):
+    &#34;&#34;&#34;
+    Return the path of the rdw file.
+    &#34;&#34;&#34;
+    return self.path</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.get_recording"><code class="name flex">
+<span>def <span class="ident">get_recording</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return the lists of recordings.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_recording(self):
+    &#34;&#34;&#34;
+    Return the lists of recordings.
+    &#34;&#34;&#34;
+    return self.recording</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.high_pass_filter"><code class="name flex">
+<span>def <span class="ident">high_pass_filter</span></span>(<span>self, ch_to_process, lowcut)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def high_pass_filter(self, ch_to_process, lowcut):
+    # TODO
+    return</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.low_pass_filter"><code class="name flex">
+<span>def <span class="ident">low_pass_filter</span></span>(<span>self, ch_to_process, highcut)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def low_pass_filter(self, ch_to_process, highcut):
+    if ch_to_process == &#34;all&#34;:
+        ch_to_process = [self.recording[ch_id][0] for ch_id in range(len(self.recording))]
+
+    b, a = scipy.signal.butter(order, Wn, btype=&#39;lowpass&#39;)
+
+    for ch_nb in ch_to_process:
+        filtered_data = scipy.signal.filtfilt(b, a, signal)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.merge_recordings"><code class="name flex">
+<span>def <span class="ident">merge_recordings</span></span>(<span>self, Rec_b)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>merge two Brw_Recording object if they are of the same sampling frequency and have the same number of channels</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def merge_recordings(self, Rec_b):
+    &#34;&#34;&#34;
+    merge two Brw_Recording object if they are of the same sampling frequency and have the same number of channels
+    &#34;&#34;&#34;
+    if self.Info.get_sampling_rate() != Rec_b.Info.get_sampling_rate():
+        print(&#34;Recordings to merge must have the same sampling rate, but have&#34;, self.Info.get_sampling_rate(), &#34;and&#34;, Rec_b.Info.get_sampling_rate(), &#34;respectively.&#34;)
+        return
+
+    if self.Info.recording_type == &#34;RawDataSettings&#34;:
+        if len(self.recording) != len(Rec_b.recording):
+            print(&#34;Recordings to merge must have the same number of channels, but have&#34;, len(self.recording[1]), &#34;and&#34;, len(Rec_b.recording[1]), &#34;respectively.&#34;)
+            return
+
+        for ch_id in range(len(self.recording)):
+            self.recording[ch_id][1] = np.concatenate((self.recording[ch_id][1], Rec_b.recording[ch_id][1]))
+            self.recording[ch_id][2] = [[self.recording[ch_id][2][0][0], Rec_b.recording[ch_id][2][0][1]]]
+
+    if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+        # TODO
+        print(&#34;not implemented yet for NoiseBlankingCompression format.&#34;)
+        return</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_activity_map"><code class="name flex">
+<span>def <span class="ident">plot_activity_map</span></span>(<span>self, label=[], t_start=0, t_end='all', method='std', threshold=-100, min_range=None, max_range=None, cmap='viridis', save_path=False, flip=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Plot the activity map (heatmap) for the specified time window.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code> list</code> of <code>int</code></dt>
+<dd>list of channel to label on the activity map</dd>
+<dt><strong><code>t_start</code></strong> :&ensp;<code>float</code></dt>
+<dd>first time point, in seconds</dd>
+<dt><strong><code>t_end</code></strong> :&ensp;<code>float</code></dt>
+<dd>last time point, in seconds</dd>
+<dt><strong><code>method</code></strong> :&ensp;<code>string</code></dt>
+<dd>set the method to use for the activity value calculation. can be "min", "max", "min-max" or "std". default value is "std"</dd>
+<dt><strong><code>min_range</code></strong> :&ensp;<code>None</code> or <code>float</code></dt>
+<dd>set the vmin value of the pyplot scatter plot</dd>
+<dt><strong><code>max_range</code></strong> :&ensp;<code>None</code> or <code>float</code></dt>
+<dd>set the vmax value of the pyplot scatter plot</dd>
+<dt><strong><code>cmap</code></strong> :&ensp;<code>string</code></dt>
+<dd>set the cmap colours. Can for instance be viridis, plasma, magma, hot or gray</dd>
+<dt><strong><code>save_path</code></strong> :&ensp;<code>None</code> or <code>string</code></dt>
+<dd>if not None, set the path and file name to save this activity plot as a png file</dd>
+<dt><strong><code>flip</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if True, flip the activity map to match BrainWave visualisation (0,0 top left)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_activity_map(self, label=[], t_start=0, t_end=&#34;all&#34;, method=&#34;std&#34;, threshold=-100, min_range=None, max_range=None, cmap=&#39;viridis&#39;, save_path=False, flip=False):
+    &#34;&#34;&#34;
+    Plot the activity map (heatmap) for the specified time window.
+
+    Parameters
+    ----------
+    label:  list of int
+        list of channel to label on the activity map
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    method: string
+        set the method to use for the activity value calculation. can be &#34;min&#34;, &#34;max&#34;, &#34;min-max&#34; or &#34;std&#34;. default value is &#34;std&#34;
+    min_range: None or float
+        set the vmin value of the pyplot scatter plot
+    max_range: None or float
+        set the vmax value of the pyplot scatter plot
+    cmap: string
+        set the cmap colours. Can for instance be viridis, plasma, magma, hot or gray
+    save_path: None or string
+        if not None, set the path and file name to save this activity plot as a png file
+    flip: Bool
+        if True, flip the activity map to match BrainWave visualisation (0,0 top left)
+    &#34;&#34;&#34;
+    # TODO: more methods for activity map
+    plt.rcdefaults()
+    # get first and last frame corresponding to t_start and t_end
+    frame_start, frame_end = self.get_frame_start_end(t_start, t_end)
+
+    # store x and y coordinates
+    x_list = []
+    y_list = []
+    # store the activity value, used for the colour map
+    intensity_list = []
+    # for each channel in the recording
+    for ch_id in range(len(self.recording)):
+        rec = []
+        if self.Info.recording_type == &#34;RawDataSettings&#34;:
+            rec = self.recording[ch_id][1][int(frame_start):int(frame_end)]
+        if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            snip_stop = 0
+            for snip_id in range(len(self.recording[ch_id][2])):
+                if self.recording[ch_id][2][snip_id][1] &gt; frame_end:
+                    break
+                if self.recording[ch_id][2][snip_id][0] &gt; frame_start:
+                    snip_start = snip_stop
+                    snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+                    rec += self.recording[ch_id][1][snip_start:snip_stop]
+
+        # choose what function to use, depending on selected method. these fonctions are in utils.py
+        val = 0
+        if method == &#34;min&#34; or method == &#34;max&#34; or method == &#34;min-max&#34;:
+            val = ch_rec_min_max(rec, method)
+        if method == &#34;std&#34;:
+            val = ch_rec_std(rec)
+        if method == &#34;spike_number&#34;:
+            val = ch_rec_spikenb(rec, threshold)
+
+        # get ch coord for this channel
+        x, y = get_ch_coord(self.recording[ch_id][0])
+        if flip:
+            # flip map to match BrainWave visualisation (0,0 top left)
+            x_list.append(y)
+            y_list.append(-x)
+        else:
+            x_list.append(x)
+            y_list.append(y)
+        intensity_list.append(val)
+
+    # cmap colours: viridis, plasma, magma, hot, gray
+    plt.scatter(x_list, y_list, c=intensity_list, marker=&#34;s&#34;, cmap=cmap, vmin=min_range, vmax=max_range)
+    plt.colorbar(label=method)
+    # set the plot square
+    plt.gca().set_aspect(&#39;equal&#39;)
+    plt.xlim(0,63)
+    plt.ylim(0,63)
+    if flip:
+        plt.ylim(-63,0)
+
+    # add label for ch in label list
+    for ch in label:
+        if flip:
+            x, y = get_ch_coord(ch)
+            ch_coord = [y, -x]
+        else:
+            ch_coord = get_ch_coord(ch)
+        plt.scatter(ch_coord[0], ch_coord[1], marker=&#39;s&#39;, s=1, c=&#39;red&#39;)
+        plt.text(ch_coord[0], ch_coord[1], ch, c=&#39;red&#39;)
+
+    if save_path:
+        # save plot as a png file
+        plt.savefig(save_path + &#34;.png&#34;)
+
+    plt.show()
+    plt.close()</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_mea"><code class="name flex">
+<span>def <span class="ident">plot_mea</span></span>(<span>self, ch_to_display='all', label=[], background=False, flip=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Plot the position of specified electrodes on a representation of the MEA.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>ch_to_display</code></strong> :&ensp;<code>list</code> of <code>int,</code> or <code>"all"</code></dt>
+<dd>list of electrode to display</dd>
+<dt><strong><code>label</code></strong> :&ensp;<code>list</code> of <code>int</code></dt>
+<dd>if the list is not empty, will display the electrode number in red, above the specified electrode</dd>
+<dt><strong><code>background</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if True, plot all electrodes in gray as a background</dd>
+<dt><strong><code>flip</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if True, flip the array to match the way it is displayed on the BrainWave software (electrode 0,0 top lef)</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_mea(self, ch_to_display=&#34;all&#34;, label=[], background=False, flip=False):
+    &#34;&#34;&#34;
+    Plot the position of specified electrodes on a representation of the MEA.
+
+    Parameters
+    ----------
+    ch_to_display: list of int, or &#34;all&#34;
+        list of electrode to display
+    label: list of int
+        if the list is not empty, will display the electrode number in red, above the specified electrode
+    background: Bool
+        if True, plot all electrodes in gray as a background
+    flip: Bool
+        if True, flip the array to match the way it is displayed on the BrainWave software (electrode 0,0 top lef)
+    &#34;&#34;&#34;
+    ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+    plt.rcdefaults()
+    # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+
+    # if background is True, plot all electrodes in gray
+    if background:
+        x_coords = []
+        y_coords = []
+        for i in range(64):
+            for j in range(64):
+                x_coords.append(i*60)
+                y_coords.append(j*60)
+        plt.scatter(x_coords, y_coords, marker=&#34;s&#34;, s=1, c=&#34;silver&#34;)
+
+    if len(ch_to_display) == 0:
+        print(&#34;No channel to display.&#34;)
+        return
+
+    for ch_id in range(len(self.recording)):
+        ch_nb = self.recording[ch_id][0]
+        if ch_to_display==&#34;all&#34; or ch_nb in ch_to_display:
+            ch_coord = get_ch_coord(ch_nb)
+            if flip:
+                # flip map to match BrainWave visualisation (0,0 top left)
+                plt.scatter(ch_coord[1]*60, -ch_coord[0]*60, marker=&#34;s&#34;, s=1, c=&#39;red&#39;)
+            else:
+                plt.scatter(ch_coord[0]*60, ch_coord[1]*60, marker=&#34;s&#34;, s=1, c=&#39;red&#39;)
+            if ch_nb in label:
+                plt.text(ch_coord[0]*60, ch_coord[1]*60, ch_nb)
+
+    plt.gca().set_aspect(&#39;equal&#39;)
+    plt.xlim(0, 3839)
+    plt.ylim(0, 3839)
+    plt.xlabel(&#34;x (µm)&#34;)
+    plt.ylabel(&#34;y (µm)&#34;)
+    plt.show()
+    plt.close()</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_raw"><code class="name flex">
+<span>def <span class="ident">plot_raw</span></span>(<span>self, ch_to_display, t_start=0, t_end='all', y_min=None, y_max=None, visualisation='aligned', artificial_noise=False, n_std=15, seed=0)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Plot the raw signal (time series) for the specified channels and time interval.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>ch_to_display</code></strong> :&ensp;<code>list</code></dt>
+<dd>channels to extract</dd>
+<dt><strong><code>t_start</code></strong> :&ensp;<code>float</code></dt>
+<dd>first time point, in seconds</dd>
+<dt><strong><code>t_end</code></strong> :&ensp;<code>float</code></dt>
+<dd>last time point, in seconds</dd>
+<dt><strong><code>y_min</code></strong> :&ensp;<code>None</code> or <code>float</code></dt>
+<dd>when specified, set the minimum value for the y axis</dd>
+<dt><strong><code>y_max</code></strong> :&ensp;<code>None</code> or <code>float</code></dt>
+<dd>when specified, set the maximum value for the y axis</dd>
+<dt><strong><code>visualisation</code></strong> :&ensp;<code>string</code></dt>
+<dd>Specify the dispay mode for raw compressed format. default value is "aligned". Can be "aligned", "reconstructed", "continuous" or "superimposed"</dd>
+<dt><strong><code>artificial_noise</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>Specific to raw compressed format. If True, add artificial noise to the recording</dd>
+<dt><strong><code>n_std</code></strong> :&ensp;<code>float</code></dt>
+<dd>Specific to raw compressed format. If artificial_noise is True, set the standard deviation of the artificial noise</dd>
+<dt><strong><code>seed</code></strong> :&ensp;<code>int</code></dt>
+<dd>Specific to raw compressed format. If artificial_noise is True, set the random generator seed to create artificial noise</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_raw(self, ch_to_display, t_start=0, t_end=&#34;all&#34;, y_min=None, y_max=None, visualisation=&#34;aligned&#34;, artificial_noise=False, n_std=15, seed=0):
+    &#34;&#34;&#34;
+    Plot the raw signal (time series) for the specified channels and time interval.
+
+    Parameters
+    ----------
+    ch_to_display: list
+        channels to extract
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    y_min: None or float
+        when specified, set the minimum value for the y axis
+    y_max: None or float
+        when specified, set the maximum value for the y axis
+    visualisation: string
+        Specify the dispay mode for raw compressed format. default value is &#34;aligned&#34;. Can be &#34;aligned&#34;, &#34;reconstructed&#34;, &#34;continuous&#34; or &#34;superimposed&#34;
+    artificial_noise: Bool
+        Specific to raw compressed format. If True, add artificial noise to the recording
+    n_std: float
+        Specific to raw compressed format. If artificial_noise is True, set the standard deviation of the artificial noise
+    seed: int
+        Specific to raw compressed format. If artificial_noise is True, set the random generator seed to create artificial noise
+    &#34;&#34;&#34;
+    # distribtue to sub functions plot_raw_format or plot_raw_compressed depending on recording format
+    if self.Info.recording_type == &#34;RawDataSettings&#34;:
+        self.plot_raw_format(ch_to_display, t_start, t_end, y_min, y_max)
+    if self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+        self.plot_raw_compressed(ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_raw_compressed"><code class="name flex">
+<span>def <span class="ident">plot_raw_compressed</span></span>(<span>self, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_raw_compressed(self, ch_to_display, t_start, t_end, y_min, y_max, visualisation, artificial_noise, n_std, seed):
+    # TODO: plot in lines or in MEA shape
+    ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+    plt.rcdefaults()
+
+    t_last_event = 0
+    if t_end == &#34;all&#34;:
+        # get the latest event from all channels to display
+        for ch in ch_to_display:
+            for idx in range(self.Info.get_nb_channel()):
+                if self.recording[idx][0] == ch:
+                    if self.recording[idx][1] and t_last_event &lt; self.recording[idx][2][len(self.recording[idx][2])-1][1]:
+                        t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                    break
+        t_end = (t_last_event + 0.1 * self.Info.get_sampling_rate() ) / self.Info.get_sampling_rate()
+
+    fig = plt.figure()
+
+    fig_nb = 1
+    for ch_nb in ch_to_display:
+        ch_id = 0
+        for idx in range(len(self.recording)):
+            if self.recording[idx][0] == ch_nb:
+                ch_id = idx
+                break
+        # create new subplot
+        ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+
+        if visualisation == &#34;aligned&#34;:
+            self.plot_raw_compressed_a(t_start, t_end, ch_nb)
+        if visualisation == &#34;reconstructed&#34;:
+            self.plot_raw_compressed_r(t_start, t_end, ch_nb, artificial_noise, n_std, seed)
+        if visualisation == &#34;continuous&#34; or visualisation == &#34;superimposed&#34;:
+            self.plot_raw_compressed_c_s(visualisation, t_start, t_end, ch_id)
+
+        if y_min or y_max:
+            plt.ylim(y_min, y_max)
+        plt.title(self.recording[ch_id][0])
+        ax.spines[&#39;top&#39;].set_visible(False)
+        ax.spines[&#39;right&#39;].set_visible(False)
+        plt.tight_layout()
+        fig_nb += 1
+
+    plt.show()
+    plt.close()</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_raw_compressed_a"><code class="name flex">
+<span>def <span class="ident">plot_raw_compressed_a</span></span>(<span>self, t_start, t_end, ch_nb, plot_zeros=False, artificial_noise=False, n_std=15, seed=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_raw_compressed_a(self, t_start, t_end, ch_nb, plot_zeros=False, artificial_noise=False, n_std=15, seed=0):
+    ch_id = 0
+    for idx in range(len(self.recording)):
+        if self.recording[idx][0] == ch_nb:
+            ch_id = idx
+            break
+
+    frame_end = int(t_start*self.Info.get_sampling_rate())
+    snip_stop = 0
+    for snip_id in range(len(self.recording[ch_id][2])):
+        frame_start = self.recording[ch_id][2][snip_id][0]
+        snip_start = snip_stop
+        snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+
+        if self.recording[ch_id][2][snip_id][1] &lt; t_end * self.Info.get_sampling_rate() and frame_start &gt; t_start * self.Info.get_sampling_rate():
+            if artificial_noise:
+                # add artificial noise before this snippet
+                plt.plot([x/self.Info.get_sampling_rate() for x in range(frame_end, frame_start)], [np.random.normal(0, n_std) for y in range(frame_start - frame_end)], c=&#39;black&#39;)
+            if plot_zeros:
+                # add horizontal line at y=0 before this snippet
+                plt.hlines(y=0, xmin=frame_end/self.Info.get_sampling_rate(), xmax=frame_start/self.Info.get_sampling_rate(), color=&#39;black&#39;)
+            # plot snippet
+            plt.plot([x/self.Info.get_sampling_rate() for x in range(self.recording[ch_id][2][snip_id][0], self.recording[ch_id][2][snip_id][1])], self.recording[ch_id][1][snip_start:snip_stop], c=&#39;black&#39;)
+            frame_end = self.recording[ch_id][2][snip_id][1]
+
+    if artificial_noise:
+        # add artificial noise from last snippet to t_end
+        plt.plot([x/self.Info.get_sampling_rate() for x in range(frame_end, int(t_end*self.Info.get_sampling_rate()))], [np.random.normal(0, n_std) for y in range(frame_end, int(t_end*self.Info.get_sampling_rate()))], c=&#39;black&#39;)
+    if plot_zeros:
+        # add 0 data from last snippet to t_end
+        plt.hlines(y=0, xmin=frame_end/self.Info.get_sampling_rate(), xmax=t_end, color=&#39;black&#39;)
+
+    plt.xlim(t_start, t_end)
+    plt.xlabel(&#34;sec&#34;)
+    plt.ylabel(&#34;µV&#34;)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_raw_compressed_c_s"><code class="name flex">
+<span>def <span class="ident">plot_raw_compressed_c_s</span></span>(<span>self, visualisation, t_start, t_end, ch_id)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_raw_compressed_c_s(self, visualisation, t_start, t_end, ch_id):
+    snip_stop = 0
+    temps=[]
+    for snip_id in range(len(self.recording[ch_id][2])):
+        if visualisation == &#34;superimposed&#34;:
+            snip_start = snip_stop
+            snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+        if self.recording[ch_id][2][snip_id][1] &lt; t_end * self.Info.get_sampling_rate() and self.recording[ch_id][2][snip_id][0] &gt; t_start * self.Info.get_sampling_rate():
+            if visualisation == &#34;superimposed&#34;:
+                # plot superimposed snippets
+                plt.plot(self.recording[ch_id][1][snip_start:snip_stop], label=&#34;spike &#34;+ str(snip_id), c=&#39;black&#39;)
+            else:
+                snip_start = snip_stop
+                snip_stop = snip_start + self.recording[ch_id][2][snip_id][1] - self.recording[ch_id][2][snip_id][0]
+                temps += self.recording[ch_id][1][snip_start:snip_stop]
+                # # plot line between snippets for continuous visu
+                plt.axvline(snip_stop, c=&#39;grey&#39;)
+
+    if visualisation == &#34;continuous&#34;:
+        plt.plot(temps, c=&#39;black&#39;)
+
+    plt.xlabel(&#34;frame&#34;)
+    plt.ylabel(&#34;µV&#34;)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_raw_compressed_r"><code class="name flex">
+<span>def <span class="ident">plot_raw_compressed_r</span></span>(<span>self, t_start, t_end, ch_nb, artificial_noise, n_std, seed)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_raw_compressed_r(self, t_start, t_end, ch_nb, artificial_noise, n_std, seed):
+    # plot raw_compressed data in sec with 0 or artificial noise between snippets
+    if artificial_noise:
+        self.plot_raw_compressed_a(t_start, t_end, ch_nb, False, artificial_noise, n_std, seed)
+    else:
+        self.plot_raw_compressed_a(t_start, t_end, ch_nb, plot_zeros=True)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.plot_raw_format"><code class="name flex">
+<span>def <span class="ident">plot_raw_format</span></span>(<span>self, ch_to_display, t_start, t_end, y_min, y_max)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_raw_format(self, ch_to_display, t_start, t_end, y_min, y_max):
+# TODO: plot in lines or in MEA shape
+    ch_to_display = check_ch_to_display(self.Info, ch_to_display)
+    plt.rcdefaults()
+
+    rec_frame_start = self.recording[0][2][0][0]
+    rec_frame_end = self.recording[0][2][0][1]
+    frame_start, frame_end = self.get_frame_start_end(t_start, t_end, ch_to_display)
+
+    fig = plt.figure()
+
+    fig_nb = 1
+    for ch in ch_to_display:
+        ch_id = 0
+        for idx in range(len(self.recording)):
+            if self.recording[idx][0] == ch:
+                ch_id = idx
+                break
+
+        ax = fig.add_subplot(len(ch_to_display), 1, fig_nb)
+        plt.plot([x/self.Info.get_sampling_rate() for x in range(int(frame_start+rec_frame_start), int(frame_end+rec_frame_start))], self.recording[ch_id][1][int(frame_start):int(frame_end)], c=&#39;black&#39;)
+
+        if y_min or y_max:
+            plt.ylim(y_min, y_max)
+        plt.xlabel(&#34;sec&#34;)
+        plt.ylabel(&#34;µV&#34;)
+        plt.title(self.recording[ch_id][0])
+        ax.spines[&#39;top&#39;].set_visible(False)
+        ax.spines[&#39;right&#39;].set_visible(False)
+        plt.tight_layout()
+        fig_nb += 1
+
+    plt.show()
+    plt.close()</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.read"><code class="name flex">
+<span>def <span class="ident">read</span></span>(<span>self, t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll, dll_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read(self, t_start, t_end, ch_to_extract, frame_chunk, multiproc, verbose, use_dll, dll_path):
+    # get Brw_Experiment_Settings info for this brw file
+    self.Info = get_brw_experiment_setting(self.path)
+
+    # if all channels are to be extracted
+    if len(ch_to_extract) == 0 or ch_to_extract == &#34;all&#34;:
+        ch_to_extract = []
+        for ch in self.Info.get_channel_idx():
+            # add this channel to the list of channels to extract
+            ch_to_extract.append(ch)
+            # initialise self.recording for this channel
+            self.recording.append([ch, [], []])
+    # if only want to extract channels specified is ch_to_extract
+    else:
+        for ch in ch_to_extract:
+            if ch in self.Info.get_channel_idx():
+                # initialise self.recording for this channel
+                self.recording.append([ch, [], []])
+            else:
+                print(&#34;Channel&#34;, ch, &#34;is not in the recording.&#34;)
+
+    # t_end is &#34;all&#34;, set t_end to recording length
+    if t_end == &#34;all&#34;: t_end = self.Info.get_recording_length_sec()
+    # if the specified frame_chunk is larger than the number of frame in the interval to extract
+    if frame_chunk &gt; (t_end - t_start) * self.Info.get_sampling_rate():
+        # set frame_chunk to the number of frame in the interval to extract
+        frame_chunk = int((t_end - t_start) * self.Info.get_sampling_rate())
+
+    # check recording type and use the relevant method to read data
+    if self.Info.recording_type == &#34;RawDataSettings&#34;:
+        if use_dll:
+            self.read_raw_data_dll(t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path)
+        else:
+            if multiproc:
+                self.read_raw_data_multiproc(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+            else:
+                self.read_raw_data(t_start, t_end, ch_to_extract, frame_chunk, verbose)
+
+    elif self.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+        self.read_raw_compressed_data(t_start, t_end, ch_to_extract, frame_chunk)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.read_raw_compressed_data"><code class="name flex">
+<span>def <span class="ident">read_raw_compressed_data</span></span>(<span>self, t_start, t_end, ch_to_extract, frame_chunk)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_compressed_data(self, t_start, t_end, ch_to_extract, frame_chunk):
+    self.data = h5py.File(self.path,&#39;r&#39;)
+    # data chunk [start-end[ in number of frame
+    toc = self.data.get(&#34;TOC&#34;)
+    # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+    event_sparse_raw_toc = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRawTOC&#34;)
+
+    # EventsBasedSparseRaw dataset is stored in byte (8 bit). Values have different format:
+    #     &#39;ChId&#39; and  &#39;Size&#39; are int (32 bit) values: encoded on bytes of EventsBasedSparseRaw
+    #     &#39;range begin&#39; and &#39;range end&#39; are long (64 bit): encoded on 8 bytes of EventsBasedSparseRaw
+    #     &#39;sample&#39; values are short (16 bit); encoded on 2 bytes of EventsBasedSparseRaw
+    #
+    #             Data chunk n                        Data chunk n+1
+    # ¦                                ¦                                  ¦
+    # ChData 1, ChData 2, ..., ChData n; ChData 1, ChData 2, ..., ChData n;
+    #     _____¦        ¦___________________________
+    #     ChID, size, range 1, range 2, ..., range n
+    #     ___________¦       ¦_______________________________________
+    #     range beging, range end, sample 1, sample 2, ...., sample n
+
+    # size: number of bytes composing the ranges of this ChData (so ChData size without ChID + size)
+    # range begin: frame number relative to the begininng of the rec of sample 1
+    # range end: frame number +1 relative to the begininng of the rec of next last sample of this range data
+    #   i.e. range end - range begin = nb of sample for this range
+
+    # get frame_start and frame_end corresponding to t_start t_end
+    frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end)
+    # calculate the invariant term for digital to analog conversion
+    converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+    # get the first and last chunk of data to read to get the recording from t_start to t_end
+    chunk_nb_start = 0; chunk_nb_end = 0
+    for chunk_nb in range(len(toc)):
+        if toc[chunk_nb][0] &lt;= frame_start:
+            chunk_nb_start = chunk_nb
+        if toc[chunk_nb][1] &gt;= frame_end:
+            chunk_nb_end = chunk_nb +1
+            break
+    print(chunk_nb_end - chunk_nb_start, &#34;data chunks to read&#34;)
+
+    # for each chunk between the first and last chunk
+    for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+        # # open hdf5 file
+        self.data = h5py.File(self.path,&#39;r&#39;)
+        # get the start id of this chunk
+        chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+        # get the end id of this chunk
+        if data_chunk_nb &lt; len(event_sparse_raw_toc)-1:
+            chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+        else:
+            # if this is the last chunk of the brw file
+            chunk_end_id = len(self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;))
+
+        # read data from chunk_start_id to chunk_end_id of this data chunk
+        data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;)[chunk_start_id:chunk_end_id]
+        self.data.close()
+        # data has to be cleared as h5py objects cannot be pickled
+        self.data = []
+
+        # index to parse the data
+        i = 0
+        # for each ChData to read
+        while i &lt; len(data_chunk):
+            # get the channel number from bytes to int
+            ch_nb = int.from_bytes([data_chunk[i], data_chunk[i+1], data_chunk[i+2], data_chunk[i+3]], byteorder=&#39;little&#39;)
+            # get the size of this ChData from bytes to int
+            size = int.from_bytes([data_chunk[i+4], data_chunk[i+5], data_chunk[i+6], data_chunk[i+7]], byteorder=&#39;little&#39;)
+            # update i to be the index of first range
+            i += 8
+
+            # if need to extract this channel (ch_nb)
+            if len(ch_to_extract) == 4096 or (ch_nb in ch_to_extract):
+                ch_id = 0
+                # get the id of this channel
+                for ch in range(len(ch_to_extract)):
+                    if self.recording[ch][0] == ch_nb:
+                        ch_id = ch
+
+                j = 0
+                # for each range in this ChData
+                while j &lt; size:
+                    # get the range begin for this range from bytes
+                    range_begin = int.from_bytes([data_chunk[i+j+k] for k in range(8)], byteorder=&#39;little&#39;)
+                    # get the range end for this range from bytes
+                    range_end = int.from_bytes([data_chunk[i+j+k+8] for k in range(8)], byteorder=&#39;little&#39;)
+                    # if is not within desired time windows to extrat, break
+                    if range_begin &lt; frame_start or range_begin &gt; frame_end:
+                        break
+
+                    # get each frame in this range
+                    for k in range(range_end - range_begin):
+                        # get frame for bytes
+                        sample = int.from_bytes([data_chunk[i+16+k*2], data_chunk[i+17+k*2]], byteorder=&#39;little&#39;)
+                        # convert digital value to analog and add this frame corresponding self.recording list channel
+                        self.recording[ch_id][1].append(convert_digital_to_analog(self.Info.min_analog_value, sample, converter_invariant))
+                    # add the recording snippet frame start and frame end to their corresponding self.recording
+                    self.recording[ch_id][2].append([range_begin, range_end])
+                    # update the index j to be the next range of this ChData
+                    j += 16 + (range_end - range_begin)*2
+
+            # update i to be the index of next ChData
+            i += size</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.read_raw_data"><code class="name flex">
+<span>def <span class="ident">read_raw_data</span></span>(<span>self, t_start, t_end, ch_to_extract, frame_chunk, verbose)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_data(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+    # get first and last frame corresponding to t_start and t_end
+    frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+    # create 0 lists of desired recording length to avoid memory reallocation
+    for ch_id in range(len(ch_to_extract)):
+        self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+    # calculate the invariant term for digital to analog conversion
+    converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+    nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+    id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+    # used to get the proper point value for each channel from the data_chunk
+    rec_ch_idx = {}
+    for id in range(self.Info.get_nb_channel()):
+        rec_ch_idx[self.Info.get_channel_idx()[id]] = id
+
+    # first frame position of the first chunk
+    first_frame = frame_start * self.Info.get_nb_channel()
+    # last frame position of the first chunk
+    last_frame = first_frame + id_frame_chunk
+
+    # for each chunk needed to read the recording from t_start to t_end
+    for chunk in range(nb_frame_chunk):
+        if verbose:
+            print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+        # if this is the last chunk of data, need to update last_frame to be the index of last needed frame (avoid out of bound)
+        if chunk == nb_frame_chunk-1:
+            last_frame = frame_end * self.Info.get_nb_channel()
+
+        # open hdf5 file
+        self.data = h5py.File(self.path,&#39;r&#39;)
+        # read data from first_frame to last_frame of this data chunk
+        data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+self.Info.get_nb_channel()]
+        # close the hdf5 file
+        self.data.close()
+        # data has to be cleared as h5py objects cannot be pickled
+        self.data = []
+
+        # update first_frame and last_frame position for next data chunk
+        first_frame += id_frame_chunk + self.Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+
+        # for each frame in this data chunk
+        for frame_nb in range(int(len(data_chunk)/self.Info.get_nb_channel())):
+            # get the position of the current frame
+            frame_start_id = frame_nb * self.Info.get_nb_channel()
+
+            # for each channel to extract
+            for ch_id in range(len(ch_to_extract)):
+                # get the channel number
+                ch = ch_to_extract[ch_id]
+                # convert digital value to analog and add this frame for this channel to corresponding self.recording list
+                self.recording[ch_id][1][frame_nb+(chunk*frame_chunk)] = convert_digital_to_analog(self.Info.min_analog_value, data_chunk[frame_start_id + rec_ch_idx.get(ch) - 1], converter_invariant)
+
+    # for each extracted channel, add the recording snippet frame_start and frame_end to their corresponding self.recording
+    for ch_id in range(len(ch_to_extract)):
+        self.recording[ch_id][2].append([frame_start, frame_end])
+
+    if verbose:
+        print(&#34;\ndone&#34;)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.read_raw_data_dll"><code class="name flex">
+<span>def <span class="ident">read_raw_data_dll</span></span>(<span>self, t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_data_dll(self, t_start, t_end, ch_to_extract, frame_chunk, verbose, dll_path):
+    import clr
+    # add reference to IO.dll and Common.dll
+    clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.IO.dll&#34;))
+    clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.Common.dll&#34;))
+
+    # import C variable types and 3Brain methods
+    from System import Int32, Double, Boolean
+    from _3Brain.BrainWave.IO import BrwFile
+    from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+    from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+    consumer = object()
+
+    # open hdf5 file using dll method
+    data = BrwFile.Open(self.path)
+    # get this hdf5 recording info using dll method
+    info = data.get_MeaExperimentInfo()
+
+    # get first and last frame corresponding to t_start and t_end
+    frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+    nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+    # will contain the data of the currend chunk, read using dll ReadRawData method
+    data_chunk = []
+    # for each chunk needed to read the recording from t_start to t_end
+    for chunk in range(nb_frame_chunk):
+        if verbose:
+            print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+        # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the brw file
+        if chunk == nb_frame_chunk-1:
+            last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+            # read this chunk
+            data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+        # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+        # second index is the channel, third index the time frame
+        else:
+            # read this chunk
+            data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+        # for each channel to extract
+        for ch_id in range(len(ch_to_extract)):
+            # convert to voltage
+            ch_data = np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float)
+            # add this chunk data at the end of this ch data array
+            self.recording[ch_id][1] = np.concatenate([self.recording[ch_id][1], ch_data])
+
+    # Close Files
+    data.Close()
+
+    # for each extracted channel, add the recording snippet frame_start and frame_end to their corresponding self.recording
+    for ch_id in range(len(ch_to_extract)):
+        self.recording[ch_id][2].append([frame_start, frame_end])
+
+    if verbose:
+        print(&#34;\ndone&#34;)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.read_raw_data_multiproc"><code class="name flex">
+<span>def <span class="ident">read_raw_data_multiproc</span></span>(<span>self, t_start, t_end, ch_to_extract, frame_chunk, verbose)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_data_multiproc(self, t_start, t_end, ch_to_extract, frame_chunk, verbose):
+    frame_start, frame_end = get_file_frame_start_end(self.Info, t_start, t_end, frame_chunk)
+    self.ch_to_extract = ch_to_extract
+    self.frame_chunk = frame_chunk
+
+    for ch_id in range(len(ch_to_extract)):
+        self.recording[ch_id][1] = [0.0] * (frame_end - frame_start + 1)
+
+    self.converter_invariant = (self.Info.max_analog_value - self.Info.min_analog_value) / (self.Info.max_digital_value - self.Info.min_digital_value)
+
+
+    nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+    id_frame_chunk = frame_chunk * self.Info.get_nb_channel()
+
+    first_frame = frame_start * self.Info.get_nb_channel()
+    last_frame = first_frame + id_frame_chunk
+    for chunk in range(nb_frame_chunk):
+        if verbose:
+            print(&#34;Reading chunk %s out of %s&#34; %(chunk+1, nb_frame_chunk), end = &#34;\r&#34;)
+        if chunk == nb_frame_chunk-1:
+            last_frame = frame_end * self.Info.get_nb_channel()
+
+        self.data = h5py.File(self.path,&#39;r&#39;)
+        data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+self.Info.get_nb_channel()]
+        self.chunk_nb = chunk
+        # TODO: object is duplicated when run with t.map
+        #       thus, memory size is thread_nb times greater
+        self.data_chunk = data_chunk
+
+        self.data.close()
+        # data has to be cleared as h5py objects cannot be pickled
+        self.data = []
+
+        first_frame += id_frame_chunk + self.Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+
+        # python does not take advantage of multi threading, so better to use cpu_count (i.e. nb of thread) / 2
+        thread_nb = int(os.cpu_count()/2)
+        t = Pool(thread_nb)
+        t.map(self.get_ch_rec, ch_to_extract)
+        t.close()
+        self.data_chunk = []
+
+    for ch_id in range(len(ch_to_extract)):
+        self.recording[ch_id][2].append([frame_start, frame_end])
+
+    if verbose:
+        print(&#34;\ndone&#34;)</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_recording.Brw_Recording.save_recording"><code class="name flex">
+<span>def <span class="ident">save_recording</span></span>(<span>self, file_path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Save the Brw_Recording object as a pickle file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def save_recording(self, file_path):
+    &#34;&#34;&#34;
+    Save the Brw_Recording object as a pickle file
+    &#34;&#34;&#34;
+    with open(file_path, &#34;wb&#34;) as file_handler:
+        pickle.dump(self, file_handler)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="beaf" href="index.html">beaf</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="beaf.brw_recording.load_recording" href="#beaf.brw_recording.load_recording">load_recording</a></code></li>
+<li><code><a title="beaf.brw_recording.read_brw_recording" href="#beaf.brw_recording.read_brw_recording">read_brw_recording</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="beaf.brw_recording.Brw_Recording" href="#beaf.brw_recording.Brw_Recording">Brw_Recording</a></code></h4>
+<ul class="">
+<li><code><a title="beaf.brw_recording.Brw_Recording.band_pass_filter" href="#beaf.brw_recording.Brw_Recording.band_pass_filter">band_pass_filter</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.down_sample" href="#beaf.brw_recording.Brw_Recording.down_sample">down_sample</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.get_Info" href="#beaf.brw_recording.Brw_Recording.get_Info">get_Info</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.get_ch_rec" href="#beaf.brw_recording.Brw_Recording.get_ch_rec">get_ch_rec</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.get_frame_start_end" href="#beaf.brw_recording.Brw_Recording.get_frame_start_end">get_frame_start_end</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.get_path" href="#beaf.brw_recording.Brw_Recording.get_path">get_path</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.get_recording" href="#beaf.brw_recording.Brw_Recording.get_recording">get_recording</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.high_pass_filter" href="#beaf.brw_recording.Brw_Recording.high_pass_filter">high_pass_filter</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.low_pass_filter" href="#beaf.brw_recording.Brw_Recording.low_pass_filter">low_pass_filter</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.merge_recordings" href="#beaf.brw_recording.Brw_Recording.merge_recordings">merge_recordings</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_activity_map" href="#beaf.brw_recording.Brw_Recording.plot_activity_map">plot_activity_map</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_mea" href="#beaf.brw_recording.Brw_Recording.plot_mea">plot_mea</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_raw" href="#beaf.brw_recording.Brw_Recording.plot_raw">plot_raw</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_raw_compressed" href="#beaf.brw_recording.Brw_Recording.plot_raw_compressed">plot_raw_compressed</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_raw_compressed_a" href="#beaf.brw_recording.Brw_Recording.plot_raw_compressed_a">plot_raw_compressed_a</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_raw_compressed_c_s" href="#beaf.brw_recording.Brw_Recording.plot_raw_compressed_c_s">plot_raw_compressed_c_s</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_raw_compressed_r" href="#beaf.brw_recording.Brw_Recording.plot_raw_compressed_r">plot_raw_compressed_r</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.plot_raw_format" href="#beaf.brw_recording.Brw_Recording.plot_raw_format">plot_raw_format</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.read" href="#beaf.brw_recording.Brw_Recording.read">read</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.read_raw_compressed_data" href="#beaf.brw_recording.Brw_Recording.read_raw_compressed_data">read_raw_compressed_data</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.read_raw_data" href="#beaf.brw_recording.Brw_Recording.read_raw_data">read_raw_data</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.read_raw_data_dll" href="#beaf.brw_recording.Brw_Recording.read_raw_data_dll">read_raw_data_dll</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.read_raw_data_multiproc" href="#beaf.brw_recording.Brw_Recording.read_raw_data_multiproc">read_raw_data_multiproc</a></code></li>
+<li><code><a title="beaf.brw_recording.Brw_Recording.save_recording" href="#beaf.brw_recording.Brw_Recording.save_recording">save_recording</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

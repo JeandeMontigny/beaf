@@ -1,0 +1,997 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>beaf.brw_spikeinterface API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>beaf.brw_spikeinterface</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import os, sys, h5py
+import spikeinterface.extractors as se
+from probeinterface import *
+
+from .brw_recording import *
+
+# TODO: inheritance for Brw_SpikeInterface and Brw_Recording to avoid code duplication?
+# ---------------------------------------------------------------- #
+class Brw_SpikeInterface:
+    &#34;&#34;&#34;
+    Brw_SpikeInterface class to read and store .brw recordings datas and convert them to SpikeInterface NumpyRecording class
+    &#34;&#34;&#34;
+    def read_raw_data_dll(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path):
+        import clr
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.IO.dll&#34;))
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.Common.dll&#34;))
+
+        from System import Int32, Double, Boolean
+        from _3Brain.BrainWave.IO import BrwFile
+        from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+        from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+        consumer = object()
+
+        data = BrwFile.Open(brw_path)
+        info = data.get_MeaExperimentInfo()
+        Info = get_brw_experiment_setting(brw_path)
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+        # get required number of frame chunk from frame_start to frame_end depending on frame_chunk size
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        data_chunk = []
+        traces_list = []
+        for chunk in range(nb_frame_chunk):
+            # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the BRW-file stream
+            if chunk == nb_frame_chunk-1:
+                last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+            # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+            # second index is the channel, third index the time frame
+            else:
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+            chunk_ch_data = []
+            for ch_id in range(len(ch_to_extract)):
+                # convert to voltage and add this chunk data at the end of this ch data array
+                chunk_ch_data.append(np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float))
+
+            # format data to match spikeinterface structure: [ [f0ch0, f0ch1, ...], [f1ch0, f1ch1, ...], ... ]
+            # for each frame in this data chunk
+            for frame_nb in range(len(chunk_ch_data[0])):
+                # frame_data will contain each ch value for a single frame
+                frame_data = []
+                # for each ch to extract
+                for ch_id in range(len(ch_to_extract)):
+                    # add this ch value for this frame in frame_data list
+                    frame_data.append(chunk_ch_data[ch_id][frame_nb])
+                # add this frame_data to traces_list
+                traces_list.append(frame_data)
+
+        # Close Files
+        data.Close()
+        # create the NumpyRecording
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+        return NR
+
+
+    def read_raw_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * Info.get_nb_channel()
+        first_frame = frame_start * Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+
+        # open hdf5 file
+        hdf_file = h5py.File(brw_path,&#39;r&#39;)
+        # calculate the invariant term for digital to analog conversion
+        converter_x = (Info.max_analog_value - Info.min_analog_value) / (Info.max_digital_value - Info.min_digital_value)
+
+        traces_list = []
+        # for each chunk needed to read the recording from t_start to t_end
+        for chunk in range(0, nb_frame_chunk):
+            # if this is the last chunk of data, need to update last_frame to be the index of last needed frame (avoid out of bound)
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * Info.get_nb_channel()
+
+            # read data from first_frame to last_frame of this data chunk
+            data_chunk = hdf_file.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+Info.get_nb_channel()]
+
+            # update first_frame and last_frame position for next data chunk
+            first_frame += id_frame_chunk + Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # for each frame in this data chunk
+            for frame_nb in range(0, int(len(data_chunk)/Info.get_nb_channel())):
+                frame_data = []
+                # get the position of the current frame
+                frame_start_id = frame_nb*Info.get_nb_channel()
+
+                # for each channel to extract
+                for ch_id in range(0, len(ch_to_extract)):
+                    # get the channel number
+                    ch = ch_to_extract[ch_id]
+                    # convert digital value to analog and add this frame for this channel to corresponding position in list
+                    frame_data.append(convert_digital_to_analog(Info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x))
+                traces_list.append(frame_data)
+
+        hdf_file.close()
+        del(hdf_file)
+
+        # convert frame_data list to numpy array and create a SpikeInterface NumpyRecording object using frame_data as data
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+        return NR
+
+
+    def read_raw_compressed_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+        # TODO: create spikeinterface NumpyRecording object
+        #       problem with recording not of the same length
+        #           solution using RecordingSegment? a RecordingExtractor segment for each snippet
+
+        # data chunk [start-end[ in number of frame
+        toc = self.data.get(&#34;TOC&#34;)
+        # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+        event_sparse_raw_toc = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRawTOC&#34;)
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end)
+
+        chunk_nb_start = 0; chunk_nb_end = 0
+        for chunk_nb in range(0, len(toc)):
+            if toc[chunk_nb][0] &lt;= frame_start:
+                chunk_nb_start = chunk_nb
+            if toc[chunk_nb][1] &gt;= frame_end:
+                chunk_nb_end = chunk_nb +1
+                break
+
+        traces_list = []
+        for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+            if data_chunk_nb &lt; len(event_sparse_raw_toc)-1:
+                chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+            else:
+                chunk_end_id = len(self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;))
+
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;)[chunk_start_id:chunk_end_id]
+
+            # get the time of the first snippet  within t_start-t_end
+            # check if any other channel in ch_to_extract has data for this time t
+            #   if not, add 0 or np.nan for this time t
+            #   if yes, extract these data as well to create the first frame in traces_list
+            # get the following snippet (that can have already been partially extracted during the previous snippet)
+
+            # naive algo:
+            # for t in range(frame_start, frame_end):
+            #   frame_data = []
+            #   for ch with data at this time t:
+            #       frame_data.append(channel&#39;s data)
+            #   if no ch with data: skip to next snippet (or fill with 0 or artificial noise)
+
+        hdf_file = h5py.File(brw_path,&#39;r&#39;)
+        hdf_file.close()
+
+        return 0
+
+
+    def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path):
+        # get Brw_Experiment_Settings info for this brw file
+        Info = get_brw_experiment_setting(brw_path)
+        # t_end is &#34;all&#34;, set t_end to recording length
+        if t_end == &#34;all&#34;: t_end = Info.get_recording_length_sec()
+        # if all channels are to be extracted
+        if len(ch_to_extract) == 0 or ch_to_extract == &#34;all&#34;:
+            ch_to_extract = []
+            for ch in range (0, 4096):
+                ch_to_extract.append(ch)
+
+        # check recording type and use the relevant method to read data
+        if Info.get_recording_type() == &#34;RawDataSettings&#34;:
+            if use_dll:
+                NR = self.read_raw_data_dll(brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path)
+            else:
+                NR = self.read_raw_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+        if Info.get_recording_type() == &#34;NoiseBlankingCompressionSettings&#34;:
+            NR = self.read_raw_compressed_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+
+        # if true, create a SpikeInterface probe representing the MEA geometry (electrodes position)
+        if attach_probe:
+            geom = []
+            for ch_nb in ch_to_extract:
+                ch_coord = get_ch_coord(ch_nb)
+                # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+                geom.append([ch_coord[0]*60, ch_coord[1]*60])
+
+            # create and attach probe using previously defined geom
+            probe = Probe(ndim=2, si_units=&#39;um&#39;)
+            probe.set_contacts(positions=geom, shapes=&#39;square&#39;, shape_params={&#39;width&#39;: 21})
+            square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+            probe.set_planar_contour(square_contour)
+            # WARNING: device_channel_indices does not match channel number
+            probe.set_device_channel_indices(range(len(ch_to_extract)))
+            NR = NR.set_probe(probe)
+
+        return NR
+
+
+# ---------------------------------------------------------------- #
+def read_brw_SpikeInterface(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000,
+                            attach_probe=True, use_dll=False, dll_path=&#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;):
+    &#34;&#34;&#34;
+    Extract data from a brw file and return a SpikeInterface NumpyRecording object.
+
+    Parameters
+    ----------
+    file_path: String
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    ch_to_extract: list of int
+        channels to extract
+    frame_chunk: int
+        set the chunk size of data to read at a time. Large frame_chunk require more memory.
+    attach_probe: Bool
+        if set to true, create a SpikeInterface probe representing the MEA geometry
+    use_dll: Bool
+        if set to True, will use 3Brain dll during read operation
+    dll_path: String
+        set the path of 3Brain dll. Default value, is &#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;
+    &#34;&#34;&#34;
+    BNR = Brw_SpikeInterface()
+    NR = BNR.read(file_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path)
+    return NR
+
+
+def get_spikeinterface_recording(Brw_Rec, t_start=0, t_end=&#34;all&#34;, ch_to_extract=&#34;all&#34;):
+    &#34;&#34;&#34;
+    Convert a Brw_Recording to a SpikeInterface NumpyRecording object.
+
+    Parameters
+    ----------
+    Brw_Rec: Brw_Recording class
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    ch_to_extract: list of int
+        channels to extract
+    &#34;&#34;&#34;
+    # WARNING: potentlal memory issues. Brw_Rec and NR object exist at the same time + traces_list
+    #          Brw_Rec is only read, not modified, so should be passed as a reference and not as a copy. need to check
+    # TODO: option to create a RecordingExtractor segment for each snippet in NoiseBlankingCompressionSettings
+    #       ie, create NR with non reconstructed data, but continuous raw_compressed data
+    #       using NumpyRecordingSegment(traces, sampling_frequency, t_start)?
+
+    # if all channels are to be extracted
+    if ch_to_extract == &#34;all&#34;:
+        ch_to_extract = [Brw_Rec.recording[ch_id][0] for ch_id in range(0, len(Brw_Rec.recording))]
+
+    if Brw_Rec.Info.recording_type == &#34;RawDataSettings&#34;:
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = Brw_Rec.get_frame_start_end(t_start, t_end, ch_to_extract)
+
+    # store raw data
+    traces_list = []
+    # SpikeInterface Probe geometry (eletrodes position)
+    geom = []
+    # for each channel to extract
+    for ch_nb in ch_to_extract:
+        ch_id = 0
+        for idx in range(0, len(Brw_Rec.recording)):
+            if Brw_Rec.recording[idx][0] == ch_nb:
+                ch_id = idx
+                break
+        # get this channel x y coordinates from its number
+        ch_coord = get_ch_coord(Brw_Rec.recording[ch_id][0])
+
+        if Brw_Rec.Info.recording_type == &#34;RawDataSettings&#34;:
+            traces_list.append(Brw_Rec.recording[ch_id][1][frame_start:frame_end])
+
+        # TODO: use RecordingSegment for NoiseBlankingCompressionSettings recordings
+        if Brw_Rec.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # continuous raw_compressed data
+            # WARNING: problem with recording not of the same length
+            if len(ch_to_extract) &gt; 1:
+                print(&#34;NumpyRecording object is not supported yet for more than one channel&#34;)
+                return
+            snip_stop = 0
+            temps = []
+            frame_end = t_end * Brw_Rec.Info.get_sampling_rate()
+            frame_start = t_start * Brw_Rec.Info.get_sampling_rate()
+            for snip_id in range(0, len(Brw_Rec.recording[ch_id][2])):
+                if Brw_Rec.recording[ch_id][2][snip_id][1] &lt; frame_end and Brw_Rec.recording[ch_id][2][snip_id][0] &gt; frame_start:
+                    snip_start = snip_stop
+                    snip_stop = snip_start + Brw_Rec.recording[ch_id][2][snip_id][1] - Brw_Rec.recording[ch_id][2][snip_id][0]
+                    temps += Brw_Rec.recording[ch_id][1][snip_start:snip_stop]
+            traces_list.append(temps)
+
+        # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+        geom.append([ch_coord[0]*60, ch_coord[1]*60])
+
+    # transpose traces_list list to match NumpyRecording required shape and create a SpikeInterface NumpyRecording
+    NR = se.NumpyRecording(traces_list=np.transpose(traces_list), sampling_frequency=Brw_Rec.Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+    # create and attach probe using previously defined geom
+    probe = Probe(ndim=2, si_units=&#39;um&#39;)
+    probe.set_contacts(positions=geom, shapes=&#39;square&#39;, shape_params={&#39;width&#39;: 21})
+    square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+    probe.set_planar_contour(square_contour)
+    # WARNING: device_channel_indices does not match channel number
+    probe.set_device_channel_indices(range(len(ch_to_extract)))
+    NR = NR.set_probe(probe)
+
+    return NR</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="beaf.brw_spikeinterface.get_spikeinterface_recording"><code class="name flex">
+<span>def <span class="ident">get_spikeinterface_recording</span></span>(<span>Brw_Rec, t_start=0, t_end='all', ch_to_extract='all')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert a Brw_Recording to a SpikeInterface NumpyRecording object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>Brw_Rec</code></strong> :&ensp;<code>Brw_Recording class</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>t_start</code></strong> :&ensp;<code>float</code></dt>
+<dd>first time point, in seconds</dd>
+<dt><strong><code>t_end</code></strong> :&ensp;<code>float</code></dt>
+<dd>last time point, in seconds</dd>
+<dt><strong><code>ch_to_extract</code></strong> :&ensp;<code>list</code> of <code>int</code></dt>
+<dd>channels to extract</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_spikeinterface_recording(Brw_Rec, t_start=0, t_end=&#34;all&#34;, ch_to_extract=&#34;all&#34;):
+    &#34;&#34;&#34;
+    Convert a Brw_Recording to a SpikeInterface NumpyRecording object.
+
+    Parameters
+    ----------
+    Brw_Rec: Brw_Recording class
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    ch_to_extract: list of int
+        channels to extract
+    &#34;&#34;&#34;
+    # WARNING: potentlal memory issues. Brw_Rec and NR object exist at the same time + traces_list
+    #          Brw_Rec is only read, not modified, so should be passed as a reference and not as a copy. need to check
+    # TODO: option to create a RecordingExtractor segment for each snippet in NoiseBlankingCompressionSettings
+    #       ie, create NR with non reconstructed data, but continuous raw_compressed data
+    #       using NumpyRecordingSegment(traces, sampling_frequency, t_start)?
+
+    # if all channels are to be extracted
+    if ch_to_extract == &#34;all&#34;:
+        ch_to_extract = [Brw_Rec.recording[ch_id][0] for ch_id in range(0, len(Brw_Rec.recording))]
+
+    if Brw_Rec.Info.recording_type == &#34;RawDataSettings&#34;:
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = Brw_Rec.get_frame_start_end(t_start, t_end, ch_to_extract)
+
+    # store raw data
+    traces_list = []
+    # SpikeInterface Probe geometry (eletrodes position)
+    geom = []
+    # for each channel to extract
+    for ch_nb in ch_to_extract:
+        ch_id = 0
+        for idx in range(0, len(Brw_Rec.recording)):
+            if Brw_Rec.recording[idx][0] == ch_nb:
+                ch_id = idx
+                break
+        # get this channel x y coordinates from its number
+        ch_coord = get_ch_coord(Brw_Rec.recording[ch_id][0])
+
+        if Brw_Rec.Info.recording_type == &#34;RawDataSettings&#34;:
+            traces_list.append(Brw_Rec.recording[ch_id][1][frame_start:frame_end])
+
+        # TODO: use RecordingSegment for NoiseBlankingCompressionSettings recordings
+        if Brw_Rec.Info.recording_type == &#34;NoiseBlankingCompressionSettings&#34;:
+            # continuous raw_compressed data
+            # WARNING: problem with recording not of the same length
+            if len(ch_to_extract) &gt; 1:
+                print(&#34;NumpyRecording object is not supported yet for more than one channel&#34;)
+                return
+            snip_stop = 0
+            temps = []
+            frame_end = t_end * Brw_Rec.Info.get_sampling_rate()
+            frame_start = t_start * Brw_Rec.Info.get_sampling_rate()
+            for snip_id in range(0, len(Brw_Rec.recording[ch_id][2])):
+                if Brw_Rec.recording[ch_id][2][snip_id][1] &lt; frame_end and Brw_Rec.recording[ch_id][2][snip_id][0] &gt; frame_start:
+                    snip_start = snip_stop
+                    snip_stop = snip_start + Brw_Rec.recording[ch_id][2][snip_id][1] - Brw_Rec.recording[ch_id][2][snip_id][0]
+                    temps += Brw_Rec.recording[ch_id][1][snip_start:snip_stop]
+            traces_list.append(temps)
+
+        # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+        geom.append([ch_coord[0]*60, ch_coord[1]*60])
+
+    # transpose traces_list list to match NumpyRecording required shape and create a SpikeInterface NumpyRecording
+    NR = se.NumpyRecording(traces_list=np.transpose(traces_list), sampling_frequency=Brw_Rec.Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+    # create and attach probe using previously defined geom
+    probe = Probe(ndim=2, si_units=&#39;um&#39;)
+    probe.set_contacts(positions=geom, shapes=&#39;square&#39;, shape_params={&#39;width&#39;: 21})
+    square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+    probe.set_planar_contour(square_contour)
+    # WARNING: device_channel_indices does not match channel number
+    probe.set_device_channel_indices(range(len(ch_to_extract)))
+    NR = NR.set_probe(probe)
+
+    return NR</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_spikeinterface.read_brw_SpikeInterface"><code class="name flex">
+<span>def <span class="ident">read_brw_SpikeInterface</span></span>(<span>file_path, t_start=0, t_end=60, ch_to_extract=[], frame_chunk=100000, attach_probe=True, use_dll=False, dll_path='C:\\Program Files\\3Brain\\BrainWave 5')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract data from a brw file and return a SpikeInterface NumpyRecording object.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>String</code></dt>
+<dd>&nbsp;</dd>
+<dt><strong><code>t_start</code></strong> :&ensp;<code>float</code></dt>
+<dd>first time point, in seconds</dd>
+<dt><strong><code>t_end</code></strong> :&ensp;<code>float</code></dt>
+<dd>last time point, in seconds</dd>
+<dt><strong><code>ch_to_extract</code></strong> :&ensp;<code>list</code> of <code>int</code></dt>
+<dd>channels to extract</dd>
+<dt><strong><code>frame_chunk</code></strong> :&ensp;<code>int</code></dt>
+<dd>set the chunk size of data to read at a time. Large frame_chunk require more memory.</dd>
+<dt><strong><code>attach_probe</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if set to true, create a SpikeInterface probe representing the MEA geometry</dd>
+<dt><strong><code>use_dll</code></strong> :&ensp;<code>Bool</code></dt>
+<dd>if set to True, will use 3Brain dll during read operation</dd>
+<dt><strong><code>dll_path</code></strong> :&ensp;<code>String</code></dt>
+<dd>set the path of 3Brain dll. Default value, is "C:\Program Files\3Brain\BrainWave 5"</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_brw_SpikeInterface(file_path, t_start = 0, t_end = 60, ch_to_extract = [], frame_chunk = 100000,
+                            attach_probe=True, use_dll=False, dll_path=&#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;):
+    &#34;&#34;&#34;
+    Extract data from a brw file and return a SpikeInterface NumpyRecording object.
+
+    Parameters
+    ----------
+    file_path: String
+    t_start: float
+        first time point, in seconds
+    t_end: float
+        last time point, in seconds
+    ch_to_extract: list of int
+        channels to extract
+    frame_chunk: int
+        set the chunk size of data to read at a time. Large frame_chunk require more memory.
+    attach_probe: Bool
+        if set to true, create a SpikeInterface probe representing the MEA geometry
+    use_dll: Bool
+        if set to True, will use 3Brain dll during read operation
+    dll_path: String
+        set the path of 3Brain dll. Default value, is &#34;C:\\Program Files\\3Brain\\BrainWave 5&#34;
+    &#34;&#34;&#34;
+    BNR = Brw_SpikeInterface()
+    NR = BNR.read(file_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path)
+    return NR</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="beaf.brw_spikeinterface.Brw_SpikeInterface"><code class="flex name class">
+<span>class <span class="ident">Brw_SpikeInterface</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Brw_SpikeInterface class to read and store .brw recordings datas and convert them to SpikeInterface NumpyRecording class</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Brw_SpikeInterface:
+    &#34;&#34;&#34;
+    Brw_SpikeInterface class to read and store .brw recordings datas and convert them to SpikeInterface NumpyRecording class
+    &#34;&#34;&#34;
+    def read_raw_data_dll(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path):
+        import clr
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.IO.dll&#34;))
+        clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.Common.dll&#34;))
+
+        from System import Int32, Double, Boolean
+        from _3Brain.BrainWave.IO import BrwFile
+        from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+        from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+        consumer = object()
+
+        data = BrwFile.Open(brw_path)
+        info = data.get_MeaExperimentInfo()
+        Info = get_brw_experiment_setting(brw_path)
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+        # get required number of frame chunk from frame_start to frame_end depending on frame_chunk size
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+        data_chunk = []
+        traces_list = []
+        for chunk in range(nb_frame_chunk):
+            # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the BRW-file stream
+            if chunk == nb_frame_chunk-1:
+                last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+            # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+            # second index is the channel, third index the time frame
+            else:
+                data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+            chunk_ch_data = []
+            for ch_id in range(len(ch_to_extract)):
+                # convert to voltage and add this chunk data at the end of this ch data array
+                chunk_ch_data.append(np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float))
+
+            # format data to match spikeinterface structure: [ [f0ch0, f0ch1, ...], [f1ch0, f1ch1, ...], ... ]
+            # for each frame in this data chunk
+            for frame_nb in range(len(chunk_ch_data[0])):
+                # frame_data will contain each ch value for a single frame
+                frame_data = []
+                # for each ch to extract
+                for ch_id in range(len(ch_to_extract)):
+                    # add this ch value for this frame in frame_data list
+                    frame_data.append(chunk_ch_data[ch_id][frame_nb])
+                # add this frame_data to traces_list
+                traces_list.append(frame_data)
+
+        # Close Files
+        data.Close()
+        # create the NumpyRecording
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+        return NR
+
+
+    def read_raw_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+        # get first and last frame corresponding to t_start and t_end
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+        nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+        id_frame_chunk = frame_chunk * Info.get_nb_channel()
+        first_frame = frame_start * Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+
+        # open hdf5 file
+        hdf_file = h5py.File(brw_path,&#39;r&#39;)
+        # calculate the invariant term for digital to analog conversion
+        converter_x = (Info.max_analog_value - Info.min_analog_value) / (Info.max_digital_value - Info.min_digital_value)
+
+        traces_list = []
+        # for each chunk needed to read the recording from t_start to t_end
+        for chunk in range(0, nb_frame_chunk):
+            # if this is the last chunk of data, need to update last_frame to be the index of last needed frame (avoid out of bound)
+            if chunk == nb_frame_chunk-1:
+                last_frame = frame_end * Info.get_nb_channel()
+
+            # read data from first_frame to last_frame of this data chunk
+            data_chunk = hdf_file.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+Info.get_nb_channel()]
+
+            # update first_frame and last_frame position for next data chunk
+            first_frame += id_frame_chunk + Info.get_nb_channel()
+            last_frame = first_frame + id_frame_chunk
+
+            # for each frame in this data chunk
+            for frame_nb in range(0, int(len(data_chunk)/Info.get_nb_channel())):
+                frame_data = []
+                # get the position of the current frame
+                frame_start_id = frame_nb*Info.get_nb_channel()
+
+                # for each channel to extract
+                for ch_id in range(0, len(ch_to_extract)):
+                    # get the channel number
+                    ch = ch_to_extract[ch_id]
+                    # convert digital value to analog and add this frame for this channel to corresponding position in list
+                    frame_data.append(convert_digital_to_analog(Info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x))
+                traces_list.append(frame_data)
+
+        hdf_file.close()
+        del(hdf_file)
+
+        # convert frame_data list to numpy array and create a SpikeInterface NumpyRecording object using frame_data as data
+        NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+        return NR
+
+
+    def read_raw_compressed_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+        # TODO: create spikeinterface NumpyRecording object
+        #       problem with recording not of the same length
+        #           solution using RecordingSegment? a RecordingExtractor segment for each snippet
+
+        # data chunk [start-end[ in number of frame
+        toc = self.data.get(&#34;TOC&#34;)
+        # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+        event_sparse_raw_toc = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRawTOC&#34;)
+        frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end)
+
+        chunk_nb_start = 0; chunk_nb_end = 0
+        for chunk_nb in range(0, len(toc)):
+            if toc[chunk_nb][0] &lt;= frame_start:
+                chunk_nb_start = chunk_nb
+            if toc[chunk_nb][1] &gt;= frame_end:
+                chunk_nb_end = chunk_nb +1
+                break
+
+        traces_list = []
+        for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+            chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+            if data_chunk_nb &lt; len(event_sparse_raw_toc)-1:
+                chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+            else:
+                chunk_end_id = len(self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;))
+
+            data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;)[chunk_start_id:chunk_end_id]
+
+            # get the time of the first snippet  within t_start-t_end
+            # check if any other channel in ch_to_extract has data for this time t
+            #   if not, add 0 or np.nan for this time t
+            #   if yes, extract these data as well to create the first frame in traces_list
+            # get the following snippet (that can have already been partially extracted during the previous snippet)
+
+            # naive algo:
+            # for t in range(frame_start, frame_end):
+            #   frame_data = []
+            #   for ch with data at this time t:
+            #       frame_data.append(channel&#39;s data)
+            #   if no ch with data: skip to next snippet (or fill with 0 or artificial noise)
+
+        hdf_file = h5py.File(brw_path,&#39;r&#39;)
+        hdf_file.close()
+
+        return 0
+
+
+    def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path):
+        # get Brw_Experiment_Settings info for this brw file
+        Info = get_brw_experiment_setting(brw_path)
+        # t_end is &#34;all&#34;, set t_end to recording length
+        if t_end == &#34;all&#34;: t_end = Info.get_recording_length_sec()
+        # if all channels are to be extracted
+        if len(ch_to_extract) == 0 or ch_to_extract == &#34;all&#34;:
+            ch_to_extract = []
+            for ch in range (0, 4096):
+                ch_to_extract.append(ch)
+
+        # check recording type and use the relevant method to read data
+        if Info.get_recording_type() == &#34;RawDataSettings&#34;:
+            if use_dll:
+                NR = self.read_raw_data_dll(brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path)
+            else:
+                NR = self.read_raw_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+        if Info.get_recording_type() == &#34;NoiseBlankingCompressionSettings&#34;:
+            NR = self.read_raw_compressed_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+
+        # if true, create a SpikeInterface probe representing the MEA geometry (electrodes position)
+        if attach_probe:
+            geom = []
+            for ch_nb in ch_to_extract:
+                ch_coord = get_ch_coord(ch_nb)
+                # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+                geom.append([ch_coord[0]*60, ch_coord[1]*60])
+
+            # create and attach probe using previously defined geom
+            probe = Probe(ndim=2, si_units=&#39;um&#39;)
+            probe.set_contacts(positions=geom, shapes=&#39;square&#39;, shape_params={&#39;width&#39;: 21})
+            square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+            probe.set_planar_contour(square_contour)
+            # WARNING: device_channel_indices does not match channel number
+            probe.set_device_channel_indices(range(len(ch_to_extract)))
+            NR = NR.set_probe(probe)
+
+        return NR</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="beaf.brw_spikeinterface.Brw_SpikeInterface.read"><code class="name flex">
+<span>def <span class="ident">read</span></span>(<span>self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, attach_probe, use_dll, dll_path):
+    # get Brw_Experiment_Settings info for this brw file
+    Info = get_brw_experiment_setting(brw_path)
+    # t_end is &#34;all&#34;, set t_end to recording length
+    if t_end == &#34;all&#34;: t_end = Info.get_recording_length_sec()
+    # if all channels are to be extracted
+    if len(ch_to_extract) == 0 or ch_to_extract == &#34;all&#34;:
+        ch_to_extract = []
+        for ch in range (0, 4096):
+            ch_to_extract.append(ch)
+
+    # check recording type and use the relevant method to read data
+    if Info.get_recording_type() == &#34;RawDataSettings&#34;:
+        if use_dll:
+            NR = self.read_raw_data_dll(brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path)
+        else:
+            NR = self.read_raw_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+    if Info.get_recording_type() == &#34;NoiseBlankingCompressionSettings&#34;:
+        NR = self.read_raw_compressed_data(brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)
+
+    # if true, create a SpikeInterface probe representing the MEA geometry (electrodes position)
+    if attach_probe:
+        geom = []
+        for ch_nb in ch_to_extract:
+            ch_coord = get_ch_coord(ch_nb)
+            # electrodes are 60um away, so x coord * 60 and y coord * 60 to get their position is space
+            geom.append([ch_coord[0]*60, ch_coord[1]*60])
+
+        # create and attach probe using previously defined geom
+        probe = Probe(ndim=2, si_units=&#39;um&#39;)
+        probe.set_contacts(positions=geom, shapes=&#39;square&#39;, shape_params={&#39;width&#39;: 21})
+        square_contour = [(-60, -60), (3900, -60), (3900, 3900), (-60, 3900)]
+        probe.set_planar_contour(square_contour)
+        # WARNING: device_channel_indices does not match channel number
+        probe.set_device_channel_indices(range(len(ch_to_extract)))
+        NR = NR.set_probe(probe)
+
+    return NR</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_compressed_data"><code class="name flex">
+<span>def <span class="ident">read_raw_compressed_data</span></span>(<span>self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_compressed_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+    # TODO: create spikeinterface NumpyRecording object
+    #       problem with recording not of the same length
+    #           solution using RecordingSegment? a RecordingExtractor segment for each snippet
+
+    # data chunk [start-end[ in number of frame
+    toc = self.data.get(&#34;TOC&#34;)
+    # data chunk start in number of element in EventsBasedSparseRaw list (EventsBasedSparseRaw[id])
+    event_sparse_raw_toc = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRawTOC&#34;)
+    frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end)
+
+    chunk_nb_start = 0; chunk_nb_end = 0
+    for chunk_nb in range(0, len(toc)):
+        if toc[chunk_nb][0] &lt;= frame_start:
+            chunk_nb_start = chunk_nb
+        if toc[chunk_nb][1] &gt;= frame_end:
+            chunk_nb_end = chunk_nb +1
+            break
+
+    traces_list = []
+    for data_chunk_nb in range(chunk_nb_start, chunk_nb_end):
+        chunk_start_id = event_sparse_raw_toc[data_chunk_nb]
+        if data_chunk_nb &lt; len(event_sparse_raw_toc)-1:
+            chunk_end_id = event_sparse_raw_toc[data_chunk_nb+1]
+        else:
+            chunk_end_id = len(self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;))
+
+        data_chunk = self.data.get(&#34;Well_A1&#34;).get(&#34;EventsBasedSparseRaw&#34;)[chunk_start_id:chunk_end_id]
+
+        # get the time of the first snippet  within t_start-t_end
+        # check if any other channel in ch_to_extract has data for this time t
+        #   if not, add 0 or np.nan for this time t
+        #   if yes, extract these data as well to create the first frame in traces_list
+        # get the following snippet (that can have already been partially extracted during the previous snippet)
+
+        # naive algo:
+        # for t in range(frame_start, frame_end):
+        #   frame_data = []
+        #   for ch with data at this time t:
+        #       frame_data.append(channel&#39;s data)
+        #   if no ch with data: skip to next snippet (or fill with 0 or artificial noise)
+
+    hdf_file = h5py.File(brw_path,&#39;r&#39;)
+    hdf_file.close()
+
+    return 0</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_data"><code class="name flex">
+<span>def <span class="ident">read_raw_data</span></span>(<span>self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_data(self, brw_path, Info, t_start, t_end, ch_to_extract, frame_chunk):
+    # get first and last frame corresponding to t_start and t_end
+    frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+    nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+    id_frame_chunk = frame_chunk * Info.get_nb_channel()
+    first_frame = frame_start * Info.get_nb_channel()
+    last_frame = first_frame + id_frame_chunk
+
+    # open hdf5 file
+    hdf_file = h5py.File(brw_path,&#39;r&#39;)
+    # calculate the invariant term for digital to analog conversion
+    converter_x = (Info.max_analog_value - Info.min_analog_value) / (Info.max_digital_value - Info.min_digital_value)
+
+    traces_list = []
+    # for each chunk needed to read the recording from t_start to t_end
+    for chunk in range(0, nb_frame_chunk):
+        # if this is the last chunk of data, need to update last_frame to be the index of last needed frame (avoid out of bound)
+        if chunk == nb_frame_chunk-1:
+            last_frame = frame_end * Info.get_nb_channel()
+
+        # read data from first_frame to last_frame of this data chunk
+        data_chunk = hdf_file.get(&#34;Well_A1&#34;).get(&#34;Raw&#34;)[first_frame:last_frame+Info.get_nb_channel()]
+
+        # update first_frame and last_frame position for next data chunk
+        first_frame += id_frame_chunk + Info.get_nb_channel()
+        last_frame = first_frame + id_frame_chunk
+
+        # for each frame in this data chunk
+        for frame_nb in range(0, int(len(data_chunk)/Info.get_nb_channel())):
+            frame_data = []
+            # get the position of the current frame
+            frame_start_id = frame_nb*Info.get_nb_channel()
+
+            # for each channel to extract
+            for ch_id in range(0, len(ch_to_extract)):
+                # get the channel number
+                ch = ch_to_extract[ch_id]
+                # convert digital value to analog and add this frame for this channel to corresponding position in list
+                frame_data.append(convert_digital_to_analog(Info.min_analog_value, data_chunk[frame_start_id + ch - 1], converter_x))
+            traces_list.append(frame_data)
+
+    hdf_file.close()
+    del(hdf_file)
+
+    # convert frame_data list to numpy array and create a SpikeInterface NumpyRecording object using frame_data as data
+    NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+    return NR</code></pre>
+</details>
+</dd>
+<dt id="beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_data_dll"><code class="name flex">
+<span>def <span class="ident">read_raw_data_dll</span></span>(<span>self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_raw_data_dll(self, brw_path, t_start, t_end, ch_to_extract, frame_chunk, dll_path):
+    import clr
+    clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.IO.dll&#34;))
+    clr.AddReference(os.path.join(dll_path, &#34;3Brain.BrainWave.Common.dll&#34;))
+
+    from System import Int32, Double, Boolean
+    from _3Brain.BrainWave.IO import BrwFile
+    from _3Brain.BrainWave.Common import (MeaFileExperimentInfo, RawDataSettings, ExperimentType, MeaPlate)
+    from _3Brain.Common import (MeaPlateModel, MeaChipRoi, MeaDataType)
+
+    consumer = object()
+
+    data = BrwFile.Open(brw_path)
+    info = data.get_MeaExperimentInfo()
+    Info = get_brw_experiment_setting(brw_path)
+    # get first and last frame corresponding to t_start and t_end
+    frame_start, frame_end = get_file_frame_start_end(Info, t_start, t_end, frame_chunk)
+    # get required number of frame chunk from frame_start to frame_end depending on frame_chunk size
+    nb_frame_chunk = int(np.ceil((frame_end - frame_start) / frame_chunk))
+
+    data_chunk = []
+    traces_list = []
+    for chunk in range(nb_frame_chunk):
+        # if this is the last chunk, needs to reduce the chunk size to read, to avoid reading beyond the end of the BRW-file stream
+        if chunk == nb_frame_chunk-1:
+            last_chunk = frame_end - int(frame_start + chunk * frame_chunk)
+            data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), last_chunk, data.get_SourceChannels(), consumer)
+        # ReadRawData returns a 3D array. first index is the well number (index 0 if single well),
+        # second index is the channel, third index the time frame
+        else:
+            data_chunk = data.ReadRawData(int(frame_start + chunk * frame_chunk), frame_chunk, data.get_SourceChannels(), consumer)
+
+        chunk_ch_data = []
+        for ch_id in range(len(ch_to_extract)):
+            # convert to voltage and add this chunk data at the end of this ch data array
+            chunk_ch_data.append(np.fromiter(info.DigitalToAnalog(data_chunk[0][ch_to_extract[ch_id]]), float))
+
+        # format data to match spikeinterface structure: [ [f0ch0, f0ch1, ...], [f1ch0, f1ch1, ...], ... ]
+        # for each frame in this data chunk
+        for frame_nb in range(len(chunk_ch_data[0])):
+            # frame_data will contain each ch value for a single frame
+            frame_data = []
+            # for each ch to extract
+            for ch_id in range(len(ch_to_extract)):
+                # add this ch value for this frame in frame_data list
+                frame_data.append(chunk_ch_data[ch_id][frame_nb])
+            # add this frame_data to traces_list
+            traces_list.append(frame_data)
+
+    # Close Files
+    data.Close()
+    # create the NumpyRecording
+    NR = se.NumpyRecording(traces_list=np.array(traces_list), sampling_frequency=Info.get_sampling_rate(), channel_ids=ch_to_extract)
+
+    return NR</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="beaf" href="index.html">beaf</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="beaf.brw_spikeinterface.get_spikeinterface_recording" href="#beaf.brw_spikeinterface.get_spikeinterface_recording">get_spikeinterface_recording</a></code></li>
+<li><code><a title="beaf.brw_spikeinterface.read_brw_SpikeInterface" href="#beaf.brw_spikeinterface.read_brw_SpikeInterface">read_brw_SpikeInterface</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="beaf.brw_spikeinterface.Brw_SpikeInterface" href="#beaf.brw_spikeinterface.Brw_SpikeInterface">Brw_SpikeInterface</a></code></h4>
+<ul class="">
+<li><code><a title="beaf.brw_spikeinterface.Brw_SpikeInterface.read" href="#beaf.brw_spikeinterface.Brw_SpikeInterface.read">read</a></code></li>
+<li><code><a title="beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_compressed_data" href="#beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_compressed_data">read_raw_compressed_data</a></code></li>
+<li><code><a title="beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_data" href="#beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_data">read_raw_data</a></code></li>
+<li><code><a title="beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_data_dll" href="#beaf.brw_spikeinterface.Brw_SpikeInterface.read_raw_data_dll">read_raw_data_dll</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
