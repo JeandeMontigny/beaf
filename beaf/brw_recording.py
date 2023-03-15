@@ -868,7 +868,7 @@ class Brw_Recording:
 
             if t_end == "all":
                 # it t_end is all the recording, set frame_end to last frame of the recording
-                frame_end = t_end * self.Info.get_sampling_rate()
+                frame_end = self.Info.get_recording_length()
 
             # if t_end is not the end of the recording, have to find the last event before t_end
             else:
