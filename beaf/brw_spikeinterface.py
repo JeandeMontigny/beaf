@@ -258,6 +258,9 @@ def get_spikeinterface_recording(Brw_Rec, t_start=0, t_end="all", ch_to_extract=
     if ch_to_extract == "all":
         ch_to_extract = [Brw_Rec.recording[ch_id][0] for ch_id in range(0, len(Brw_Rec.recording))]
 
+    if t_end == "all":
+        t_end = Brw_Rec.Info.get_recording_length_sec()
+
     if Brw_Rec.Info.recording_type == "RawDataSettings":
         # get first and last frame corresponding to t_start and t_end
         frame_start, frame_end = Brw_Rec.get_frame_start_end(t_start, t_end, ch_to_extract)
