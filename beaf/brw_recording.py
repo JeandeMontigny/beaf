@@ -877,7 +877,10 @@ class Brw_Recording:
                 # will store the frame time of the last event before t_end
                 t_last_event = 0
                 for idx in range(len(self.recording)):
-                    if len(self.recording[idx][2]) != 0 and t_last_event < self.recording[idx][2][len(self.recording[idx][2])-1][1] and self.recording[idx][0] in ch_list:
+                    if (len(self.recording[idx][2]) != 0
+                        and t_last_event < self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                        and t_end * self.Info.get_sampling_rate() >= self.recording[idx][2][len(self.recording[idx][2])-1][1]
+                        and self.recording[idx][0] in ch_list):
                         t_last_event = self.recording[idx][2][len(self.recording[idx][2])-1][1]
                 frame_end = t_last_event
 
