@@ -2,15 +2,21 @@ import inspect, psutil
 import numpy as np
 
 # ---------------------------------------------------------------- #
-def get_ch_number(x, y):
-    ch_nb = x * 64 + y % 64
-    return ch_nb
+def get_ch_number(x, y, one_one_origin=True):
+    if one_one_origin:
+        if y == 64:
+            return (x-1) * 64 + y % 64 + 64
+        else:
+            return (x-1) * 64 + y % 64
+    else :
+        return x * 64 + y % 64
 
 
-def get_ch_coord(ch_nb):
+def get_ch_coord(ch_nb, one_one_origin=True):
     x = ch_nb // 64
     y = ch_nb % 64
-
+    if one_one_origin:
+        x = x + 1
     return x, y
 
 
